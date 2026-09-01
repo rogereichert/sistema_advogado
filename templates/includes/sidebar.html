@@ -1,0 +1,260 @@
+<aside class="fixed inset-y-0 left-0 z-40 flex w-72 flex-col bg-slate-950 text-white">
+
+    <div class="border-b border-white/10 px-7 py-7">
+
+        <div class="flex items-center gap-3">
+
+            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10 ring-1 ring-amber-400/20">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.7"
+                    stroke="currentColor"
+                    class="h-6 w-6 text-amber-300"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 3v18m0-18L6.75 6m5.25-3 5.25 3M6.75 6 3 13.5h7.5L6.75 6Zm10.5 0L13.5 13.5H21L17.25 6ZM5.25 21h13.5"
+                    />
+                </svg>
+            </div>
+
+            <div>
+                <h1 class="text-lg font-semibold tracking-tight">
+                    Advogado Company
+                </h1>
+
+                <p class="text-xs text-slate-400">
+                    Gestão Jurídica
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <nav class="flex-1 px-4 py-6">
+
+        <p class="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+            Escritório
+        </p>
+
+
+        <div class="space-y-1">
+
+            <!-- VISÃO GERAL -->
+            <a
+                href="{% url 'core:dashboard' %}"
+                class="
+                    flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition
+                    {% if request.resolver_match.namespace == 'core' %}
+                        bg-white/10 text-white
+                    {% else %}
+                        text-slate-400 hover:bg-white/5 hover:text-white
+                    {% endif %}
+                "
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.7"
+                    stroke="currentColor"
+                    class="
+                        h-5 w-5
+                        {% if request.resolver_match.namespace == 'core' %}
+                            text-amber-300
+                        {% endif %}
+                    "
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 13.5 12 4l9 9.5M5.25 11.25V21h13.5v-9.75"
+                    />
+                </svg>
+
+                Visão Geral
+            </a>
+
+
+            <!-- CLIENTES -->
+            <a
+                href="{% url 'clients:list' %}"
+                class="
+                    flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition
+                    {% if request.resolver_match.namespace == 'clients' %}
+                        bg-white/10 text-white
+                    {% else %}
+                        text-slate-400 hover:bg-white/5 hover:text-white
+                    {% endif %}
+                "
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.7"
+                    stroke="currentColor"
+                    class="
+                        h-5 w-5
+                        {% if request.resolver_match.namespace == 'clients' %}
+                            text-amber-300
+                        {% endif %}
+                    "
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M18 18.72a9.72 9.72 0 0 0 3.74-.62 3 3 0 0 0-4.5-2.6M18 18.72v-.75c0-1-.2-1.95-.57-2.8M18 18.72a9.72 9.72 0 0 1-6 0m5.43-3.55a5.97 5.97 0 0 0-10.86 0M6 18.72a9.72 9.72 0 0 1-3.74-.62 3 3 0 0 1 4.5-2.6M6 18.72v-.75c0-1 .2-1.95.57-2.8m0 0a5.97 5.97 0 0 1 10.86 0M15 7.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6.75 8.25a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm15 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"
+                    />
+                </svg>
+
+                Clientes
+            </a>
+
+
+            <!-- CASOS JURÍDICOS -->
+            <a
+                href="{% url 'cases:list' %}"
+                class="
+                    flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition
+                    {% if request.resolver_match.namespace == 'cases' %}
+                        bg-white/10 text-white
+                    {% else %}
+                        text-slate-400 hover:bg-white/5 hover:text-white
+                    {% endif %}
+                "
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.7"
+                    stroke="currentColor"
+                    class="
+                        h-5 w-5
+                        {% if request.resolver_match.namespace == 'cases' %}
+                            text-amber-300
+                        {% endif %}
+                    "
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M20.25 14.15v4.25a2.85 2.85 0 0 1-2.85 2.85H6.6a2.85 2.85 0 0 1-2.85-2.85V7.6A2.85 2.85 0 0 1 6.6 4.75h4.25m4.5 0h5.9m-2.95-2.95v5.9M9 12h6m-6 4h3"
+                    />
+                </svg>
+
+                Casos Jurídicos
+            </a>
+
+
+            <!-- AGENDA -->
+            <a
+                href="{% url 'agenda:list' %}"
+                class="
+                    flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition
+                    {% if request.resolver_match.namespace == 'agenda' %}
+                        bg-white/10 text-white
+                    {% else %}
+                        text-slate-400 hover:bg-white/5 hover:text-white
+                    {% endif %}
+                "
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.7"
+                    stroke="currentColor"
+                    class="
+                        h-5 w-5
+                        {% if request.resolver_match.namespace == 'agenda' %}
+                            text-amber-300
+                        {% endif %}
+                    "
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
+                    />
+                </svg>
+
+                Agenda
+            </a>
+
+
+            <!-- DOCUMENTOS -->
+            <a
+                href="{% url 'documents:list' %}"
+                class="
+                    flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition
+                    {% if request.resolver_match.namespace == 'documents' %}
+                        bg-white/10 text-white
+                    {% else %}
+                        text-slate-400 hover:bg-white/5 hover:text-white
+                    {% endif %}
+                "
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.7"
+                    stroke="currentColor"
+                    class="
+                        h-5 w-5
+                        {% if request.resolver_match.namespace == 'documents' %}
+                            text-amber-300
+                        {% endif %}
+                    "
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
+                    />
+                </svg>
+
+                Documentos
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <div class="border-t border-white/10 p-4">
+
+        <div class="rounded-xl bg-white/5 p-4">
+
+            <div class="flex items-center gap-3">
+
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400/10 text-sm font-semibold text-amber-300">
+                    {{ request.user.nome_completo|slice:":1"|upper }}
+                </div>
+
+                <div class="min-w-0">
+
+                    <p class="truncate text-sm font-medium text-white">
+                        {{ request.user.nome_completo|default:request.user.username }}
+                    </p>
+
+                    <p class="truncate text-xs text-slate-500">
+                        Advogado responsável
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</aside>

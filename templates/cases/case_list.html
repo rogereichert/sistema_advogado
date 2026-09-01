@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Casos Jurídicos | Advogado Company
+{% endblock %}
+
+{% block page_header %}
+    Casos Jurídicos
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <div>
+
+        <p class="text-sm font-medium text-amber-700">
+            Gestão jurídica
+        </p>
+
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+            Casos Jurídicos
+        </h1>
+
+        <p class="mt-2 text-sm text-slate-500">
+            Consulte e acompanhe todos os casos cadastrados no escritório.
+        </p>
+
+    </div>
+
+
+    <form
+        method="get"
+        class="mt-8 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm"
+    >
+
+        <div class="grid gap-4 xl:grid-cols-4">
+
+            <div class="xl:col-span-2">
+
+                <label class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    Buscar
+                </label>
+
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ search }}"
+                    placeholder="Cliente, CPF, título ou número do processo..."
+                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    Status
+                </label>
+
+                <select
+                    name="status"
+                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                >
+
+                    <option value="">
+                        Todos
+                    </option>
+
+                    {% for status in statuses %}
+
+                        <option
+                            value="{{ status.pk }}"
+                            {% if selected_status == status.pk|stringformat:"s" %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ status.nome }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    Área
+                </label>
+
+                <input
+                    type="text"
+                    name="area"
+                    value="{{ area }}"
+                    placeholder="Ex.: Trabalhista"
+                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="mt-4 flex justify-end gap-3">
+
+            <a
+                href="{% url 'cases:list' %}"
+                class="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+            >
+                Limpar
+            </a>
+
+            <button
+                type="submit"
+                class="rounded-xl bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+                Filtrar
+            </button>
+
+        </div>
+
+    </form>
+
+
+    <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+        <div class="border-b border-slate-100 px-7 py-5">
+
+            <h2 class="font-semibold text-slate-950">
+                Casos encontrados
+            </h2>
+
+            <p class="mt-1 text-sm text-slate-500">
+                {{ cases|length }} caso{{ cases|length|pluralize:"s" }}
+            </p>
+
+        </div>
+
+
+        <div class="overflow-x-auto">
+
+            <table class="w-full">
+
+                <thead class="bg-slate-50">
+
+                    <tr class="text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
+
+                        <th class="px-6 py-4">
+                            Caso
+                        </th>
+
+                        <th class="px-6 py-4">
+                            Cliente
+                        </th>
+
+                        <th class="px-6 py-4">
+                            Status
+                        </th>
+
+                        <th class="px-6 py-4">
+                            Área
+                        </th>
+
+                        <th class="px-6 py-4">
+                            Processo
+                        </th>
+
+                        <th class="px-6 py-4">
+                            Abertura
+                        </th>
+
+                        <th class="px-6 py-4"></th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody class="divide-y divide-slate-100">
+
+                    {% for case in cases %}
+
+                        <tr class="transition hover:bg-slate-50">
+
+                            <td class="px-6 py-5">
+
+                                <p class="font-semibold text-slate-900">
+                                    {{ case.titulo }}
+                                </p>
+
+                                <p class="mt-1 text-xs text-slate-400">
+                                    #{{ case.pk|stringformat:"05d" }}
+                                </p>
+
+                            </td>
+
+
+                            <td class="px-6 py-5 text-sm text-slate-700">
+                                {{ case.cliente.nome_completo }}
+                            </td>
+
+
+                            <td class="px-6 py-5">
+
+                                <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
+                                    {{ case.status.nome }}
+                                </span>
+
+                            </td>
+
+
+                            <td class="px-6 py-5 text-sm text-slate-600">
+                                {{ case.area_juridica|default:"-" }}
+                            </td>
+
+
+                            <td class="px-6 py-5 text-sm text-slate-600">
+                                {{ case.numero_processo|default:"Não ajuizado" }}
+                            </td>
+
+
+                            <td class="px-6 py-5 text-sm text-slate-600">
+                                {{ case.data_abertura|date:"d/m/Y" }}
+                            </td>
+
+
+                            <td class="px-6 py-5 text-right">
+
+                                <a
+                                    href="{% url 'cases:detail' case.pk %}"
+                                    class="text-sm font-semibold text-slate-600 transition hover:text-slate-950"
+                                >
+                                    Visualizar →
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="px-6 py-14 text-center"
+                            >
+
+                                <p class="font-medium text-slate-700">
+                                    Nenhum caso encontrado
+                                </p>
+
+                                <p class="mt-1 text-sm text-slate-500">
+                                    Tente alterar os filtros de pesquisa.
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

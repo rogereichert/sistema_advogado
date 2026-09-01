@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Solicitar documento | Advogado Company
+{% endblock %}
+
+{% block page_header %}
+    Documentação necessária
+{% endblock %}
+
+{% block content %}
+
+<div class="mx-auto max-w-3xl">
+
+    <a
+        href="{% url 'cases:detail' case.pk %}"
+        class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-900"
+    >
+        ← Voltar para a causa
+    </a>
+
+
+    <div class="mt-6">
+
+        <p class="text-sm font-medium text-amber-700">
+            Caso #{{ case.pk|stringformat:"05d" }}
+        </p>
+
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+            Solicitar documento
+        </h1>
+
+        <p class="mt-2 text-sm text-slate-500">
+            Adicione um documento à lista de pendências desta causa.
+        </p>
+
+    </div>
+
+
+    <form method="post" class="mt-8">
+
+        {% csrf_token %}
+
+        <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+            <div class="border-b border-slate-100 px-7 py-5">
+
+                <h2 class="font-semibold text-slate-950">
+                    Documento necessário
+                </h2>
+
+            </div>
+
+
+            <div class="space-y-6 p-7">
+
+                <div>
+
+                    <label
+                        for="{{ form.nome.id_for_label }}"
+                        class="mb-2 block text-sm font-medium text-slate-700"
+                    >
+                        Documento
+                    </label>
+
+                    {{ form.nome }}
+
+                    {% if form.nome.errors %}
+                        <div class="mt-2 text-sm text-red-600">
+                            {{ form.nome.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        for="{{ form.descricao.id_for_label }}"
+                        class="mb-2 block text-sm font-medium text-slate-700"
+                    >
+                        Descrição
+                    </label>
+
+                    {{ form.descricao }}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div class="mt-8 flex justify-end gap-3">
+
+            <a
+                href="{% url 'cases:detail' case.pk %}"
+                class="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+                Cancelar
+            </a>
+
+
+            <button
+                type="submit"
+                class="rounded-xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+            >
+                Adicionar documento
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

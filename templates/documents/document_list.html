@@ -1,0 +1,529 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Documentos | Advogado Company
+{% endblock %}
+
+{% block page_header %}
+    Documentos
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <!-- CABEÇALHO -->
+    <div class="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
+
+        <div>
+
+            <p class="text-sm font-medium text-amber-700">
+                Gestão documental
+            </p>
+
+            <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+                Central de Documentos
+            </h1>
+
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+                Localize rapidamente documentos anexados aos clientes e casos jurídicos do escritório.
+            </p>
+
+        </div>
+
+
+        <div class="rounded-xl border border-slate-200 bg-white px-5 py-3 shadow-sm">
+
+            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                Documentos encontrados
+            </p>
+
+            <p class="mt-1 text-2xl font-semibold text-slate-950">
+                {{ total_documents }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTROS -->
+    <section class="mt-8 rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+        <div class="border-b border-slate-100 px-7 py-5">
+
+            <h2 class="font-semibold text-slate-950">
+                Localizar documentos
+            </h2>
+
+            <p class="mt-1 text-sm text-slate-500">
+                Pesquise pelo documento, cliente ou caso e refine os resultados com os filtros.
+            </p>
+
+        </div>
+
+
+        <form
+            method="get"
+            class="p-7"
+        >
+
+            <div class="grid gap-5 xl:grid-cols-12">
+
+                <!-- BUSCA -->
+                <div class="xl:col-span-6">
+
+                    <label
+                        for="q"
+                        class="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                        Buscar
+                    </label>
+
+
+                    <div class="relative">
+
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-5 w-5"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
+                                />
+                            </svg>
+
+                        </div>
+
+
+                        <input
+                            type="text"
+                            id="q"
+                            name="q"
+                            value="{{ search }}"
+                            placeholder="Arquivo, cliente, CPF, caso ou nº do processo..."
+                            class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- CLIENTE -->
+                <div class="xl:col-span-3">
+
+                    <label
+                        for="client"
+                        class="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                        Cliente
+                    </label>
+
+
+                    <select
+                        id="client"
+                        name="client"
+                        class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                    >
+
+                        <option value="">
+                            Todos os clientes
+                        </option>
+
+                        {% for client in clients %}
+
+                            <option
+                                value="{{ client.pk }}"
+                                {% if selected_client == client.pk|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ client.nome_completo }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- TIPO -->
+                <div class="xl:col-span-3">
+
+                    <label
+                        for="type"
+                        class="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                        Tipo de arquivo
+                    </label>
+
+
+                    <select
+                        id="type"
+                        name="type"
+                        class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                    >
+
+                        <option value="">
+                            Todos os tipos
+                        </option>
+
+                        {% for extension in extensions %}
+
+                            <option
+                                value="{{ extension }}"
+                                {% if selected_type == extension %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ extension|upper }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="mt-5 flex flex-wrap items-center gap-3">
+
+                <button
+                    type="submit"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+                >
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
+                        />
+                    </svg>
+
+                    Pesquisar
+
+                </button>
+
+
+                {% if search or selected_client or selected_type %}
+
+                    <a
+                        href="{% url 'documents:list' %}"
+                        class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-slate-950"
+                    >
+                        Limpar filtros
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- LISTAGEM -->
+    <section class="mt-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+        <!-- CABEÇALHO -->
+        <div class="flex items-center justify-between border-b border-slate-100 px-7 py-5">
+
+            <div>
+
+                <h2 class="font-semibold text-slate-950">
+                    Arquivos
+                </h2>
+
+                <p class="mt-1 text-sm text-slate-500">
+
+                    {% if total_documents == 1 %}
+                        1 documento encontrado.
+                    {% else %}
+                        {{ total_documents }} documentos encontrados.
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+        {% if documents %}
+
+            <!-- TABELA -->
+            <div class="overflow-x-auto">
+
+                <table class="min-w-full">
+
+                    <thead class="bg-slate-50/80">
+
+                        <tr class="border-b border-slate-100">
+
+                            <th class="px-7 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                Documento
+                            </th>
+
+                            <th class="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                Cliente
+                            </th>
+
+                            <th class="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                Caso
+                            </th>
+
+                            <th class="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                Enviado em
+                            </th>
+
+                            <th class="px-7 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                Ações
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody class="divide-y divide-slate-100">
+
+                        {% for document in documents %}
+
+                            <tr class="transition hover:bg-slate-50/70">
+
+                                <!-- DOCUMENTO -->
+                                <td class="px-7 py-5">
+
+                                    <div class="flex min-w-[260px] items-center gap-4">
+
+                                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
+
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.7"
+                                                stroke="currentColor"
+                                                class="h-5 w-5"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
+                                                />
+                                            </svg>
+
+                                        </div>
+
+
+                                        <div class="min-w-0">
+
+                                            <p class="max-w-xs truncate text-sm font-semibold text-slate-900">
+                                                {{ document.nome_original }}
+                                            </p>
+
+
+                                            {% if document.descricao %}
+
+                                                <p class="mt-1 max-w-xs truncate text-xs text-slate-400">
+                                                    {{ document.descricao }}
+                                                </p>
+
+                                            {% else %}
+
+                                                <p class="mt-1 text-xs text-slate-400">
+                                                    Sem descrição
+                                                </p>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- CLIENTE -->
+                                <td class="px-5 py-5">
+
+                                    <a
+                                        href="{% url 'clients:detail' document.caso.cliente.pk %}"
+                                        class="text-sm font-medium text-slate-700 transition hover:text-amber-700"
+                                    >
+                                        {{ document.caso.cliente.nome_completo }}
+                                    </a>
+
+                                </td>
+
+
+                                <!-- CASO -->
+                                <td class="px-5 py-5">
+
+                                    <div class="min-w-[180px]">
+
+                                        <a
+                                            href="{% url 'cases:detail' document.caso.pk %}"
+                                            class="text-sm font-medium text-slate-700 transition hover:text-amber-700"
+                                        >
+                                            {{ document.caso.titulo }}
+                                        </a>
+
+
+                                        <p class="mt-1 text-xs text-slate-400">
+                                            Caso #{{ document.caso.pk|stringformat:"05d" }}
+                                        </p>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- DATA -->
+                                <td class="whitespace-nowrap px-5 py-5">
+
+                                    <p class="text-sm font-medium text-slate-700">
+                                        {{ document.criado_em|date:"d/m/Y" }}
+                                    </p>
+
+                                    <p class="mt-1 text-xs text-slate-400">
+                                        {{ document.criado_em|time:"H:i" }}
+                                    </p>
+
+                                </td>
+
+
+                                <!-- AÇÕES -->
+                                <td class="px-7 py-5">
+
+                                    <div class="flex items-center justify-end gap-2">
+
+                                        <a
+                                            href="{% url 'documents:download' document.pk %}"
+                                            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950"
+                                        >
+
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.8"
+                                                stroke="currentColor"
+                                                class="h-4 w-4"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-4.5-4.5L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                                                />
+                                            </svg>
+
+                                            Baixar
+
+                                        </a>
+
+
+                                        <a
+                                            href="{% url 'cases:detail' document.caso.pk %}"
+                                            class="inline-flex items-center rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800"
+                                        >
+                                            Abrir caso
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        {% else %}
+
+            <!-- ESTADO VAZIO -->
+            <div class="px-7 py-16 text-center">
+
+                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.6"
+                        stroke="currentColor"
+                        class="h-7 w-7"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
+                        />
+                    </svg>
+
+                </div>
+
+
+                <h3 class="mt-5 text-sm font-semibold text-slate-800">
+                    Nenhum documento encontrado
+                </h3>
+
+
+                {% if search or selected_client or selected_type %}
+
+                    <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+                        Nenhum arquivo corresponde aos filtros selecionados.
+                        Tente alterar a pesquisa ou limpar os filtros.
+                    </p>
+
+
+                    <a
+                        href="{% url 'documents:list' %}"
+                        class="mt-5 inline-flex items-center justify-center rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                    >
+                        Limpar filtros
+                    </a>
+
+                {% else %}
+
+                    <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
+                        Os documentos anexados aos casos jurídicos aparecerão automaticamente nesta central.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}

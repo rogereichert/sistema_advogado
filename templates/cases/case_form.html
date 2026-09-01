@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Nova causa | Advogado Company
+{% endblock %}
+
+
+{% block page_header %}
+    Nova causa jurídica
+{% endblock %}
+
+
+{% block content %}
+
+<div class="mx-auto max-w-6xl">
+
+    <a
+        href="{% url 'clients:detail' client.pk %}"
+        class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-900"
+    >
+        ← {{ client.nome_completo }}
+    </a>
+
+
+    <div class="mt-6">
+
+        <p class="text-sm font-medium text-amber-700">
+
+            {% if editing %}
+                Atualização do caso
+            {% else %}
+                Novo caso
+            {% endif %}
+
+        </p>
+
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+
+            {% if editing %}
+                Editar causa jurídica
+            {% else %}
+                Nova causa jurídica
+            {% endif %}
+
+        </h1>
+
+        <p class="mt-2 text-sm text-slate-500">
+            Vinculada ao cliente
+            <span class="font-semibold text-slate-700">
+                {{ client.nome_completo }}
+            </span>
+        </p>
+
+    </div>
+
+
+    <form method="post" class="mt-8">
+
+        {% csrf_token %}
+
+
+        <div class="space-y-6">
+
+            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+                <div class="border-b border-slate-100 px-7 py-5">
+
+                    <h2 class="font-semibold text-slate-950">
+                        Informações da causa
+                    </h2>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        Dados principais para identificação e acompanhamento.
+                    </p>
+
+                </div>
+
+
+                <div class="grid gap-6 p-7 md:grid-cols-2">
+
+                    <div class="md:col-span-2">
+
+                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                            {{ form.titulo.label }}
+                        </label>
+
+                        {{ form.titulo }}
+
+                        {{ form.titulo.errors }}
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                            {{ form.area_juridica.label }}
+                        </label>
+
+                        {{ form.area_juridica }}
+
+                        {{ form.area_juridica.errors }}
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                            {{ form.status.label }}
+                        </label>
+
+                        {{ form.status }}
+
+                        {{ form.status.errors }}
+
+                    </div>
+
+
+                    <div class="md:col-span-2">
+
+                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                            {{ form.descricao.label }}
+                        </label>
+
+                        {{ form.descricao }}
+
+                        {{ form.descricao.errors }}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+                <div class="border-b border-slate-100 px-7 py-5">
+
+                    <h2 class="font-semibold text-slate-950">
+                        Dados processuais
+                    </h2>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        Preencha somente se já houver processo judicial.
+                    </p>
+
+                </div>
+
+
+                <div class="grid gap-6 p-7 md:grid-cols-2">
+
+                    <div class="md:col-span-2">
+
+                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                            {{ form.numero_processo.label }}
+                        </label>
+
+                        {{ form.numero_processo }}
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                            {{ form.vara.label }}
+                        </label>
+
+                        {{ form.vara }}
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                            {{ form.comarca.label }}
+                        </label>
+
+                        {{ form.comarca }}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+                <div class="border-b border-slate-100 px-7 py-5">
+
+                    <h2 class="font-semibold text-slate-950">
+                        Observações
+                    </h2>
+
+                </div>
+
+
+                <div class="p-7">
+
+                    {{ form.observacoes }}
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <div class="mt-8 flex justify-end gap-3">
+
+            <a
+                href="{% url 'clients:detail' client.pk %}"
+                class="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+                Cancelar
+            </a>
+
+            <button
+                type="submit"
+                class="rounded-xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+            >
+                {% if editing %}
+                    Salvar alterações
+                {% else %}
+                    Criar causa
+                {% endif %}
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

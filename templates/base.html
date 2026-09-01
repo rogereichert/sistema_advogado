@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+            Advogado Company
+        {% endblock %}
+    </title>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+
+    <style type="text/tailwindcss">
+
+        @theme {
+            --font-sans: "Inter", "Segoe UI", sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+        }
+
+    </style>
+
+</head>
+
+
+<body class="bg-[#f6f5f2] text-slate-900 antialiased">
+
+    {% include "includes/sidebar.html" %}
+
+
+    <div class="min-h-screen pl-72">
+
+        {% include "includes/topbar.html" %}
+
+
+        <main class="px-8 py-8 lg:px-10">
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

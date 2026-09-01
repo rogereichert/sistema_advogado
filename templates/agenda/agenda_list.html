@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Agenda | Advogado Company
+{% endblock %}
+
+{% block page_header %}
+    Agenda
+{% endblock %}
+
+{% block content %}
+
+<div>
+
+    <div>
+
+        <p class="text-sm font-medium text-amber-700">
+            Compromissos jurídicos
+        </p>
+
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+            Agenda
+        </h1>
+
+        <p class="mt-2 text-sm text-slate-500">
+            Acompanhe audiências, prazos, reuniões e compromissos do escritório.
+        </p>
+
+    </div>
+
+
+    <section class="mt-8 rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+        <div class="border-b border-slate-100 px-7 py-5">
+
+            <h2 class="font-semibold text-slate-950">
+                Próximos compromissos
+            </h2>
+
+            <p class="mt-1 text-sm text-slate-500">
+                Eventos a partir de hoje.
+            </p>
+
+        </div>
+
+
+        <div class="divide-y divide-slate-100">
+
+            {% for event in upcoming_events %}
+
+                <div class="flex items-center justify-between gap-6 px-7 py-5">
+
+                    <div class="flex items-start gap-5">
+
+                        <div class="min-w-[72px] rounded-xl bg-slate-950 px-3 py-3 text-center text-white">
+
+                            <p class="text-xl font-semibold">
+                                {{ event.data|date:"d" }}
+                            </p>
+
+                            <p class="text-xs uppercase text-slate-400">
+                                {{ event.data|date:"M" }}
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="flex flex-wrap items-center gap-3">
+
+                                <p class="font-semibold text-slate-900">
+                                    {{ event.titulo }}
+                                </p>
+
+                                <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
+                                    {{ event.get_tipo_display }}
+                                </span>
+
+                            </div>
+
+
+                            <p class="mt-2 text-sm text-slate-500">
+                                {{ event.caso.cliente.nome_completo }}
+                                ·
+                                {{ event.caso.titulo }}
+                            </p>
+
+
+                            <p class="mt-1 text-sm text-slate-500">
+
+                                {% if event.hora %}
+                                    {{ event.hora|time:"H:i" }}
+                                {% else %}
+                                    Horário não informado
+                                {% endif %}
+
+                                {% if event.local %}
+                                    · {{ event.local }}
+                                {% endif %}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="flex items-center gap-3">
+
+                        <a
+                            href="{% url 'agenda:update' event.pk %}"
+                            class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
+                        >
+                            Editar
+                        </a>
+
+                        <a
+                            href="{% url 'cases:detail' event.caso.pk %}"
+                            class="text-sm font-semibold text-amber-700 hover:text-amber-800"
+                        >
+                            Abrir caso →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="px-7 py-12 text-center">
+
+                    <p class="font-medium text-slate-700">
+                        Nenhum compromisso agendado
+                    </p>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        Novos eventos aparecerão aqui.
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    {% if past_events %}
+
+        <section class="mt-6 rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+            <div class="border-b border-slate-100 px-7 py-5">
+
+                <h2 class="font-semibold text-slate-950">
+                    Compromissos anteriores
+                </h2>
+
+            </div>
+
+
+            <div class="divide-y divide-slate-100">
+
+                {% for event in past_events %}
+
+                    <div class="flex items-center justify-between gap-6 px-7 py-4">
+
+                        <div>
+
+                            <p class="text-sm font-semibold text-slate-700">
+                                {{ event.titulo }}
+                            </p>
+
+                            <p class="mt-1 text-xs text-slate-400">
+                                {{ event.data|date:"d/m/Y" }}
+                                ·
+                                {{ event.caso.cliente.nome_completo }}
+                            </p>
+
+                        </div>
+
+                        <a
+                            href="{% url 'cases:detail' event.caso.pk %}"
+                            class="text-xs font-semibold text-slate-500 hover:text-slate-900"
+                        >
+                            Abrir caso
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
