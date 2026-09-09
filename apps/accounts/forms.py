@@ -16,6 +16,9 @@ class LoginForm(AuthenticationForm):
 
     username = forms.CharField(
         label="Usuário",
+        error_messages={
+            "required": "Informe seu usuário.",
+        },
         widget=forms.TextInput(
             attrs={
                 "class": INPUT_CLASSES,
@@ -29,6 +32,9 @@ class LoginForm(AuthenticationForm):
     password = forms.CharField(
         label="Senha",
         strip=False,
+        error_messages={
+            "required": "Informe sua senha.",
+        },
         widget=forms.PasswordInput(
             attrs={
                 "class": INPUT_CLASSES,

@@ -483,14 +483,29 @@
                                 autocomplete="username"
                                 autofocus
                                 placeholder="Digite seu usuário"
-                                class="block w-full rounded-xl border border-slate-200 bg-white py-3.5 pl-12 pr-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10"
+                                aria-invalid="{% if form.username.errors %}true{% else %}false{% endif %}"
+                                {% if form.username.errors %}
+                                    aria-describedby="username-error"
+                                {% endif %}
+                                class="{% if form.username.errors %}border-red-300 focus:border-red-500 focus:ring-red-500/10{% else %}border-slate-200 focus:border-amber-500 focus:ring-amber-500/10{% endif %} block w-full rounded-xl border bg-white py-3.5 pl-12 pr-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400"
                             >
 
                         </div>
 
 
-                    </div>
+                        {% if form.username.errors %}
 
+                            <p
+                                id="username-error"
+                                class="mt-2 text-xs font-medium text-red-600"
+                            >
+                                {{ form.username.errors.0 }}
+                            </p>
+
+                        {% endif %}
+
+
+                    </div>
 
 
                     <!-- SENHA -->
@@ -539,7 +554,11 @@
                                 id="{{ form.password.id_for_label }}"
                                 autocomplete="current-password"
                                 placeholder="Digite sua senha"
-                                class="block w-full rounded-xl border border-slate-200 bg-white py-3.5 pl-12 pr-12 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10"
+                                aria-invalid="{% if form.password.errors %}true{% else %}false{% endif %}"
+                                {% if form.password.errors %}
+                                    aria-describedby="password-error"
+                                {% endif %}
+                                class="{% if form.password.errors %}border-red-300 focus:border-red-500 focus:ring-red-500/10{% else %}border-slate-200 focus:border-amber-500 focus:ring-amber-500/10{% endif %} block w-full rounded-xl border bg-white py-3.5 pl-12 pr-12 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400"
                             >
 
 
@@ -580,8 +599,19 @@
                         </div>
 
 
-                    </div>
+                        {% if form.password.errors %}
 
+                            <p
+                                id="password-error"
+                                class="mt-2 text-xs font-medium text-red-600"
+                            >
+                                {{ form.password.errors.0 }}
+                            </p>
+
+                        {% endif %}
+
+
+                    </div>
 
 
                     <!-- BOTÃO -->
