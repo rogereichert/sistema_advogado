@@ -38,6 +38,22 @@ class ClientForm(forms.ModelForm):
         ]
 
         widgets = {
+            "cpf": forms.TextInput(
+                attrs={
+                    "maxlength": "14",
+                    "inputmode": "numeric",
+                    "autocomplete": "off",
+                }
+            ),
+
+            "cep": forms.TextInput(
+                attrs={
+                    "maxlength": "9",
+                    "inputmode": "numeric",
+                    "autocomplete": "postal-code",
+                }
+            ),
+
             "data_nascimento": forms.DateInput(
                 attrs={"type": "date"}
             ),

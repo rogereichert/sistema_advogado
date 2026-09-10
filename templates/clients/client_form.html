@@ -262,4 +262,125 @@
 
 </div>
 
+
+<script>
+    const cpfField = document.getElementById("id_cpf");
+    const cepField = document.getElementById("id_cep");
+
+    const logradouroField = document.getElementById("id_logradouro");
+    const bairroField = document.getElementById("id_bairro");
+    const cidadeField = document.getElementById("id_cidade");
+    const ufField = document.getElementById("id_uf");
+
+
+    if (cpfField) {
+
+        cpfField.addEventListener("input", function() {
+
+            let value = this.value.replace(/\D/g, "");
+
+
+            value = value.substring(0, 11);
+
+
+            if (value.length > 9) {
+
+                value = value.replace(
+                    /^(\d{3})(\d{3})(\d{3})(\d{1,2})$/,
+                    "$1.$2.$3-$4"
+                );
+
+            } else if (value.length > 6) {
+
+                value = value.replace(
+                    /^(\d{3})(\d{3})(\d{1,3})$/,
+                    "$1.$2.$3"
+                );
+
+            } else if (value.length > 3) {
+
+                value = value.replace(
+                    /^(\d{3})(\d{1,3})$/,
+                    "$1.$2"
+                );
+
+            }
+
+
+            this.value = value;
+
+        });
+
+    }
+
+
+    if (cepField) {
+
+        cepField.addEventListener("input", function() {
+
+            let value = this.value.replace(/\D/g, "");
+
+
+            value = value.substring(0, 8);
+
+
+            if (value.length > 5) {
+
+                value = value.replace(
+                    /^(\d{5})(\d{1,3})$/,
+                    "$1-$2"
+                );
+
+            }
+
+
+            this.value = value;
+
+        });
+
+
+        cepField.addEventListener("blur", function() {
+
+            const cep = this.value.replace(/\D/g, "");
+
+
+            if (cep.length !== 8) {
+                return;
+            }
+
+
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => {
+
+                    if (!response.ok) {
+                        throw new Error("Erro ao consultar o CEP.");
+                    }
+
+                    return response.json();
+
+                })
+                .then(data => {
+
+                    if (data.erro) {
+                        return;
+                    }
+
+
+                    logradouroField.value = data.logradouro || "";
+                    bairroField.value = data.bairro || "";
+                    cidadeField.value = data.localidade || "";
+                    ufField.value = data.uf || "";
+
+                })
+                .catch(error => {
+
+                    console.error("Não foi possível consultar o CEP:", error);
+
+                });
+
+        });
+
+    }
+</script>
+
 {% endblock %}
