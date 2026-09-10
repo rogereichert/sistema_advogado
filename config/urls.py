@@ -46,6 +46,12 @@ urlpatterns = [
         "agenda/",
         include("apps.agenda.urls"),
     ),
+
+    path(
+        "relatorios/", 
+        include("apps.reports.urls")
+    ),
+
 ]
 
 

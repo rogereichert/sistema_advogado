@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "apps.cases",
     "apps.documents",
     "apps.agenda",
+    "apps.reports",
 ]
 
 MIDDLEWARE = [

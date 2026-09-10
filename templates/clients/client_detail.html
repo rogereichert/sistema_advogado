@@ -51,12 +51,45 @@
         </div>
 
 
-        <a
-            href="{% url 'cases:create' client.pk %}"
-            class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
-        >
-            + Nova causa
-        </a>
+        <div class="flex flex-wrap items-center gap-3">
+
+            <button
+                type="button"
+                id="open-dossier-modal"
+                class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M19.5 14.25v-9a2.25 2.25 0 0 0-2.25-2.25h-10A2.25 2.25 0 0 0 5 5.25v13.5A2.25 2.25 0 0 0 7.25 21h10a2.25 2.25 0 0 0 2.25-2.25v-4.5"
+                    />
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M14.25 15.75 21 9m0 0-3.75-3.75M21 9h-6.75"
+                    />
+                </svg>
+
+                Gerar dossiê
+            </button>
+
+            <a
+                href="{% url 'cases:create' client.pk %}"
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+            >
+                + Nova causa
+            </a>
+
+        </div>
+
 
     </div>
 
@@ -451,5 +484,513 @@
     </div>
 
 </div>
+
+    <!-- MODAL: GERAR DOSSIÊ -->
+    <div
+        id="dossier-modal"
+        class="fixed inset-0 z-50 hidden"
+        aria-labelledby="dossier-modal-title"
+        aria-modal="true"
+        role="dialog"
+    >
+
+        <!-- Fundo -->
+        <div
+            id="dossier-modal-backdrop"
+            class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
+        ></div>
+
+
+        <!-- Conteúdo -->
+        <div class="relative flex min-h-full items-center justify-center p-4 sm:p-6">
+
+            <div
+                class="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+            >
+
+                <!-- Cabeçalho -->
+                <div class="flex items-start justify-between border-b border-slate-100 px-6 py-5 sm:px-7">
+
+                    <div>
+
+                        <p class="text-xs font-semibold uppercase tracking-[0.15em] text-amber-700">
+                            Relatório
+                        </p>
+
+                        <h2
+                            id="dossier-modal-title"
+                            class="mt-1 text-xl font-semibold tracking-tight text-slate-950"
+                        >
+                            Gerar dossiê
+                        </h2>
+
+                        <p class="mt-1 text-sm text-slate-500">
+                            Escolha o conteúdo que deseja incluir no documento.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="close-dossier-modal"
+                        class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                        aria-label="Fechar"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-5 w-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6 18 18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button>
+
+                </div>
+
+
+                <form
+                    method="post"
+                    action="{% url 'reports:client_dossier' client.pk %}"
+                    target="_blank"
+                >
+                    {% csrf_token %}
+
+                    <!-- Corpo -->
+                    <div class="space-y-7 px-6 py-6 sm:px-7">
+
+
+                    <!-- FINALIDADE -->
+                    <section>
+
+                        <div class="mb-4">
+
+                            <h3 class="text-sm font-semibold text-slate-900">
+                                Finalidade do documento
+                            </h3>
+
+                            <p class="mt-1 text-xs text-slate-500">
+                                A finalidade ajuda a definir a apresentação do dossiê.
+                            </p>
+
+                        </div>
+
+
+                        <div class="grid gap-3 md:grid-cols-3">
+
+                            <label class="cursor-pointer">
+
+                                <input
+                                    type="radio"
+                                    name="dossier_type"
+                                    value="complete"
+                                    class="peer sr-only"
+                                    checked
+                                >
+
+                                <div class="rounded-xl border border-slate-200 p-4 transition peer-checked:border-amber-500 peer-checked:bg-amber-50/50 peer-checked:ring-2 peer-checked:ring-amber-500/10">
+
+                                    <p class="text-sm font-semibold text-slate-900">
+                                        Dossiê completo
+                                    </p>
+
+                                    <p class="mt-1 text-xs leading-5 text-slate-500">
+                                        Reúne todas as informações selecionadas.
+                                    </p>
+
+                                </div>
+
+                            </label>
+
+
+                            <label class="cursor-pointer">
+
+                                <input
+                                    type="radio"
+                                    name="dossier_type"
+                                    value="client"
+                                    class="peer sr-only"
+                                >
+
+                                <div class="rounded-xl border border-slate-200 p-4 transition peer-checked:border-amber-500 peer-checked:bg-amber-50/50 peer-checked:ring-2 peer-checked:ring-amber-500/10">
+
+                                    <p class="text-sm font-semibold text-slate-900">
+                                        Relatório para cliente
+                                    </p>
+
+                                    <p class="mt-1 text-xs leading-5 text-slate-500">
+                                        Formato mais adequado para compartilhamento.
+                                    </p>
+
+                                </div>
+
+                            </label>
+
+
+                            <label class="cursor-pointer">
+
+                                <input
+                                    type="radio"
+                                    name="dossier_type"
+                                    value="summary"
+                                    class="peer sr-only"
+                                >
+
+                                <div class="rounded-xl border border-slate-200 p-4 transition peer-checked:border-amber-500 peer-checked:bg-amber-50/50 peer-checked:ring-2 peer-checked:ring-amber-500/10">
+
+                                    <p class="text-sm font-semibold text-slate-900">
+                                        Resumo do caso
+                                    </p>
+
+                                    <p class="mt-1 text-xs leading-5 text-slate-500">
+                                        Uma versão mais objetiva e resumida.
+                                    </p>
+
+                                </div>
+
+                            </label>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- CASOS -->
+                    <section>
+
+                        <div class="mb-4">
+
+                            <h3 class="text-sm font-semibold text-slate-900">
+                                Casos incluídos
+                            </h3>
+
+                            <p class="mt-1 text-xs text-slate-500">
+                                Selecione os casos que farão parte do dossiê.
+                            </p>
+
+                        </div>
+
+
+                        <div class="divide-y divide-slate-100 rounded-xl border border-slate-200">
+
+                            {% for case in cases %}
+
+                                <label class="flex cursor-pointer items-start gap-3 p-4 transition hover:bg-slate-50">
+
+                                    <input
+                                        type="checkbox"
+                                        name="cases"
+                                        value="{{ case.pk }}"
+                                        class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                                        checked
+                                    >
+
+                                    <span class="min-w-0 flex-1">
+
+                                        <span class="flex flex-wrap items-center gap-2">
+
+                                            <span class="text-sm font-semibold text-slate-900">
+                                                {{ case.titulo }}
+                                            </span>
+
+                                            <span class="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
+                                                {{ case.status.nome }}
+                                            </span>
+
+                                        </span>
+
+
+                                        <span class="mt-1 block text-xs text-slate-500">
+
+                                            {% if case.area_juridica %}
+                                                {{ case.area_juridica }}
+                                            {% endif %}
+
+                                            {% if case.numero_processo %}
+                                                · {{ case.numero_processo }}
+                                            {% endif %}
+
+                                        </span>
+
+                                    </span>
+
+                                </label>
+
+                            {% empty %}
+
+                                <div class="p-5 text-sm text-slate-500">
+                                    Nenhum caso cadastrado para este cliente.
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- CONTEÚDO -->
+                    <section>
+
+                        <div class="mb-4">
+
+                            <h3 class="text-sm font-semibold text-slate-900">
+                                Conteúdo do dossiê
+                            </h3>
+
+                            <p class="mt-1 text-xs text-slate-500">
+                                Escolha quais informações devem aparecer no documento.
+                            </p>
+
+                        </div>
+
+
+                        <div class="grid gap-3 sm:grid-cols-2">
+
+                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
+
+                                <input
+                                    type="checkbox"
+                                    name="sections"
+                                    value="client"
+                                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                                    checked
+                                >
+
+                                <span>
+
+                                    <span class="block text-sm font-semibold text-slate-900">
+                                        Dados do cliente
+                                    </span>
+
+                                    <span class="mt-1 block text-xs text-slate-500">
+                                        Dados pessoais e informações de contato.
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
+
+                                <input
+                                    type="checkbox"
+                                    name="sections"
+                                    value="cases"
+                                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                                    checked
+                                >
+
+                                <span>
+
+                                    <span class="block text-sm font-semibold text-slate-900">
+                                        Informações dos processos
+                                    </span>
+
+                                    <span class="mt-1 block text-xs text-slate-500">
+                                        Dados e situação dos casos selecionados.
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
+
+                                <input
+                                    type="checkbox"
+                                    name="sections"
+                                    value="history"
+                                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                                    checked
+                                >
+
+                                <span>
+
+                                    <span class="block text-sm font-semibold text-slate-900">
+                                        Histórico
+                                    </span>
+
+                                    <span class="mt-1 block text-xs text-slate-500">
+                                        Registros históricos dos processos.
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
+
+                                <input
+                                    type="checkbox"
+                                    name="sections"
+                                    value="movements"
+                                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                                    checked
+                                >
+
+                                <span>
+
+                                    <span class="block text-sm font-semibold text-slate-900">
+                                        Movimentações
+                                    </span>
+
+                                    <span class="mt-1 block text-xs text-slate-500">
+                                        Andamentos e movimentações registradas.
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
+
+                                <input
+                                    type="checkbox"
+                                    name="sections"
+                                    value="documents"
+                                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                                    checked
+                                >
+
+                                <span>
+
+                                    <span class="block text-sm font-semibold text-slate-900">
+                                        Documentação
+                                    </span>
+
+                                    <span class="mt-1 block text-xs text-slate-500">
+                                        Documentos e checklist documental.
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+
+                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
+
+                                <input
+                                    type="checkbox"
+                                    name="sections"
+                                    value="agenda"
+                                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                                    checked
+                                >
+
+                                <span>
+
+                                    <span class="block text-sm font-semibold text-slate-900">
+                                        Agenda
+                                    </span>
+
+                                    <span class="mt-1 block text-xs text-slate-500">
+                                        Audiências, reuniões, prazos e compromissos.
+                                    </span>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- Rodapé -->
+                <div class="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50/70 px-6 py-4 sm:flex-row sm:items-center sm:justify-end sm:px-7">
+
+                    <button
+                        type="button"
+                        id="cancel-dossier-modal"
+                        class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="generate-dossier"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+                    >
+                        Gerar dossiê
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="m9 12.75 3 3 3-3m-3 3V3.75M5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V8.25L15.75 3H5.25A2.25 2.25 0 0 0 3 5.25v13.5A2.25 2.25 0 0 0 5.25 21Z"
+                            />
+                        </svg>
+
+                    </button>
+
+                </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONTROLE DO MODAL -->
+    <script>
+        const dossierModal = document.getElementById("dossier-modal");
+        const openDossierModal = document.getElementById("open-dossier-modal");
+        const closeDossierModal = document.getElementById("close-dossier-modal");
+        const cancelDossierModal = document.getElementById("cancel-dossier-modal");
+        const dossierModalBackdrop = document.getElementById("dossier-modal-backdrop");
+
+
+        function openDossier() {
+            dossierModal.classList.remove("hidden");
+            document.body.classList.add("overflow-hidden");
+        }
+
+
+        function closeDossier() {
+            dossierModal.classList.add("hidden");
+            document.body.classList.remove("overflow-hidden");
+        }
+
+
+        openDossierModal.addEventListener("click", openDossier);
+        closeDossierModal.addEventListener("click", closeDossier);
+        cancelDossierModal.addEventListener("click", closeDossier);
+        dossierModalBackdrop.addEventListener("click", closeDossier);
+
+
+        document.addEventListener("keydown", function(event) {
+
+            if (event.key === "Escape" && !dossierModal.classList.contains("hidden")) {
+                closeDossier();
+            }
+
+        });
+    </script>
+
 
 {% endblock %}
