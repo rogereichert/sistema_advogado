@@ -1,284 +1,283 @@
 {% extends "base.html" %}
 
-
 {% block title %}
-    {% if client %}
-        Editar cliente | Advogado Company
-    {% else %}
-        Novo cliente | Advogado Company
-    {% endif %}
+{% if client %}
+Editar cliente | Advogado Company
+{% else %}
+Novo cliente | Advogado Company
+{% endif %}
 {% endblock %}
-
 
 {% block page_header %}
-    Cadastro de cliente
+Cadastro de cliente
 {% endblock %}
-
 
 {% block content %}
 
 <div class="mx-auto max-w-6xl">
 
-    <div class="mb-8">
+```
+<div class="mb-8">
 
-        <a
-            href="{% url 'clients:list' %}"
-            class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-900"
-        >
-            ← Clientes
-        </a>
+    <a
+        href="{% url 'clients:list' %}"
+        class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-900"
+    >
+        ← Clientes
+    </a>
 
 
-        <div class="mt-6">
+    <div class="mt-6">
 
-            <p class="text-sm font-medium text-amber-700">
-                {% if client %}
-                    Edição de cadastro
-                {% else %}
-                    Novo cadastro
+        <p class="text-sm font-medium text-amber-700">
+            {% if client %}
+                Edição de cadastro
+            {% else %}
+                Novo cadastro
+            {% endif %}
+        </p>
+
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+            {% if client %}
+                Editar cliente
+            {% else %}
+                Novo cliente
+            {% endif %}
+        </h1>
+
+        <p class="mt-2 text-sm text-slate-500">
+            {% if client %}
+                Atualize os dados pessoais e informações de contato do cliente.
+            {% else %}
+                Registre os dados pessoais e informações de contato do cliente.
+            {% endif %}
+        </p>
+
+    </div>
+
+</div>
+
+
+<form method="post">
+
+    {% csrf_token %}
+
+
+    <div class="space-y-6">
+
+        <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+            <div class="border-b border-slate-100 px-7 py-5">
+
+                <h2 class="font-semibold text-slate-950">
+                    Dados pessoais
+                </h2>
+
+                <p class="mt-1 text-sm text-slate-500">
+                    Informações principais de identificação.
+                </p>
+
+            </div>
+
+
+            <div class="grid gap-6 p-7 md:grid-cols-2">
+
+                {% for field in form %}
+
+                    {% if field.name == "nome_completo" or field.name == "cpf" or field.name == "rg" or field.name == "carteira_trabalho" or field.name == "titulo_eleitor" or field.name == "estado_civil" or field.name == "data_nascimento" %}
+
+                        <div {% if field.name == "nome_completo" %}class="md:col-span-2"{% endif %}>
+
+                            <label
+                                for="{{ field.id_for_label }}"
+                                class="mb-2 block text-sm font-medium text-slate-700"
+                            >
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.errors %}
+                                <div class="mt-2 text-sm text-red-600">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+            <div class="border-b border-slate-100 px-7 py-5">
+
+                <h2 class="font-semibold text-slate-950">
+                    Contato
+                </h2>
+
+                <p class="mt-1 text-sm text-slate-500">
+                    Canais para comunicação com o cliente.
+                </p>
+
+            </div>
+
+
+            <div class="grid gap-6 p-7 md:grid-cols-2">
+
+                {% for field in form %}
+
+                    {% if field.name == "telefone" or field.name == "email" %}
+
+                        <div>
+
+                            <label
+                                for="{{ field.id_for_label }}"
+                                class="mb-2 block text-sm font-medium text-slate-700"
+                            >
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.errors %}
+                                <div class="mt-2 text-sm text-red-600">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+            <div class="border-b border-slate-100 px-7 py-5">
+
+                <h2 class="font-semibold text-slate-950">
+                    Endereço
+                </h2>
+
+                <p class="mt-1 text-sm text-slate-500">
+                    Informações residenciais do cliente.
+                </p>
+
+            </div>
+
+
+            <div class="grid gap-6 p-7 md:grid-cols-4">
+
+                {% for field in form %}
+
+                    {% if field.name == "cep" or field.name == "logradouro" or field.name == "numero" or field.name == "complemento" or field.name == "bairro" or field.name == "cidade" or field.name == "uf" %}
+
+                        <div
+                            {% if field.name == "logradouro" %}
+                                class="md:col-span-3"
+                            {% elif field.name == "complemento" %}
+                                class="md:col-span-2"
+                            {% elif field.name == "bairro" %}
+                                class="md:col-span-2"
+                            {% elif field.name == "cidade" %}
+                                class="md:col-span-3"
+                            {% endif %}
+                        >
+
+                            <label
+                                for="{{ field.id_for_label }}"
+                                class="mb-2 block text-sm font-medium text-slate-700"
+                            >
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.errors %}
+                                <div class="mt-2 text-sm text-red-600">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+
+            <div class="border-b border-slate-100 px-7 py-5">
+
+                <h2 class="font-semibold text-slate-950">
+                    Observações
+                </h2>
+
+                <p class="mt-1 text-sm text-slate-500">
+                    Informações adicionais relevantes sobre o cliente.
+                </p>
+
+            </div>
+
+
+            <div class="p-7">
+
+                {{ form.observacoes }}
+
+                {% if form.observacoes.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.observacoes.errors }}
+                    </div>
                 {% endif %}
-            </p>
 
-            <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-                {% if client %}
-                    Editar cliente
-                {% else %}
-                    Novo cliente
-                {% endif %}
-            </h1>
+            </div>
 
-            <p class="mt-2 text-sm text-slate-500">
-                {% if client %}
-                    Atualize os dados pessoais e informações de contato do cliente.
-                {% else %}
-                    Registre os dados pessoais e informações de contato do cliente.
-                {% endif %}
-            </p>
-
-        </div>
+        </section>
 
     </div>
 
 
-    <form method="post">
-
-        {% csrf_token %}
-
-
-        <div class="space-y-6">
-
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-                <div class="border-b border-slate-100 px-7 py-5">
-
-                    <h2 class="font-semibold text-slate-950">
-                        Dados pessoais
-                    </h2>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Informações principais de identificação.
-                    </p>
-
-                </div>
-
-
-                <div class="grid gap-6 p-7 md:grid-cols-2">
-
-                    {% for field in form %}
-
-                        {% if field.name == "nome_completo" or field.name == "cpf" or field.name == "rg" or field.name == "carteira_trabalho" or field.name == "titulo_eleitor" or field.name == "estado_civil" or field.name == "data_nascimento" %}
-
-                            <div {% if field.name == "nome_completo" %}class="md:col-span-2"{% endif %}>
-
-                                <label
-                                    for="{{ field.id_for_label }}"
-                                    class="mb-2 block text-sm font-medium text-slate-700"
-                                >
-                                    {{ field.label }}
-                                </label>
-
-                                {{ field }}
-
-                                {% if field.errors %}
-                                    <div class="mt-2 text-sm text-red-600">
-                                        {{ field.errors }}
-                                    </div>
-                                {% endif %}
-
-                            </div>
-
-                        {% endif %}
-
-                    {% endfor %}
-
-                </div>
-
-            </section>
-
-
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-                <div class="border-b border-slate-100 px-7 py-5">
-
-                    <h2 class="font-semibold text-slate-950">
-                        Contato
-                    </h2>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Canais para comunicação com o cliente.
-                    </p>
-
-                </div>
-
-
-                <div class="grid gap-6 p-7 md:grid-cols-2">
-
-                    {% for field in form %}
-
-                        {% if field.name == "telefone" or field.name == "email" %}
-
-                            <div>
-
-                                <label
-                                    for="{{ field.id_for_label }}"
-                                    class="mb-2 block text-sm font-medium text-slate-700"
-                                >
-                                    {{ field.label }}
-                                </label>
-
-                                {{ field }}
-
-                                {% if field.errors %}
-                                    <div class="mt-2 text-sm text-red-600">
-                                        {{ field.errors }}
-                                    </div>
-                                {% endif %}
-
-                            </div>
-
-                        {% endif %}
-
-                    {% endfor %}
-
-                </div>
-
-            </section>
-
-
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-                <div class="border-b border-slate-100 px-7 py-5">
-
-                    <h2 class="font-semibold text-slate-950">
-                        Endereço
-                    </h2>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Informações residenciais do cliente.
-                    </p>
-
-                </div>
-
-
-                <div class="grid gap-6 p-7 md:grid-cols-4">
-
-                    {% for field in form %}
-
-                        {% if field.name == "cep" or field.name == "logradouro" or field.name == "numero" or field.name == "complemento" or field.name == "bairro" or field.name == "cidade" or field.name == "uf" %}
-
-                            <div
-                                {% if field.name == "logradouro" %}
-                                    class="md:col-span-3"
-                                {% elif field.name == "complemento" %}
-                                    class="md:col-span-2"
-                                {% elif field.name == "bairro" %}
-                                    class="md:col-span-2"
-                                {% elif field.name == "cidade" %}
-                                    class="md:col-span-3"
-                                {% endif %}
-                            >
-
-                                <label
-                                    for="{{ field.id_for_label }}"
-                                    class="mb-2 block text-sm font-medium text-slate-700"
-                                >
-                                    {{ field.label }}
-                                </label>
-
-                                {{ field }}
-
-                                {% if field.errors %}
-                                    <div class="mt-2 text-sm text-red-600">
-                                        {{ field.errors }}
-                                    </div>
-                                {% endif %}
-
-                            </div>
-
-                        {% endif %}
-
-                    {% endfor %}
-
-                </div>
-
-            </section>
-
-
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-                <div class="border-b border-slate-100 px-7 py-5">
-
-                    <h2 class="font-semibold text-slate-950">
-                        Observações
-                    </h2>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Informações adicionais relevantes sobre o cliente.
-                    </p>
-
-                </div>
-
-
-                <div class="p-7">
-
-                    {{ form.observacoes }}
-
-                    {% if form.observacoes.errors %}
-                        <div class="mt-2 text-sm text-red-600">
-                            {{ form.observacoes.errors }}
-                        </div>
-                    {% endif %}
-
-                </div>
-
-            </section>
-
-        </div>
-
-
-        <div class="mt-8 flex justify-end gap-3">
-
-            <a
-                href="{% url 'clients:list' %}"
-                class="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-            >
-                Cancelar
-            </a>
-
-            <button
-                type="submit"
-                class="rounded-xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
-            >
-                {% if client %}
-                    Salvar alterações
-                {% else %}
-                    Salvar cliente
-                {% endif %}
-            </button>
-
-        </div>
-
-    </form>
+    <div class="mt-8 flex justify-end gap-3">
+
+        <a
+            href="{% url 'clients:list' %}"
+            class="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+            Cancelar
+        </a>
+
+        <button
+            type="submit"
+            class="rounded-xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+        >
+            {% if client %}
+                Salvar alterações
+            {% else %}
+                Salvar cliente
+            {% endif %}
+        </button>
+
+    </div>
+
+</form>
+```
 
 </div>
 
@@ -331,6 +330,11 @@
     }
 
 
+    let ultimoCepConsultado = "";
+    let consultaCepAtual = 0;
+    let temporizadorCep = null;
+
+
     async function lookupCep() {
         if (!cepField) {
             return;
@@ -342,8 +346,16 @@
             return;
         }
 
+        if (cep === ultimoCepConsultado) {
+            return;
+        }
+
+        const numeroConsulta = ++consultaCepAtual;
+
         try {
-            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const response = await fetch(
+                `https://viacep.com.br/ws/${cep}/json/`
+            );
 
             if (!response.ok) {
                 throw new Error("Não foi possível consultar o CEP.");
@@ -351,7 +363,12 @@
 
             const data = await response.json();
 
+            if (numeroConsulta !== consultaCepAtual) {
+                return;
+            }
+
             if (data.erro) {
+                ultimoCepConsultado = "";
                 return;
             }
 
@@ -370,7 +387,14 @@
             if (ufField) {
                 ufField.value = data.uf || "";
             }
+
+            ultimoCepConsultado = cep;
+
         } catch (error) {
+            if (numeroConsulta !== consultaCepAtual) {
+                return;
+            }
+
             console.error("Erro ao consultar o CEP:", error);
         }
     }
@@ -381,10 +405,29 @@
         cepField.inputMode = "numeric";
 
         cepField.addEventListener("input", function() {
+
             cepField.value = formatCep(cepField.value);
+
+            const cep = cepField.value.replace(/\D/g, "");
+
+            clearTimeout(temporizadorCep);
+
+            if (cep.length !== 8) {
+                return;
+            }
+
+            temporizadorCep = setTimeout(function() {
+                lookupCep();
+            }, 300);
         });
 
-        cepField.addEventListener("blur", lookupCep);
+
+        cepField.addEventListener("blur", function() {
+
+            clearTimeout(temporizadorCep);
+
+            lookupCep();
+        });
     }
 </script>
 
