@@ -20,6 +20,12 @@ urlpatterns = [
     ),
 
     path(
+        "<int:pk>/editar/",
+        views.client_update,
+        name="update",
+    ),
+
+    path(
         "<int:pk>/",
         views.client_detail,
         name="detail",

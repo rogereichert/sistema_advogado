@@ -48,6 +48,42 @@ def client_create(request):
 
 
 @login_required
+def client_update(request, pk):
+    client = get_object_or_404(
+        Client,
+        pk=pk,
+    )
+
+    if request.method == "POST":
+        form = ClientForm(
+            request.POST,
+            instance=client,
+        )
+
+        if form.is_valid():
+            form.save()
+
+            return redirect(
+                "clients:detail",
+                pk=client.pk,
+            )
+
+    else:
+        form = ClientForm(
+            instance=client,
+        )
+
+    return render(
+        request,
+        "clients/client_form.html",
+        {
+            "form": form,
+            "client": client,
+        },
+    )
+
+
+@login_required
 def client_detail(request, pk):
     client = get_object_or_404(
         Client,
@@ -83,6 +119,7 @@ def client_detail(request, pk):
             "next_event": next_event,
         },
     )
+
 
 @login_required
 def client_detail(request, pk):

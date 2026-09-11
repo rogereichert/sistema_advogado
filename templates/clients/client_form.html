@@ -2,7 +2,11 @@
 
 
 {% block title %}
-    Novo cliente | Advogado Company
+    {% if client %}
+        Editar cliente | Advogado Company
+    {% else %}
+        Novo cliente | Advogado Company
+    {% endif %}
 {% endblock %}
 
 
@@ -28,15 +32,27 @@
         <div class="mt-6">
 
             <p class="text-sm font-medium text-amber-700">
-                Novo cadastro
+                {% if client %}
+                    Edição de cadastro
+                {% else %}
+                    Novo cadastro
+                {% endif %}
             </p>
 
             <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-                Novo cliente
+                {% if client %}
+                    Editar cliente
+                {% else %}
+                    Novo cliente
+                {% endif %}
             </h1>
 
             <p class="mt-2 text-sm text-slate-500">
-                Registre os dados pessoais e informações de contato do cliente.
+                {% if client %}
+                    Atualize os dados pessoais e informações de contato do cliente.
+                {% else %}
+                    Registre os dados pessoais e informações de contato do cliente.
+                {% endif %}
             </p>
 
         </div>
@@ -253,7 +269,11 @@
                 type="submit"
                 class="rounded-xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
             >
-                Salvar cliente
+                {% if client %}
+                    Salvar alterações
+                {% else %}
+                    Salvar cliente
+                {% endif %}
             </button>
 
         </div>
@@ -262,124 +282,109 @@
 
 </div>
 
-
 <script>
     const cpfField = document.getElementById("id_cpf");
     const cepField = document.getElementById("id_cep");
-
     const logradouroField = document.getElementById("id_logradouro");
     const bairroField = document.getElementById("id_bairro");
     const cidadeField = document.getElementById("id_cidade");
     const ufField = document.getElementById("id_uf");
 
 
+    function formatCpf(value) {
+        const digits = value.replace(/\D/g, "").slice(0, 11);
+
+        if (digits.length <= 3) {
+            return digits;
+        }
+
+        if (digits.length <= 6) {
+            return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+        }
+
+        if (digits.length <= 9) {
+            return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+        }
+
+        return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+    }
+
+
+    function formatCep(value) {
+        const digits = value.replace(/\D/g, "").slice(0, 8);
+
+        if (digits.length <= 5) {
+            return digits;
+        }
+
+        return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+    }
+
+
     if (cpfField) {
+        cpfField.maxLength = 14;
+        cpfField.inputMode = "numeric";
 
         cpfField.addEventListener("input", function() {
-
-            let value = this.value.replace(/\D/g, "");
-
-
-            value = value.substring(0, 11);
+            cpfField.value = formatCpf(cpfField.value);
+        });
+    }
 
 
-            if (value.length > 9) {
+    async function lookupCep() {
+        if (!cepField) {
+            return;
+        }
 
-                value = value.replace(
-                    /^(\d{3})(\d{3})(\d{3})(\d{1,2})$/,
-                    "$1.$2.$3-$4"
-                );
+        const cep = cepField.value.replace(/\D/g, "");
 
-            } else if (value.length > 6) {
+        if (cep.length !== 8) {
+            return;
+        }
 
-                value = value.replace(
-                    /^(\d{3})(\d{3})(\d{1,3})$/,
-                    "$1.$2.$3"
-                );
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
 
-            } else if (value.length > 3) {
-
-                value = value.replace(
-                    /^(\d{3})(\d{1,3})$/,
-                    "$1.$2"
-                );
-
+            if (!response.ok) {
+                throw new Error("Não foi possível consultar o CEP.");
             }
 
+            const data = await response.json();
 
-            this.value = value;
+            if (data.erro) {
+                return;
+            }
 
-        });
+            if (logradouroField) {
+                logradouroField.value = data.logradouro || "";
+            }
 
+            if (bairroField) {
+                bairroField.value = data.bairro || "";
+            }
+
+            if (cidadeField) {
+                cidadeField.value = data.localidade || "";
+            }
+
+            if (ufField) {
+                ufField.value = data.uf || "";
+            }
+        } catch (error) {
+            console.error("Erro ao consultar o CEP:", error);
+        }
     }
 
 
     if (cepField) {
+        cepField.maxLength = 9;
+        cepField.inputMode = "numeric";
 
         cepField.addEventListener("input", function() {
-
-            let value = this.value.replace(/\D/g, "");
-
-
-            value = value.substring(0, 8);
-
-
-            if (value.length > 5) {
-
-                value = value.replace(
-                    /^(\d{5})(\d{1,3})$/,
-                    "$1-$2"
-                );
-
-            }
-
-
-            this.value = value;
-
+            cepField.value = formatCep(cepField.value);
         });
 
-
-        cepField.addEventListener("blur", function() {
-
-            const cep = this.value.replace(/\D/g, "");
-
-
-            if (cep.length !== 8) {
-                return;
-            }
-
-
-            fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                .then(response => {
-
-                    if (!response.ok) {
-                        throw new Error("Erro ao consultar o CEP.");
-                    }
-
-                    return response.json();
-
-                })
-                .then(data => {
-
-                    if (data.erro) {
-                        return;
-                    }
-
-
-                    logradouroField.value = data.logradouro || "";
-                    bairroField.value = data.bairro || "";
-                    cidadeField.value = data.localidade || "";
-                    ufField.value = data.uf || "";
-
-                })
-                .catch(error => {
-
-                    console.error("Não foi possível consultar o CEP:", error);
-
-                });
-
-        });
-
+        cepField.addEventListener("blur", lookupCep);
     }
 </script>
 
