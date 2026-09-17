@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -17,33 +19,267 @@
     </title>
 
 
+    <!-- =========================================================
+         TAILWIND CSS
+    ========================================================== -->
+
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
+
+    <!-- =========================================================
+         DESIGN SYSTEM
+    ========================================================== -->
 
     <style type="text/tailwindcss">
 
         @theme {
-            --font-sans: "Inter", "Segoe UI", sans-serif;
+
+            /*
+             * -----------------------------------------------------
+             * TIPOGRAFIA
+             * -----------------------------------------------------
+             */
+
+            --font-sans:
+                "Inter",
+                "Segoe UI",
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                sans-serif;
+
+
+            /*
+             * -----------------------------------------------------
+             * IDENTIDADE — NAVY
+             * -----------------------------------------------------
+             */
+
+            --color-brand-50: #f2f6fb;
+            --color-brand-100: #e3edf8;
+            --color-brand-200: #c9dbef;
+            --color-brand-300: #a2c0e1;
+            --color-brand-400: #749dce;
+            --color-brand-500: #527db9;
+            --color-brand-600: #3e639c;
+            --color-brand-700: #344f7e;
+            --color-brand-800: #2d4369;
+            --color-brand-900: #233653;
+            --color-brand-950: #17253d;
+
+
+            /*
+             * -----------------------------------------------------
+             * ACENTO — DOURADO
+             * -----------------------------------------------------
+             */
+
+            --color-gold-50: #fffaf0;
+            --color-gold-100: #fdf0ce;
+            --color-gold-200: #f9dda0;
+            --color-gold-300: #f4c66d;
+            --color-gold-400: #ecaa3b;
+            --color-gold-500: #d9911f;
+            --color-gold-600: #b87316;
+            --color-gold-700: #945516;
+            --color-gold-800: #784419;
+            --color-gold-900: #633919;
+
+
+            /*
+             * -----------------------------------------------------
+             * SUPERFÍCIES
+             * -----------------------------------------------------
+             */
+
+            --color-app-bg: #f5f7fa;
+            --color-app-surface: #ffffff;
+            --color-app-soft: #f8fafc;
         }
+
+
+        /*
+         * =========================================================
+         * BASE
+         * =========================================================
+         */
+
+        html {
+            scroll-behavior: smooth;
+        }
+
 
         body {
             font-family: var(--font-sans);
         }
 
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+
+        button,
+        a,
+        input,
+        select,
+        textarea {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+
+        /*
+         * =========================================================
+         * FORMULÁRIOS
+         * =========================================================
+         *
+         * O Django adiciona a classe .app-input através do forms.py.
+         *
+         * Vamos adicioná-la no próximo passo.
+         * =========================================================
+         */
+
+        .app-input {
+            width: 100%;
+            min-height: 46px;
+
+            border: 1px solid #cbd5e1;
+            border-radius: 0.75rem;
+
+            background-color: #ffffff;
+
+            padding: 0.7rem 0.95rem;
+
+            color: #172033;
+
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+
+            box-shadow:
+                0 1px 2px rgba(15, 23, 42, 0.035);
+
+            outline: none;
+
+            transition:
+                border-color 150ms ease,
+                box-shadow 150ms ease,
+                background-color 150ms ease;
+        }
+
+
+        .app-input::placeholder {
+            color: #94a3b8;
+        }
+
+
+        .app-input:hover {
+            border-color: #94a3b8;
+        }
+
+
+        .app-input:focus {
+            border-color: #527db9;
+
+            box-shadow:
+                0 0 0 3px rgba(82, 125, 185, 0.14),
+                0 1px 2px rgba(15, 23, 42, 0.04);
+        }
+
+
+        .app-input:disabled {
+            cursor: not-allowed;
+
+            border-color: #e2e8f0;
+
+            background-color: #f8fafc;
+
+            color: #94a3b8;
+        }
+
+
+        textarea.app-input {
+            min-height: 110px;
+
+            resize: vertical;
+        }
+
+
+        select.app-input {
+            cursor: pointer;
+
+            padding-right: 2.5rem;
+        }
+
+
+        /*
+         * ---------------------------------------------------------
+         * AUTOFILL DO NAVEGADOR
+         * ---------------------------------------------------------
+         */
+
+        .app-input:-webkit-autofill,
+        .app-input:-webkit-autofill:hover,
+        .app-input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #172033;
+
+            -webkit-box-shadow:
+                0 0 0 1000px #ffffff inset;
+
+            transition:
+                background-color 9999s ease-out 0s;
+        }
+
+
+        /*
+         * =========================================================
+         * SELEÇÃO DE TEXTO
+         * =========================================================
+         */
+
+        ::selection {
+            background-color: #c9dbef;
+            color: #17253d;
+        }
+
     </style>
+
+
+    {% block extra_head %}
+    {% endblock %}
 
 </head>
 
 
-<body class="bg-[#f6f5f2] text-slate-900 antialiased">
+<body class="bg-app-bg text-slate-900 antialiased">
+
+
+    <!-- =========================================================
+         SIDEBAR
+    ========================================================== -->
 
     {% include "includes/sidebar.html" %}
 
 
+    <!-- =========================================================
+         APLICAÇÃO
+    ========================================================== -->
+
     <div class="min-h-screen pl-72">
+
+
+        <!-- =====================================================
+             TOPBAR
+        ====================================================== -->
 
         {% include "includes/topbar.html" %}
 
+
+        <!-- =====================================================
+             CONTEÚDO
+        ====================================================== -->
 
         <main class="px-8 py-8 lg:px-10">
 
@@ -52,7 +288,22 @@
 
         </main>
 
+
     </div>
+
+
+    <!-- =========================================================
+         JAVASCRIPT GLOBAL
+    ========================================================== -->
+
+    <script
+        src="{% static 'js/clients/client-form.js' %}"
+    ></script>
+
+
+    {% block extra_js %}
+    {% endblock %}
+
 
 </body>
 

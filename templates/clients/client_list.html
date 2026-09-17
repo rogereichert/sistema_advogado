@@ -1,34 +1,67 @@
 {% extends "base.html" %}
 
-
 {% block title %}
     Clientes | Advogado Company
 {% endblock %}
 
-
-{% block page_header %}
-    Clientes
-{% endblock %}
-
-
 {% block content %}
 
-<section>
+<div class="mx-auto max-w-[1600px]">
 
-    <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+    <!-- =========================================================
+         CABEÇALHO
+    ========================================================== -->
+
+    <div
+        class="mb-7 flex flex-col justify-between gap-5 lg:flex-row lg:items-end"
+    >
 
         <div>
 
-            <p class="text-sm font-medium text-amber-700">
-                Gestão de relacionamento
-            </p>
+            <div class="flex items-center gap-3">
 
-            <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-                Clientes
-            </h1>
+                <div
+                    class="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-950 text-white shadow-sm"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.7"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.203-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 9.094 9.094 0 0 0 3.74.477m.94-3.197A5.994 5.994 0 0 0 12 18a5.994 5.994 0 0 0 5.058-2.478M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"
+                        />
+                    </svg>
+                </div>
 
-            <p class="mt-2 max-w-xl text-sm leading-6 text-slate-500">
-                Consulte informações, acompanhe clientes e acesse seus casos jurídicos.
+
+                <div>
+
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.14em] text-amber-700"
+                    >
+                        Gestão
+                    </p>
+
+                    <h1
+                        class="mt-1 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl"
+                    >
+                        Clientes
+                    </h1>
+
+                </div>
+
+            </div>
+
+
+            <p class="mt-4 max-w-2xl text-sm leading-6 text-slate-500">
+                Consulte clientes cadastrados e acesse rapidamente seus
+                casos, contatos e informações jurídicas.
             </p>
 
         </div>
@@ -36,9 +69,10 @@
 
         <button
             type="button"
-            id="open-create-client"
-            class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 cursor-pointer"
+            id="open-create-client-modal"
+            class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
         >
+
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -55,231 +89,328 @@
             </svg>
 
             Novo cliente
+
         </button>
 
     </div>
 
 
-    <div id="clients-data">
+    <!-- =========================================================
+         BARRA DE CONTROLE
+    ========================================================== -->
 
-        <div class="mt-8 grid gap-4 md:grid-cols-3">
+    <section
+        class="mb-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm"
+    >
 
-            <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+        <div
+            class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+        >
 
-                <p class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-                    Total de clientes
-                </p>
+            <!-- BUSCA -->
 
-                <p class="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
-                    {{ clients|length }}
-                </p>
+            <div class="relative w-full md:max-w-md">
 
-                <p class="mt-1 text-sm text-slate-500">
-                    cadastrados no sistema
-                </p>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
+                    />
+                </svg>
+
+
+                <input
+                    type="search"
+                    id="client-search"
+                    autocomplete="off"
+                    placeholder="Buscar por nome, CPF, telefone ou e-mail..."
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-100"
+                >
 
             </div>
 
 
-            <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+            <!-- CONTADOR -->
 
-                <p class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-                    Casos ativos
-                </p>
+            <div
+                class="flex items-center gap-2 text-sm text-slate-500"
+            >
 
-                <p class="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
-                    —
-                </p>
+                <span
+                    class="inline-block h-2 w-2 rounded-full bg-emerald-500"
+                ></span>
 
-                <p class="mt-1 text-sm text-slate-500">
-                    disponível em breve
-                </p>
+                <span>
+                    <strong
+                        id="visible-client-count"
+                        class="font-semibold text-slate-900"
+                    >
+                        {{ clients|length }}
+                    </strong>
 
-            </div>
-
-
-            <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-
-                <p class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-                    Próximos compromissos
-                </p>
-
-                <p class="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
-                    —
-                </p>
-
-                <p class="mt-1 text-sm text-slate-500">
-                    agenda jurídica
-                </p>
+                    <span id="client-count-label">
+                        {% if clients|length == 1 %}
+                            cliente
+                        {% else %}
+                            clientes
+                        {% endif %}
+                    </span>
+                </span>
 
             </div>
 
         </div>
 
-
-        <div class="mt-8 overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-            <div class="flex items-center justify-between border-b border-slate-100 px-6 py-5">
-
-                <div>
-
-                    <h2 class="font-semibold text-slate-950">
-                        Clientes cadastrados
-                    </h2>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Acesse o cadastro completo de cada cliente.
-                    </p>
-
-                </div>
-
-            </div>
+    </section>
 
 
-            <div class="overflow-x-auto">
+    <!-- =========================================================
+         LISTAGEM
+    ========================================================== -->
+
+    <section
+        class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
+    >
+
+        {% if clients %}
+
+            <!-- =================================================
+                 TABELA — DESKTOP
+            ================================================== -->
+
+            <div class="hidden overflow-x-auto md:block">
 
                 <table class="w-full">
 
-                    <thead class="bg-slate-50/70">
+                    <thead>
 
-                        <tr class="text-left text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-400">
+                        <tr
+                            class="border-b border-slate-100 bg-slate-50/70"
+                        >
 
-                            <th class="px-6 py-4">
+                            <th
+                                class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400"
+                            >
                                 Cliente
                             </th>
 
-                            <th class="px-6 py-4">
+                            <th
+                                class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400"
+                            >
                                 CPF
                             </th>
 
-                            <th class="px-6 py-4">
+                            <th
+                                class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400"
+                            >
                                 Contato
                             </th>
 
-                            <th class="px-6 py-4">
-                                Localização
+                            <th
+                                class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400"
+                            >
+                                Cidade
                             </th>
 
-                            <th class="px-6 py-4"></th>
+                            <th
+                                class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-400"
+                            >
+                                Ações
+                            </th>
 
                         </tr>
 
                     </thead>
 
 
-                    <tbody class="divide-y divide-slate-100">
+                    <tbody
+                        id="client-table-body"
+                        class="divide-y divide-slate-100"
+                    >
 
                         {% for client in clients %}
 
-                            <tr class="group transition hover:bg-slate-50/80">
+                            <tr
+                                class="client-row transition hover:bg-slate-50/80"
+                                data-search="{{ client.nome_completo|lower }} {{ client.cpf }} {{ client.cpf_formatado }} {{ client.telefone }} {{ client.telefone_formatado }} {{ client.email|lower }} {{ client.cidade|lower }} {{ client.uf|lower }}"
+                            >
 
-                                <td class="px-6 py-5">
+                                <!-- CLIENTE -->
 
-                                    <div class="flex items-center gap-4">
+                                <td class="px-6 py-4">
 
-                                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
+                                    <a
+                                        href="{% url 'clients:detail' client.pk %}"
+                                        class="group flex min-w-0 items-center gap-3"
+                                    >
+
+                                        <div
+                                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-sm font-semibold text-slate-600 transition group-hover:bg-slate-950 group-hover:text-white"
+                                        >
                                             {{ client.nome_completo|slice:":1"|upper }}
                                         </div>
 
 
-                                        <div>
+                                        <div class="min-w-0">
 
-                                            <p class="font-semibold text-slate-900">
+                                            <p
+                                                class="truncate text-sm font-semibold text-slate-900 transition group-hover:text-amber-700"
+                                            >
                                                 {{ client.nome_completo }}
                                             </p>
 
-                                            <p class="mt-1 text-sm text-slate-500">
-                                                {{ client.email|default:"E-mail não informado" }}
+                                            <p
+                                                class="mt-0.5 text-xs text-slate-400"
+                                            >
+                                                ID #{{ client.pk }}
                                             </p>
 
                                         </div>
 
-                                    </div>
+                                    </a>
 
                                 </td>
 
 
-                                <td class="px-6 py-5 text-sm text-slate-600">
-                                    {{ client.cpf }}
+                                <!-- CPF -->
+
+                                <td
+                                    class="whitespace-nowrap px-6 py-4 text-sm text-slate-600"
+                                >
+                                    {{ client.cpf_formatado }}
                                 </td>
 
 
-                                <td class="px-6 py-5">
+                                <!-- CONTATO -->
 
-                                    <p class="text-sm font-medium text-slate-700">
-                                        {{ client.telefone|default:"Não informado" }}
-                                    </p>
+                                <td class="px-6 py-4">
 
-                                </td>
+                                    {% if client.telefone or client.email %}
 
+                                        <div
+                                            class="max-w-[260px] text-sm text-slate-600"
+                                        >
 
-                                <td class="px-6 py-5 text-sm text-slate-600">
+                                            {% if client.telefone %}
+                                                <p class="truncate">
+                                                    {{ client.telefone_formatado }}
+                                                </p>
+                                            {% endif %}
 
-                                    {% if client.cidade %}
+                                            {% if client.email %}
+                                                <p
+                                                    class="{% if client.telefone %}mt-0.5{% endif %} truncate text-xs text-slate-400"
+                                                >
+                                                    {{ client.email }}
+                                                </p>
+                                            {% endif %}
 
-                                        {{ client.cidade }}
-
-                                        {% if client.uf %}
-                                            · {{ client.uf }}
-                                        {% endif %}
+                                        </div>
 
                                     {% else %}
-                                        Não informado
+
+                                        <span class="text-sm text-slate-400">
+                                            Não informado
+                                        </span>
+
                                     {% endif %}
 
                                 </td>
 
 
-                                <td class="px-6 py-5 text-right">
+                                <!-- CIDADE -->
 
-                                    <div class="flex items-center justify-end gap-2">
+                                <td class="px-6 py-4">
 
-                                        <a
-                                            href="{% url 'clients:detail' client.pk %}"
-                                            class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
-                                        >
-                                            Visualizar
+                                    {% if client.cidade %}
 
-                                            <span>
-                                                →
-                                            </span>
+                                        <p class="text-sm text-slate-600">
+                                            {{ client.cidade }}
 
-                                        </a>
+                                            {% if client.uf %}
+                                                <span class="text-slate-400">
+                                                    /{{ client.uf }}
+                                                </span>
+                                            {% endif %}
+                                        </p>
 
+                                    {% else %}
 
-                                        <button
-                                            type="button"
-                                            data-edit-client="{{ client.pk }}"
-                                            data-edit-url="{% url 'clients:update' client.pk %}"
-                                            class="inline-flex items-center rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 cursor-pointer"
-                                        >
-                                            Editar
-                                        </button>
+                                        <span class="text-sm text-slate-400">
+                                            Não informado
+                                        </span>
 
-                                    </div>
+                                    {% endif %}
 
                                 </td>
 
-                            </tr>
 
-                        {% empty %}
+                                <!-- AÇÕES -->
 
-                            <tr>
+                                <td class="px-6 py-4">
 
-                                <td
-                                    colspan="5"
-                                    class="px-6 py-16 text-center"
-                                >
+                                    <div
+                                        class="flex items-center justify-end gap-1"
+                                    >
 
-                                    <div class="mx-auto max-w-sm">
+                                        <button
+                                            type="button"
+                                            class="edit-client-button flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-900"
+                                            data-client-id="{{ client.pk }}"
+                                            data-client-name="{{ client.nome_completo }}"
+                                            title="Editar cliente"
+                                            aria-label="Editar {{ client.nome_completo }}"
+                                        >
 
-                                        <p class="font-medium text-slate-800">
-                                            Nenhum cliente cadastrado
-                                        </p>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.8"
+                                                stroke="currentColor"
+                                                class="h-4 w-4"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13l-2.507.716.716-2.507a4.5 4.5 0 0 1 1.13-1.897L16.862 4.487Z"
+                                                />
+                                            </svg>
 
-                                        <p class="mt-2 text-sm text-slate-500">
-                                            Cadastre o primeiro cliente para começar a organizar os atendimentos jurídicos.
-                                        </p>
+                                        </button>
+
+
+                                        <a
+                                            href="{% url 'clients:detail' client.pk %}"
+                                            class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-900"
+                                            title="Abrir cliente"
+                                            aria-label="Abrir {{ client.nome_completo }}"
+                                        >
+
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.8"
+                                                stroke="currentColor"
+                                                class="h-4 w-4"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="m9 18 6-6-6-6"
+                                                />
+                                            </svg>
+
+                                        </a>
 
                                     </div>
 
@@ -295,90 +426,379 @@
 
             </div>
 
-        </div>
 
-    </div>
+            <!-- =================================================
+                 CARDS — MOBILE
+            ================================================== -->
 
-</section>
+            <div
+                id="client-mobile-list"
+                class="divide-y divide-slate-100 md:hidden"
+            >
 
+                {% for client in clients %}
 
-<div
-    id="client-modal"
-    class="fixed inset-0 z-50 hidden"
-    aria-hidden="true"
->
-
-    <div
-        id="client-modal-backdrop"
-        class="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px]"
-    ></div>
-
-
-    <div class="relative flex min-h-full items-center justify-center p-4 sm:p-6">
-
-        <div
-            id="client-modal-panel"
-            class="flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="client-modal-title"
-        >
-
-            <div class="flex shrink-0 items-center justify-between border-b border-slate-100 px-6 py-5 sm:px-7">
-
-                <div>
-
-                    <p
-                        id="client-modal-label"
-                        class="text-xs font-semibold uppercase tracking-[0.15em] text-amber-700"
+                    <article
+                        class="client-card p-5"
+                        data-search="{{ client.nome_completo|lower }} {{ client.cpf }} {{ client.cpf_formatado }} {{ client.telefone }} {{ client.telefone_formatado }} {{ client.email|lower }} {{ client.cidade|lower }} {{ client.uf|lower }}"
                     >
-                        Cadastro
-                    </p>
 
-                    <h2
-                        id="client-modal-title"
-                        class="mt-1 text-xl font-semibold tracking-tight text-slate-950"
-                    >
-                        Novo cliente
-                    </h2>
+                        <div
+                            class="flex items-start justify-between gap-4"
+                        >
 
-                </div>
+                            <a
+                                href="{% url 'clients:detail' client.pk %}"
+                                class="flex min-w-0 items-center gap-3"
+                            >
+
+                                <div
+                                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-sm font-semibold text-slate-600"
+                                >
+                                    {{ client.nome_completo|slice:":1"|upper }}
+                                </div>
 
 
-                <button
-                    type="button"
-                    id="close-client-modal"
-                    class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
-                    aria-label="Fechar"
+                                <div class="min-w-0">
+
+                                    <h2
+                                        class="truncate text-sm font-semibold text-slate-900"
+                                    >
+                                        {{ client.nome_completo }}
+                                    </h2>
+
+                                    <p class="mt-1 text-xs text-slate-400">
+                                        CPF {{ client.cpf_formatado }}
+                                    </p>
+
+                                </div>
+
+                            </a>
+
+
+                            <button
+                                type="button"
+                                class="edit-client-button flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-900"
+                                data-client-id="{{ client.pk }}"
+                                data-client-name="{{ client.nome_completo }}"
+                                aria-label="Editar {{ client.nome_completo }}"
+                            >
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-4 w-4"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13l-2.507.716.716-2.507a4.5 4.5 0 0 1 1.13-1.897L16.862 4.487Z"
+                                    />
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="mt-4 grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-3"
+                        >
+
+                            <div>
+
+                                <p
+                                    class="text-[10px] font-semibold uppercase tracking-wider text-slate-400"
+                                >
+                                    Telefone
+                                </p>
+
+                                <p
+                                    class="mt-1 truncate text-xs font-medium text-slate-700"
+                                >
+                                    {{ client.telefone_formatado|default:"Não informado" }}
+                                </p>
+
+                            </div>
+
+
+                            <div>
+
+                                <p
+                                    class="text-[10px] font-semibold uppercase tracking-wider text-slate-400"
+                                >
+                                    Localização
+                                </p>
+
+                                <p
+                                    class="mt-1 truncate text-xs font-medium text-slate-700"
+                                >
+                                    {% if client.cidade %}
+                                        {{ client.cidade }}{% if client.uf %}/{{ client.uf }}{% endif %}
+                                    {% else %}
+                                        Não informado
+                                    {% endif %}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <a
+                            href="{% url 'clients:detail' client.pk %}"
+                            class="mt-4 flex items-center justify-between text-xs font-semibold text-slate-600"
+                        >
+
+                            Ver cliente
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-4 w-4"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m9 18 6-6-6-6"
+                                />
+                            </svg>
+
+                        </a>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- =================================================
+                 NENHUM RESULTADO DA BUSCA
+            ================================================== -->
+
+            <div
+                id="client-search-empty"
+                class="hidden px-6 py-16 text-center"
+            >
+
+                <div
+                    class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400"
                 >
+
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke-width="1.8"
+                        stroke-width="1.7"
                         stroke="currentColor"
-                        class="h-5 w-5"
+                        class="h-6 w-6"
                     >
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M6 18 18 6M6 6l12 12"
+                            d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
                         />
                     </svg>
+
+                </div>
+
+
+                <h3 class="mt-4 font-semibold text-slate-900">
+                    Nenhum cliente encontrado
+                </h3>
+
+                <p class="mt-1 text-sm text-slate-500">
+                    Tente pesquisar utilizando outro nome, CPF,
+                    telefone ou e-mail.
+                </p>
+
+                <button
+                    type="button"
+                    id="clear-client-search"
+                    class="mt-5 cursor-pointer text-sm font-semibold text-amber-700 transition hover:text-amber-800"
+                >
+                    Limpar pesquisa
                 </button>
 
             </div>
 
 
-            <div
-                id="client-modal-body"
-                class="min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-7"
-            >
-                <div class="flex min-h-64 items-center justify-center">
-                    <div class="text-sm text-slate-500">
-                        Carregando formulário...
-                    </div>
+        {% else %}
+
+            <!-- =================================================
+                 SISTEMA SEM CLIENTES
+            ================================================== -->
+
+            <div class="px-6 py-20 text-center">
+
+                <div
+                    class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400"
+                >
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.7"
+                        stroke="currentColor"
+                        class="h-7 w-7"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"
+                        />
+                    </svg>
+
                 </div>
+
+
+                <h2
+                    class="mt-5 text-lg font-semibold text-slate-900"
+                >
+                    Nenhum cliente cadastrado
+                </h2>
+
+                <p
+                    class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500"
+                >
+                    Cadastre o primeiro cliente para começar a organizar
+                    casos, documentos, agenda e histórico jurídico.
+                </p>
+
+
+                <button
+                    type="button"
+                    data-open-create-client
+                    class="mt-6 inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+                >
+                    <span class="text-lg leading-none">
+                        +
+                    </span>
+
+                    Cadastrar primeiro cliente
+                </button>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+<!-- =============================================================
+     MODAL — CRIAR / EDITAR CLIENTE
+============================================================== -->
+
+<div
+    id="client-modal"
+    class="fixed inset-0 z-50 hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="client-modal-title"
+>
+
+    <!-- BACKDROP -->
+
+    <div
+        id="client-modal-backdrop"
+        class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
+    ></div>
+
+
+    <!--
+        Esta camada ocupa toda a viewport.
+
+        O scroll fica nela, e não no body da página.
+        Dessa forma a tela de Clientes permanece parada ao fundo,
+        enquanto o conteúdo do modal pode ser rolado normalmente.
+    -->
+
+    <div
+        class="absolute inset-0 overflow-y-auto overscroll-contain"
+    >
+
+        <div
+            class="flex min-h-full items-start justify-center p-4 sm:p-6 lg:p-8"
+        >
+
+            <!-- JANELA DO MODAL -->
+
+            <div
+                class="relative my-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl"
+            >
+
+                <!-- =================================================
+                     CABEÇALHO FIXO
+                ================================================== -->
+
+                <div
+                    class="sticky top-0 z-20 flex shrink-0 items-center justify-between border-b border-slate-100 bg-white px-6 py-5"
+                >
+
+                    <div class="min-w-0">
+
+                        <p
+                            class="text-xs font-semibold uppercase tracking-wider text-amber-700"
+                        >
+                            Cadastro
+                        </p>
+
+                        <h2
+                            id="client-modal-title"
+                            class="mt-1 truncate text-lg font-semibold text-slate-950"
+                        >
+                            Novo cliente
+                        </h2>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="close-client-modal"
+                        class="ml-4 flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-900"
+                        aria-label="Fechar"
+                    >
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-5 w-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6 18 18 6M6 6l12 12"
+                            />
+                        </svg>
+
+                    </button>
+
+                </div>
+
+
+                <!-- =================================================
+                     CONTEÚDO
+                ================================================== -->
+
+                <div
+                    id="client-modal-content"
+                    class="min-h-48 bg-white"
+                ></div>
+
             </div>
 
         </div>
@@ -388,417 +808,693 @@
 </div>
 
 
-<div
-    id="client-toast"
-    class="pointer-events-none fixed bottom-6 right-6 z-[60] hidden rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-xl"
-></div>
-
-
-<style>
-    #client-modal .client-form-content {
-        max-width: none;
-    }
-
-    #client-modal .client-form-page-only,
-    #client-modal .client-form-page-header {
-        display: none;
-    }
-
-    #client-modal .client-form-content > form {
-        margin-top: 0;
-    }
-
-    #client-modal .client-form-content .space-y-6 > section {
-        border-radius: 1rem;
-    }
-</style>
-
+<!-- =============================================================
+     JAVASCRIPT
+============================================================== -->
 
 <script>
-    const clientModal = document.getElementById("client-modal");
-    const clientModalBody = document.getElementById("client-modal-body");
-    const clientModalTitle = document.getElementById("client-modal-title");
-    const clientModalLabel = document.getElementById("client-modal-label");
-    const closeClientModalButton = document.getElementById("close-client-modal");
-    const clientModalBackdrop = document.getElementById("client-modal-backdrop");
-    const clientsData = document.getElementById("clients-data");
-    const clientToast = document.getElementById("client-toast");
+document.addEventListener("DOMContentLoaded", () => {
+
+    /*
+    ==============================================================
+    PESQUISA DE CLIENTES
+    ==============================================================
+    */
+
+    const searchInput =
+        document.getElementById("client-search");
+
+    const desktopRows = [
+        ...document.querySelectorAll(".client-row")
+    ];
+
+    const mobileCards = [
+        ...document.querySelectorAll(".client-card")
+    ];
+
+    const emptySearch =
+        document.getElementById("client-search-empty");
+
+    const clearSearchButton =
+        document.getElementById("clear-client-search");
+
+    const visibleCount =
+        document.getElementById("visible-client-count");
+
+    const countLabel =
+        document.getElementById("client-count-label");
 
 
-    let clientModalUrl = "";
-    let clientToastTimer = null;
+    const normalizeSearch = (value) => {
+
+        return String(value || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim();
+
+    };
 
 
-    function openClientModal() {
-        clientModal.classList.remove("hidden");
-        clientModal.setAttribute("aria-hidden", "false");
-        document.body.classList.add("overflow-hidden");
-    }
+    const updateCount = (count) => {
 
-
-    function closeClientModal() {
-        clientModal.classList.add("hidden");
-        clientModal.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("overflow-hidden");
-        clientModalBody.innerHTML = "";
-        clientModalUrl = "";
-    }
-
-
-    function showClientToast(message) {
-        clearTimeout(clientToastTimer);
-
-        clientToast.textContent = message;
-        clientToast.classList.remove("hidden");
-
-        clientToastTimer = setTimeout(function() {
-            clientToast.classList.add("hidden");
-        }, 3000);
-    }
-
-
-    function formatCpf(value) {
-        const digits = value.replace(/\D/g, "").slice(0, 11);
-
-        if (digits.length <= 3) {
-            return digits;
+        if (visibleCount) {
+            visibleCount.textContent = count;
         }
 
-        if (digits.length <= 6) {
-            return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+        if (countLabel) {
+            countLabel.textContent =
+                count === 1
+                    ? "cliente"
+                    : "clientes";
         }
 
-        if (digits.length <= 9) {
-            return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+    };
+
+
+    const filterClients = () => {
+
+        if (!searchInput) {
+            return;
         }
 
-        return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
-    }
+        const query =
+            normalizeSearch(searchInput.value);
+
+        let visible = 0;
 
 
-    function formatCep(value) {
-        const digits = value.replace(/\D/g, "").slice(0, 8);
+        /*
+         * Desktop e mobile possuem representações diferentes
+         * do mesmo cliente. Contamos apenas a tabela desktop
+         * para não duplicar o número.
+         */
 
-        if (digits.length <= 5) {
-            return digits;
-        }
+        desktopRows.forEach((row) => {
 
-        return `${digits.slice(0, 5)}-${digits.slice(5)}`;
-    }
-
-
-    function initializeClientForm() {
-        const cpfField = document.getElementById("id_cpf");
-        const cepField = document.getElementById("id_cep");
-        const logradouroField = document.getElementById("id_logradouro");
-        const bairroField = document.getElementById("id_bairro");
-        const cidadeField = document.getElementById("id_cidade");
-        const ufField = document.getElementById("id_uf");
-
-        if (cpfField) {
-            cpfField.maxLength = 14;
-            cpfField.inputMode = "numeric";
-
-            cpfField.addEventListener("input", function() {
-                cpfField.value = formatCpf(cpfField.value);
-            });
-        }
-
-
-        let ultimoCepConsultado = "";
-        let consultaCepAtual = 0;
-        let temporizadorCep = null;
-
-
-        async function lookupCep() {
-            if (!cepField) {
-                return;
-            }
-
-            const cep = cepField.value.replace(/\D/g, "");
-
-            if (cep.length !== 8) {
-                return;
-            }
-
-            if (cep === ultimoCepConsultado) {
-                return;
-            }
-
-            const numeroConsulta = ++consultaCepAtual;
-
-            try {
-                const response = await fetch(
-                    `https://viacep.com.br/ws/${cep}/json/`
+            const searchable =
+                normalizeSearch(
+                    row.dataset.search
                 );
 
-                if (!response.ok) {
-                    throw new Error("Não foi possível consultar o CEP.");
-                }
+            const match =
+                !query ||
+                searchable.includes(query);
 
-                const data = await response.json();
+            row.classList.toggle(
+                "hidden",
+                !match
+            );
 
-                if (numeroConsulta !== consultaCepAtual) {
-                    return;
-                }
-
-                if (data.erro) {
-                    ultimoCepConsultado = "";
-                    return;
-                }
-
-                if (logradouroField) {
-                    logradouroField.value = data.logradouro || "";
-                }
-
-                if (bairroField) {
-                    bairroField.value = data.bairro || "";
-                }
-
-                if (cidadeField) {
-                    cidadeField.value = data.localidade || "";
-                }
-
-                if (ufField) {
-                    ufField.value = data.uf || "";
-                }
-
-                ultimoCepConsultado = cep;
-
-            } catch (error) {
-                if (numeroConsulta !== consultaCepAtual) {
-                    return;
-                }
-
-                console.error("Erro ao consultar o CEP:", error);
-            }
-        }
-
-
-        if (cepField) {
-            cepField.maxLength = 9;
-            cepField.inputMode = "numeric";
-
-            cepField.addEventListener("input", function() {
-                cepField.value = formatCep(cepField.value);
-
-                const cep = cepField.value.replace(/\D/g, "");
-
-                clearTimeout(temporizadorCep);
-
-                if (cep.length !== 8) {
-                    return;
-                }
-
-                temporizadorCep = setTimeout(function() {
-                    lookupCep();
-                }, 300);
-            });
-
-            cepField.addEventListener("blur", function() {
-                clearTimeout(temporizadorCep);
-                lookupCep();
-            });
-        }
-    }
-
-
-    async function loadClientForm(url, isEdit) {
-        clientModalUrl = url;
-
-        clientModalLabel.textContent = isEdit
-            ? "Edição de cadastro"
-            : "Novo cadastro";
-
-        clientModalTitle.textContent = isEdit
-            ? "Editar cliente"
-            : "Novo cliente";
-
-        clientModalBody.innerHTML = `
-            <div class="flex min-h-64 items-center justify-center">
-                <div class="text-sm text-slate-500">
-                    Carregando formulário...
-                </div>
-            </div>
-        `;
-
-        openClientModal();
-
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            });
-
-            const html = await response.text();
-
-            if (!response.ok) {
-                throw new Error("Não foi possível carregar o formulário.");
+            if (match) {
+                visible += 1;
             }
 
-            clientModalBody.innerHTML = html;
-            initializeClientForm();
-
-            const form = clientModalBody.querySelector("#client-form");
-
-            if (!form) {
-                throw new Error("Formulário de cliente não encontrado.");
-            }
-
-            form.action = url;
-            form.addEventListener("submit", submitClientForm);
-        } catch (error) {
-            clientModalBody.innerHTML = `
-                <div class="flex min-h-64 items-center justify-center text-center">
-                    <div>
-                        <p class="font-medium text-slate-800">
-                            Não foi possível carregar o formulário.
-                        </p>
-
-                        <p class="mt-2 text-sm text-slate-500">
-                            Tente fechar a janela e abrir novamente.
-                        </p>
-                    </div>
-                </div>
-            `;
-
-            console.error("Erro ao carregar formulário do cliente:", error);
-        }
-    }
-
-
-    async function submitClientForm(event) {
-        event.preventDefault();
-
-        const form = event.currentTarget;
-        const submitButton = form.querySelector('button[type="submit"]');
-        const textoOriginal = submitButton ? submitButton.textContent.trim() : "Salvar";
-
-        if (submitButton) {
-            submitButton.disabled = true;
-            submitButton.classList.add("opacity-60", "cursor-not-allowed");
-            submitButton.textContent = "Salvando...";
-        }
-
-        try {
-            const response = await fetch(form.action || clientModalUrl, {
-                method: "POST",
-                body: new FormData(form),
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            });
-
-            const contentType = response.headers.get("content-type") || "";
-
-            if (contentType.includes("application/json")) {
-                const data = await response.json();
-
-                if (!response.ok || !data.success) {
-                    throw new Error(data.message || "Não foi possível salvar o cliente.");
-                }
-
-                closeClientModal();
-                await refreshClientList();
-                showClientToast(data.message);
-                return;
-            }
-
-            const html = await response.text();
-
-            if (!response.ok) {
-                clientModalBody.innerHTML = html;
-                initializeClientForm();
-                const returnedForm = clientModalBody.querySelector("#client-form");
-
-                if (returnedForm) {
-                    returnedForm.action = clientModalUrl;
-                    returnedForm.addEventListener("submit", submitClientForm);
-                }
-
-                return;
-            }
-
-            throw new Error("Resposta inesperada do servidor.");
-        } catch (error) {
-            console.error("Erro ao salvar cliente:", error);
-
-            const errorMessage = document.createElement("div");
-            errorMessage.className = "mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700";
-            errorMessage.textContent = error.message || "Não foi possível salvar o cliente.";
-            clientModalBody.prepend(errorMessage);
-        } finally {
-            const currentForm = clientModalBody.querySelector("#client-form");
-            const currentSubmitButton = currentForm
-                ? currentForm.querySelector('button[type="submit"]')
-                : null;
-
-            if (currentSubmitButton) {
-                currentSubmitButton.disabled = false;
-                currentSubmitButton.classList.remove("opacity-60", "cursor-not-allowed");
-                currentSubmitButton.textContent = textoOriginal;
-            }
-        }
-    }
-
-
-    async function refreshClientList() {
-        try {
-            const response = await fetch(window.location.href, {
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error("Não foi possível atualizar a lista de clientes.");
-            }
-
-            const html = await response.text();
-            const parser = new DOMParser();
-            const documentResponse = parser.parseFromString(html, "text/html");
-            const newClientsData = documentResponse.getElementById("clients-data");
-
-            if (!newClientsData) {
-                throw new Error("Lista de clientes não encontrada.");
-            }
-
-            clientsData.innerHTML = newClientsData.innerHTML;
-            initializeClientEditButtons();
-
-        } catch (error) {
-            console.error("Erro ao atualizar lista de clientes:", error);
-        }
-    }
-
-
-    function initializeClientEditButtons() {
-        document.querySelectorAll("[data-edit-client]").forEach(function(button) {
-            button.addEventListener("click", function() {
-                loadClientForm(button.dataset.editUrl, true);
-            });
         });
-    }
 
 
-    document.getElementById("open-create-client").addEventListener("click", function() {
-        loadClientForm("{% url 'clients:create' %}?modal=1", false);
-    });
+        mobileCards.forEach((card) => {
+
+            const searchable =
+                normalizeSearch(
+                    card.dataset.search
+                );
+
+            const match =
+                !query ||
+                searchable.includes(query);
+
+            card.classList.toggle(
+                "hidden",
+                !match
+            );
+
+        });
 
 
-    closeClientModalButton.addEventListener("click", closeClientModal);
-    clientModalBackdrop.addEventListener("click", closeClientModal);
+        /*
+         * Caso a tabela desktop não exista, utilizamos
+         * os cards como fonte da contagem.
+         */
 
+        if (
+            desktopRows.length === 0 &&
+            mobileCards.length > 0
+        ) {
 
-    document.addEventListener("keydown", function(event) {
-        if (event.key === "Escape" && !clientModal.classList.contains("hidden")) {
-            closeClientModal();
+            visible =
+                mobileCards.filter(
+                    card =>
+                        !card.classList.contains(
+                            "hidden"
+                        )
+                ).length;
+
         }
+
+
+        updateCount(visible);
+
+
+        if (emptySearch) {
+
+            emptySearch.classList.toggle(
+                "hidden",
+                visible !== 0
+            );
+
+        }
+
+    };
+
+
+    searchInput?.addEventListener(
+        "input",
+        filterClients
+    );
+
+
+    clearSearchButton?.addEventListener(
+        "click",
+        () => {
+
+            searchInput.value = "";
+
+            filterClients();
+
+            searchInput.focus();
+
+        }
+    );
+
+
+    /*
+    ==============================================================
+    MODAL
+    ==============================================================
+    */
+
+    const modal =
+        document.getElementById("client-modal");
+
+    const modalBackdrop =
+        document.getElementById(
+            "client-modal-backdrop"
+        );
+
+    const modalContent =
+        document.getElementById(
+            "client-modal-content"
+        );
+
+    const modalTitle =
+        document.getElementById(
+            "client-modal-title"
+        );
+
+    const closeModalButton =
+        document.getElementById(
+            "close-client-modal"
+        );
+
+    const createButton =
+        document.getElementById(
+            "open-create-client-modal"
+        );
+
+    const secondaryCreateButtons = [
+        ...document.querySelectorAll(
+            "[data-open-create-client]"
+        )
+    ];
+
+
+    let currentUrl = null;
+
+
+    const createUrl =
+        "{% url 'clients:create' %}";
+
+
+    const lockBody = () => {
+        document.body.classList.add(
+            "overflow-hidden"
+        );
+    };
+
+
+    const unlockBody = () => {
+        document.body.classList.remove(
+            "overflow-hidden"
+        );
+    };
+
+
+    const loadingHtml = () => `
+        <div
+            class="flex items-center justify-center px-6 py-16"
+        >
+            <div class="text-center">
+
+                <div
+                    class="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-slate-950"
+                ></div>
+
+                <p class="mt-4 text-sm text-slate-500">
+                    Carregando cadastro...
+                </p>
+
+            </div>
+        </div>
+    `;
+
+
+    const errorHtml = () => `
+        <div class="p-10 text-center">
+
+            <div
+                class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-600"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-6 w-6"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 9v3.75m9-1.5a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 15.75h.008v.008H12v-.008Z"
+                    />
+                </svg>
+            </div>
+
+            <p
+                class="mt-4 font-semibold text-slate-900"
+            >
+                Não foi possível carregar o cadastro.
+            </p>
+
+            <p class="mt-1 text-sm text-slate-500">
+                Atualize a página e tente novamente.
+            </p>
+
+        </div>
+    `;
+
+
+    const closeModal = () => {
+
+        modal.classList.add("hidden");
+
+        unlockBody();
+
+        currentUrl = null;
+
+        /*
+         * Limpamos o HTML para impedir IDs duplicados
+         * e listeners antigos quando o modal for
+         * utilizado novamente.
+         */
+        modalContent.innerHTML = "";
+
+    };
+
+
+    /*
+    ==============================================================
+    FORMULÁRIO AJAX
+    ==============================================================
+    */
+
+    const bindClientForm = () => {
+
+        const form =
+            modalContent.querySelector(
+                "#client-form"
+            );
+
+        if (!form || !currentUrl) {
+            return;
+        }
+
+
+        form.addEventListener(
+            "submit",
+            async (event) => {
+
+                event.preventDefault();
+
+
+                const submitButton =
+                    form.querySelector(
+                        'button[type="submit"]'
+                    );
+
+                const submitLabel =
+                    form.querySelector(
+                        "[data-submit-label]"
+                    );
+
+                const originalLabel =
+                    submitLabel
+                        ? submitLabel.textContent
+                        : "";
+
+
+                if (submitButton) {
+                    submitButton.disabled = true;
+                }
+
+
+                if (submitLabel) {
+                    submitLabel.textContent =
+                        "Salvando...";
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            currentUrl,
+                            {
+                                method: "POST",
+
+                                body:
+                                    new FormData(
+                                        form
+                                    ),
+
+                                headers: {
+                                    "X-Requested-With":
+                                        "XMLHttpRequest"
+                                }
+                            }
+                        );
+
+
+                    const contentType =
+                        response.headers.get(
+                            "content-type"
+                        ) || "";
+
+
+                    /*
+                     * O backend devolve JSON somente
+                     * quando o cadastro foi concluído.
+                     */
+
+                    if (
+                        response.ok &&
+                        contentType.includes(
+                            "application/json"
+                        )
+                    ) {
+
+                        const data =
+                            await response.json();
+
+
+                        if (data.success) {
+
+                            window.location.reload();
+
+                            return;
+
+                        }
+
+                    }
+
+
+                    /*
+                     * Status 400 é esperado quando o
+                     * formulário contém erros de
+                     * validação. O backend devolve o
+                     * formulário novamente com os erros.
+                     */
+
+                    const html =
+                        await response.text();
+
+
+                    modalContent.innerHTML =
+                        html;
+
+
+                    bindClientForm();
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Erro ao salvar cliente:",
+                        error
+                    );
+
+
+                    modalContent.innerHTML =
+                        errorHtml();
+
+                } finally {
+
+                    if (
+                        submitButton &&
+                        document.body.contains(
+                            submitButton
+                        )
+                    ) {
+
+                        submitButton.disabled =
+                            false;
+
+                    }
+
+
+                    if (
+                        submitLabel &&
+                        document.body.contains(
+                            submitLabel
+                        )
+                    ) {
+
+                        submitLabel.textContent =
+                            originalLabel;
+
+                    }
+
+                }
+
+            }
+        );
+
+    };
+
+
+    /*
+    ==============================================================
+    ABERTURA
+    ==============================================================
+    */
+
+    const openModal = async ({
+        url,
+        title
+    }) => {
+
+        currentUrl = url;
+
+        modalTitle.textContent = title;
+
+        modalContent.innerHTML =
+            loadingHtml();
+
+        modal.classList.remove(
+            "hidden"
+        );
+
+        lockBody();
+
+
+        try {
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        headers: {
+                            "X-Requested-With":
+                                "XMLHttpRequest"
+                        }
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    `HTTP ${response.status}`
+                );
+
+            }
+
+
+            modalContent.innerHTML =
+                await response.text();
+
+
+            bindClientForm();
+
+
+        } catch (error) {
+
+            console.error(
+                "Erro ao carregar cadastro:",
+                error
+            );
+
+
+            modalContent.innerHTML =
+                errorHtml();
+
+        }
+
+    };
+
+
+    const openCreateModal = () => {
+
+        openModal({
+            url: createUrl,
+            title: "Novo cliente"
+        });
+
+    };
+
+
+    createButton?.addEventListener(
+        "click",
+        openCreateModal
+    );
+
+
+    secondaryCreateButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                openCreateModal
+            );
+
+        }
+    );
+
+
+    /*
+    ==============================================================
+    EDIÇÃO
+    ==============================================================
+    */
+
+    const editButtons = [
+        ...document.querySelectorAll(
+            ".edit-client-button"
+        )
+    ];
+
+
+    editButtons.forEach((button) => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const clientId =
+                    button.dataset.clientId;
+
+                const clientName =
+                    button.dataset.clientName;
+
+
+                /*
+                 * Evitamos hardcode da URL completa.
+                 *
+                 * A URL base vem do Django e trocamos
+                 * somente o ID utilizado para gerar
+                 * a rota.
+                 */
+
+                const editUrlTemplate =
+                    "{% url 'clients:update' 999999999 %}";
+
+                const editUrl =
+                    editUrlTemplate.replace(
+                        "999999999",
+                        clientId
+                    );
+
+
+                openModal({
+                    url: editUrl,
+                    title:
+                        `Editar ${clientName}`
+                });
+
+            }
+        );
+
     });
 
 
-    initializeClientEditButtons();
+    /*
+    ==============================================================
+    FECHAMENTO
+    ==============================================================
+    */
+
+    closeModalButton?.addEventListener(
+        "click",
+        closeModal
+    );
+
+
+    modalBackdrop?.addEventListener(
+        "click",
+        closeModal
+    );
+
+
+    /*
+     * Evento disparado pelo client_form.html.
+     */
+
+    document.addEventListener(
+        "client-form:cancel",
+        closeModal
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.key === "Escape" &&
+                !modal.classList.contains(
+                    "hidden"
+                )
+            ) {
+
+                closeModal();
+
+            }
+
+        }
+    );
+
+});
 </script>
 
 {% endblock %}

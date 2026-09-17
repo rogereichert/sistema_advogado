@@ -1,0 +1,1076 @@
+<form
+    method="post"
+    id="client-form"
+    data-client-form
+    novalidate
+>
+    {% csrf_token %}
+
+
+    <!-- =========================================================
+         ERROS GERAIS
+    ========================================================== -->
+
+    {% if form.non_field_errors %}
+
+        <div
+            class="mx-6 mt-6 flex gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 sm:mx-7"
+            role="alert"
+        >
+
+            <div
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-600"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 9v3.75m9-1.5a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 15.75h.008v.008H12v-.008Z"
+                    />
+                </svg>
+            </div>
+
+
+            <div class="min-w-0">
+
+                <p class="text-sm font-semibold text-red-800">
+                    Revise as informações do cadastro
+                </p>
+
+                <div class="mt-1 text-sm leading-5 text-red-700">
+                    {{ form.non_field_errors }}
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =========================================================
+         CONTEÚDO
+    ========================================================== -->
+
+    <div class="bg-app-soft px-6 py-6 sm:px-7">
+
+
+        <!-- =====================================================
+             DADOS PESSOAIS
+        ====================================================== -->
+
+        <section aria-labelledby="client-personal-heading">
+
+            <div
+                class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
+            >
+
+                <div class="flex items-start gap-3">
+
+                    <div
+                        class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-brand-100 bg-brand-50 text-brand-700"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-[18px] w-[18px]"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"
+                            />
+                        </svg>
+                    </div>
+
+
+                    <div>
+
+                        <h3
+                            id="client-personal-heading"
+                            class="text-[15px] font-semibold tracking-tight text-brand-950"
+                        >
+                            Dados pessoais
+                        </h3>
+
+                        <p class="mt-0.5 text-xs leading-5 text-slate-500">
+                            Identificação e documentos pessoais do cliente.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="inline-flex w-fit items-center gap-1.5 rounded-full border border-gold-100 bg-gold-50 px-2.5 py-1 text-xs font-medium text-gold-800"
+                >
+                    <span
+                        class="h-1.5 w-1.5 rounded-full bg-gold-500"
+                        aria-hidden="true"
+                    ></span>
+
+                    Campos com
+
+                    <span class="font-bold text-red-500">
+                        *
+                    </span>
+
+                    são obrigatórios
+                </div>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 gap-x-5 gap-y-5 md:grid-cols-2">
+
+
+                <!-- =================================================
+                     NOME COMPLETO
+                ================================================== -->
+
+                <div class="md:col-span-2">
+
+                    <label
+                        for="{{ form.nome_completo.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        Nome completo
+
+                        <span
+                            class="text-red-500"
+                            aria-hidden="true"
+                        >
+                            *
+                        </span>
+                    </label>
+
+                    {{ form.nome_completo }}
+
+
+                    {% if form.nome_completo.errors %}
+
+                        <div
+                            class="mt-1.5 flex items-start gap-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                class="mt-px h-3.5 w-3.5 shrink-0"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 9v3.75m0 3h.008"
+                                />
+                            </svg>
+
+                            <div>
+                                {% for error in form.nome_completo.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     CPF
+                ================================================== -->
+
+                <div>
+
+                    <label
+                        for="{{ form.cpf.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        CPF
+
+                        <span
+                            class="text-red-500"
+                            aria-hidden="true"
+                        >
+                            *
+                        </span>
+                    </label>
+
+                    {{ form.cpf }}
+
+
+                    {% if form.cpf.errors %}
+
+                        <div
+                            class="mt-1.5 flex items-start gap-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                class="mt-px h-3.5 w-3.5 shrink-0"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 9v3.75m0 3h.008"
+                                />
+                            </svg>
+
+                            <div>
+                                {% for error in form.cpf.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     RG
+                ================================================== -->
+
+                <div>
+
+                    <label
+                        for="{{ form.rg.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        RG
+                    </label>
+
+                    {{ form.rg }}
+
+
+                    {% if form.rg.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.rg.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     ESTADO CIVIL
+                ================================================== -->
+
+                <div>
+
+                    <label
+                        for="{{ form.estado_civil.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        Estado civil
+                    </label>
+
+                    {{ form.estado_civil }}
+
+
+                    {% if form.estado_civil.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.estado_civil.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     DATA DE NASCIMENTO
+                ================================================== -->
+
+                <div>
+
+                    <label
+                        for="{{ form.data_nascimento.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        Data de nascimento
+                    </label>
+
+                    {{ form.data_nascimento }}
+
+
+                    {% if form.data_nascimento.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.data_nascimento.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     CARTEIRA DE TRABALHO
+                ================================================== -->
+
+                <div>
+
+                    <label
+                        for="{{ form.carteira_trabalho.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        Carteira de trabalho
+                    </label>
+
+                    {{ form.carteira_trabalho }}
+
+
+                    {% if form.carteira_trabalho.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.carteira_trabalho.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     TÍTULO DE ELEITOR
+                ================================================== -->
+
+                <div>
+
+                    <label
+                        for="{{ form.titulo_eleitor.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        Título de eleitor
+                    </label>
+
+                    {{ form.titulo_eleitor }}
+
+
+                    {% if form.titulo_eleitor.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.titulo_eleitor.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             DIVISOR
+        ====================================================== -->
+
+        <div class="my-8 border-t border-brand-100"></div>
+
+
+        <!-- =====================================================
+             ENDEREÇO
+        ====================================================== -->
+
+        <section aria-labelledby="client-address-heading">
+
+            <div class="mb-5 flex items-start gap-3">
+
+                <div
+                    class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-brand-100 bg-brand-50 text-brand-700"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-[18px] w-[18px]"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 21s7-5.25 7-11a7 7 0 1 0-14 0c0 5.75 7 11 7 11Z"
+                        />
+                        <circle
+                            cx="12"
+                            cy="10"
+                            r="2.2"
+                        />
+                    </svg>
+                </div>
+
+
+                <div>
+
+                    <h3
+                        id="client-address-heading"
+                        class="text-[15px] font-semibold tracking-tight text-brand-950"
+                    >
+                        Endereço
+                    </h3>
+
+                    <p class="mt-0.5 text-xs leading-5 text-slate-500">
+                        Localização residencial ou endereço para correspondência.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 gap-x-5 gap-y-5 md:grid-cols-12">
+
+
+                <!-- =================================================
+                     CEP
+                ================================================== -->
+
+                <div class="md:col-span-4">
+
+                    <label
+                        for="{{ form.cep.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        CEP
+                    </label>
+
+
+                    <div class="flex gap-2">
+
+                        <div class="min-w-0 flex-1">
+                            {{ form.cep }}
+                        </div>
+
+
+                        <button
+                            type="button"
+                            data-search-cep
+                            class="inline-flex h-[46px] shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-100 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.9"
+                                stroke="currentColor"
+                                class="h-4 w-4"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
+                                />
+                            </svg>
+
+                            <span>
+                                Buscar
+                            </span>
+
+                        </button>
+
+                    </div>
+
+
+                    <p
+                        data-cep-status
+                        class="mt-1.5 hidden text-xs font-medium text-slate-500"
+                        aria-live="polite"
+                    ></p>
+
+
+                    {% if form.cep.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.cep.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     LOGRADOURO
+                ================================================== -->
+
+                <div class="md:col-span-8">
+
+                    <label
+                        for="{{ form.logradouro.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        Logradouro
+                    </label>
+
+                    {{ form.logradouro }}
+
+
+                    {% if form.logradouro.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.logradouro.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     NÚMERO
+                ================================================== -->
+
+                <div class="md:col-span-3">
+
+                    <label
+                        for="{{ form.numero.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        Número
+                    </label>
+
+                    {{ form.numero }}
+
+
+                    {% if form.numero.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.numero.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     COMPLEMENTO
+                ================================================== -->
+
+                <div class="md:col-span-9">
+
+                    <label
+                        for="{{ form.complemento.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        Complemento
+                    </label>
+
+                    {{ form.complemento }}
+
+
+                    {% if form.complemento.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.complemento.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     BAIRRO
+                ================================================== -->
+
+                <div class="md:col-span-4">
+
+                    <label
+                        for="{{ form.bairro.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        Bairro
+                    </label>
+
+                    {{ form.bairro }}
+
+
+                    {% if form.bairro.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.bairro.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     CIDADE
+                ================================================== -->
+
+                <div class="md:col-span-6">
+
+                    <label
+                        for="{{ form.cidade.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        Cidade
+                    </label>
+
+                    {{ form.cidade }}
+
+
+                    {% if form.cidade.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.cidade.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     UF
+                ================================================== -->
+
+                <div class="md:col-span-2">
+
+                    <label
+                        for="{{ form.uf.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        UF
+                    </label>
+
+                    {{ form.uf }}
+
+
+                    {% if form.uf.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.uf.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             DIVISOR
+        ====================================================== -->
+
+        <div class="my-8 border-t border-brand-100"></div>
+
+
+        <!-- =====================================================
+             CONTATO
+        ====================================================== -->
+
+        <section aria-labelledby="client-contact-heading">
+
+            <div class="mb-5 flex items-start gap-3">
+
+                <div
+                    class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-brand-100 bg-brand-50 text-brand-700"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-[18px] w-[18px]"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M2.25 6.75A2.25 2.25 0 0 1 4.5 4.5h15a2.25 2.25 0 0 1 2.25 2.25v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75Zm0 0L12 13.5l9.75-6.75"
+                        />
+                    </svg>
+                </div>
+
+
+                <div>
+
+                    <h3
+                        id="client-contact-heading"
+                        class="text-[15px] font-semibold tracking-tight text-brand-950"
+                    >
+                        Contato
+                    </h3>
+
+                    <p class="mt-0.5 text-xs leading-5 text-slate-500">
+                        Informações utilizadas para comunicação com o cliente.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 gap-x-5 gap-y-5 md:grid-cols-2">
+
+
+                <!-- =================================================
+                     TELEFONE
+                ================================================== -->
+
+                <div>
+
+                    <label
+                        for="{{ form.telefone.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        Telefone
+                    </label>
+
+                    {{ form.telefone }}
+
+
+                    {% if form.telefone.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.telefone.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =================================================
+                     E-MAIL
+                ================================================== -->
+
+                <div>
+
+                    <label
+                        for="{{ form.email.id_for_label }}"
+                        class="mb-1.5 block text-sm font-medium text-brand-900"
+                    >
+                        E-mail
+                    </label>
+
+                    {{ form.email }}
+
+
+                    {% if form.email.errors %}
+
+                        <div
+                            class="mt-1.5 text-xs font-medium text-red-600"
+                            role="alert"
+                        >
+                            {% for error in form.email.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             DIVISOR
+        ====================================================== -->
+
+        <div class="my-8 border-t border-brand-100"></div>
+
+
+        <!-- =====================================================
+             OBSERVAÇÕES
+        ====================================================== -->
+
+        <section aria-labelledby="client-notes-heading">
+
+            <div class="mb-5 flex items-start gap-3">
+
+                <div
+                    class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-brand-100 bg-brand-50 text-brand-700"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-[18px] w-[18px]"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M8.25 6.75h7.5M8.25 10.5h7.5m-7.5 3.75h4.5M5.25 3.75h13.5A2.25 2.25 0 0 1 21 6v12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18V6a2.25 2.25 0 0 1 2.25-2.25Z"
+                        />
+                    </svg>
+                </div>
+
+
+                <div>
+
+                    <h3
+                        id="client-notes-heading"
+                        class="text-[15px] font-semibold tracking-tight text-brand-950"
+                    >
+                        Observações
+                    </h3>
+
+                    <p class="mt-0.5 text-xs leading-5 text-slate-500">
+                        Anotações internas relevantes para o atendimento.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <label
+                    for="{{ form.observacoes.id_for_label }}"
+                    class="sr-only"
+                >
+                    Observações
+                </label>
+
+                {{ form.observacoes }}
+
+
+                {% if form.observacoes.errors %}
+
+                    <div
+                        class="mt-1.5 text-xs font-medium text-red-600"
+                        role="alert"
+                    >
+                        {% for error in form.observacoes.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+
+                {% endif %}
+
+
+                <div
+                    class="mt-2 flex items-start gap-2 text-xs leading-5 text-slate-500"
+                >
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-500"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M11.25 11.25 12 10.5m0 0 .75.75M12 10.5v4.5m9-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 7.5h.008v.008H12V7.5Z"
+                        />
+                    </svg>
+
+                    <p>
+                        Evite registrar informações desnecessárias.
+                        Inclua apenas dados úteis ao acompanhamento do cliente.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- =========================================================
+         AÇÕES
+    ========================================================== -->
+
+    <div
+        class="sticky bottom-0 z-10 flex flex-col-reverse gap-3 border-t border-brand-100 bg-white/95 px-6 py-4 shadow-[0_-8px_24px_rgba(23,37,61,0.04)] backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-7"
+    >
+
+        <div
+            class="hidden items-center gap-2 text-xs text-slate-500 sm:flex"
+        >
+
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.8"
+                stroke="currentColor"
+                class="h-4 w-4 text-brand-500"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 12.75 11.25 15 15 9.75m6 2.25a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+            </svg>
+
+            <span>
+                Revise os dados antes de salvar.
+            </span>
+
+        </div>
+
+
+        <div class="flex flex-col-reverse gap-2 sm:flex-row">
+
+            <button
+                type="button"
+                data-client-form-cancel
+                class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-900 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            >
+                Cancelar
+            </button>
+
+
+            <button
+                type="submit"
+                class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.9"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M17.25 3.75H6.75A2.25 2.25 0 0 0 4.5 6v12a2.25 2.25 0 0 0 2.25 2.25h10.5A2.25 2.25 0 0 0 19.5 18V6a2.25 2.25 0 0 0-2.25-2.25ZM8.25 3.75V9h7.5V3.75M8.25 20.25v-4.5h7.5v4.5"
+                    />
+                </svg>
+
+
+                <span data-submit-label>
+                    {% if client %}
+                        Salvar alterações
+                    {% else %}
+                        Salvar cliente
+                    {% endif %}
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</form>

@@ -1,238 +1,422 @@
 {% extends "base.html" %}
 
-
 {% block title %}
     {{ client.nome_completo }} | Advogado Company
 {% endblock %}
 
-
-{% block page_header %}
-    Perfil do cliente
-{% endblock %}
-
-
 {% block content %}
 
-<div>
+<div class="mx-auto max-w-[1600px]">
 
-    <a
-        href="{% url 'clients:list' %}"
-        class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-900"
+    <!-- =========================================================
+         NAVEGAÇÃO
+    ========================================================== -->
+
+    <div class="mb-6">
+        <a
+            href="{% url 'clients:list' %}"
+            class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-950"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.8"
+                stroke="currentColor"
+                class="h-4 w-4"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                />
+            </svg>
+
+            Voltar para clientes
+        </a>
+    </div>
+
+
+    <!-- =========================================================
+         CABEÇALHO DO CLIENTE
+    ========================================================== -->
+
+    <section
+        class="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm"
     >
-        ← Clientes
-    </a>
 
+        <div class="p-6 sm:p-8">
 
-    <div class="mt-6 flex flex-col justify-between gap-6 xl:flex-row xl:items-center">
-
-        <div class="flex items-center gap-5">
-
-            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-950 text-xl font-semibold text-white shadow-sm">
-                {{ client.nome_completo|slice:":1"|upper }}
-            </div>
-
-
-            <div>
-
-                <p class="text-sm font-medium text-amber-700">
-                    Cliente
-                </p>
-
-                <h1 class="mt-1 text-3xl font-semibold tracking-tight text-slate-950">
-                    {{ client.nome_completo }}
-                </h1>
-
-                <p class="mt-2 text-sm text-slate-500">
-                    Cadastro realizado em {{ client.criado_em|date:"d/m/Y" }}
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="flex flex-wrap items-center gap-3">
-
-            <button
-                type="button"
-                id="open-dossier-modal"
-                class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 cursor-pointer"
+            <div
+                class="flex flex-col justify-between gap-6 xl:flex-row xl:items-center"
             >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.8"
-                    stroke="currentColor"
-                    class="h-4 w-4"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M19.5 14.25v-9a2.25 2.25 0 0 0-2.25-2.25h-10A2.25 2.25 0 0 0 5 5.25v13.5A2.25 2.25 0 0 0 7.25 21h10a2.25 2.25 0 0 0 2.25-2.25v-4.5"
-                    />
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M14.25 15.75 21 9m0 0-3.75-3.75M21 9h-6.75"
-                    />
-                </svg>
 
-                Gerar dossiê
-            </button>
+                <div class="flex min-w-0 items-center gap-5">
 
-            <button
-                type="button"
-                id="open-edit-client-modal"
-                class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 cursor-pointer"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.8"
-                    stroke="currentColor"
-                    class="h-4 w-4"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13l-2.507.716.716-2.507a4.5 4.5 0 0 1 1.13-1.897L16.862 4.487Z"
-                    />
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M19.5 7.5 16.5 4.5"
-                    />
-                </svg>
+                    <div
+                        class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-xl font-semibold text-white shadow-sm"
+                    >
+                        {{ client.nome_completo|slice:":1"|upper }}
+                    </div>
 
-                Editar cliente
-            </button>
+                    <div class="min-w-0">
 
-            <a
-                href="{% url 'cases:create' client.pk %}"
-                class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
-            >
-                + Nova causa
-            </a>
+                        <div class="flex flex-wrap items-center gap-2">
 
-        </div>
+                            <span
+                                class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 ring-1 ring-inset ring-amber-200"
+                            >
+                                Cliente
+                            </span>
 
+                            <span class="text-xs text-slate-400">
+                                ID #{{ client.pk }}
+                            </span>
 
-    </div>
+                        </div>
 
+                        <h1
+                            class="mt-2 truncate text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl"
+                        >
+                            {{ client.nome_completo }}
+                        </h1>
 
-    <div class="mt-8 grid gap-4 md:grid-cols-3">
+                        <div
+                            class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500"
+                        >
 
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                            <span>
+                                CPF {{ client.cpf_formatado }}
+                            </span>
 
-            <p class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-                Casos ativos
-            </p>
+                            <span class="hidden sm:inline">
+                                •
+                            </span>
 
-            <p class="mt-3 text-3xl font-semibold text-slate-950">
-                {{ active_cases_count }}
-            </p>
+                            <span>
+                                Cliente desde {{ client.criado_em|date:"d/m/Y" }}
+                            </span>
 
-            <p class="mt-1 text-sm text-slate-500">
-                casos vinculados ao cliente
-            </p>
+                        </div>
 
-        </div>
-
-
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-
-            <p class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-                Documentos
-            </p>
-
-            <p class="mt-3 text-3xl font-semibold text-slate-950">
-                0
-            </p>
-
-            <p class="mt-1 text-sm text-slate-500">
-                documentos vinculados
-            </p>
-
-        </div>
-
-
-       <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-
-            <p class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-                Próximo compromisso
-            </p>
-
-            {% if next_event %}
-
-                <p class="mt-3 text-lg font-semibold text-slate-950">
-                    {{ next_event.data|date:"d/m/Y" }}
-                </p>
-
-                <p class="mt-1 text-sm font-medium text-slate-600">
-
-                    {% if next_event.hora %}
-                        {{ next_event.hora|time:"H:i" }}
-                    {% else %}
-                        Horário não informado
-                    {% endif %}
-
-                </p>
-
-                <p class="mt-2 truncate text-xs text-slate-500">
-                    {{ next_event.titulo }}
-                </p>
-
-            {% else %}
-
-                <p class="mt-3 text-lg font-semibold text-slate-950">
-                    —
-                </p>
-
-                <p class="mt-1 text-sm text-slate-500">
-                    Nenhum compromisso
-                </p>
-
-            {% endif %}
-
-        </div>
-
-    </div>
-
-
-    <div class="mt-8 grid gap-6 xl:grid-cols-3">
-
-        <div class="space-y-6 xl:col-span-2">
-
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-                <div class="border-b border-slate-100 px-7 py-5">
-
-                    <h2 class="font-semibold text-slate-950">
-                        Informações pessoais
-                    </h2>
+                    </div>
 
                 </div>
 
 
-                <dl class="grid gap-x-8 gap-y-6 p-7 md:grid-cols-2">
+                <!-- AÇÕES -->
+
+                <div class="flex flex-wrap items-center gap-3">
+
+                    <button
+                        type="button"
+                        id="open-dossier-modal"
+                        class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M19.5 14.25v-9A2.25 2.25 0 0 0 17.25 3h-10A2.25 2.25 0 0 0 5 5.25v13.5A2.25 2.25 0 0 0 7.25 21h10a2.25 2.25 0 0 0 2.25-2.25v-4.5"
+                            />
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M14.25 15.75 21 9m0 0-3.75-3.75M21 9h-6.75"
+                            />
+                        </svg>
+
+                        Gerar dossiê
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="open-edit-client-modal"
+                        class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13l-2.507.716.716-2.507a4.5 4.5 0 0 1 1.13-1.897L16.862 4.487Z"
+                            />
+                        </svg>
+
+                        Editar
+                    </button>
+
+
+                    <a
+                        href="{% url 'cases:create' client.pk %}"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 4.5v15m7.5-7.5h-15"
+                            />
+                        </svg>
+
+                        Nova causa
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         INDICADORES
+    ========================================================== -->
+
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+
+        <!-- CASOS ATIVOS -->
+
+        <div
+            class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm"
+        >
+
+            <div class="flex items-start justify-between gap-4">
+
+                <div>
+
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400"
+                    >
+                        Casos ativos
+                    </p>
+
+                    <p class="mt-3 text-3xl font-semibold text-slate-950">
+                        {{ active_cases_count }}
+                    </p>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        em acompanhamento
+                    </p>
+
+                </div>
+
+                <div
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.7"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M20.25 14.15v4.073a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6.75A2.25 2.25 0 0 1 6 4.5h4.5m4.5 0h3.75m0 0V8.25m0-3.75-8.25 8.25"
+                        />
+                    </svg>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL DE CASOS -->
+
+        <div
+            class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm"
+        >
+
+            <div class="flex items-start justify-between gap-4">
+
+                <div>
+
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400"
+                    >
+                        Total de casos
+                    </p>
+
+                    <p class="mt-3 text-3xl font-semibold text-slate-950">
+                        {{ cases|length }}
+                    </p>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        vinculados ao cliente
+                    </p>
+
+                </div>
+
+                <div
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.7"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5V5.625A3.375 3.375 0 0 0 11.25 2.25H6.375A3.375 3.375 0 0 0 3 5.625v12.75a3.375 3.375 0 0 0 3.375 3.375h11.25A3.375 3.375 0 0 0 21 18.375v-.75"
+                        />
+                    </svg>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRÓXIMO COMPROMISSO -->
+
+        <div
+            class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm sm:col-span-2 xl:col-span-1"
+        >
+
+            <div class="flex items-start justify-between gap-4">
+
+                <div class="min-w-0">
+
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400"
+                    >
+                        Próximo compromisso
+                    </p>
+
+                    {% if next_event %}
+
+                        <p class="mt-3 text-lg font-semibold text-slate-950">
+                            {{ next_event.data|date:"d/m/Y" }}
+
+                            {% if next_event.hora %}
+                                <span class="text-slate-400">
+                                    ·
+                                </span>
+
+                                {{ next_event.hora|time:"H:i" }}
+                            {% endif %}
+                        </p>
+
+                        <p class="mt-1 truncate text-sm text-slate-500">
+                            {{ next_event.titulo }}
+                        </p>
+
+                    {% else %}
+
+                        <p class="mt-3 text-lg font-semibold text-slate-950">
+                            Nenhum agendamento
+                        </p>
+
+                        <p class="mt-1 text-sm text-slate-500">
+                            Não há compromissos futuros.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+                <div
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.7"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6.75 3v2.25M17.25 3v2.25M3.75 9.75h16.5m-15 11.25h13.5A1.5 1.5 0 0 0 20.25 19.5V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5V19.5A1.5 1.5 0 0 0 5.25 21Z"
+                        />
+                    </svg>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         CONTEÚDO PRINCIPAL
+    ========================================================== -->
+
+    <div class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
+
+        <div class="space-y-6">
+
+            <!-- INFORMAÇÕES PESSOAIS -->
+
+            <section
+                class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
+            >
+
+                <div
+                    class="flex items-center justify-between border-b border-slate-100 px-6 py-5"
+                >
 
                     <div>
+                        <h2 class="font-semibold text-slate-950">
+                            Informações pessoais
+                        </h2>
 
+                        <p class="mt-1 text-sm text-slate-500">
+                            Dados cadastrais e documentos do cliente.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <dl class="grid md:grid-cols-2">
+
+                    <div class="border-b border-slate-100 px-6 py-5 md:border-r">
                         <dt class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             CPF
                         </dt>
 
                         <dd class="mt-2 text-sm font-medium text-slate-800">
-                            {{ client.cpf }}
+                            {{ client.cpf_formatado }}
                         </dd>
-
                     </div>
 
 
-                    <div>
-
+                    <div class="border-b border-slate-100 px-6 py-5">
                         <dt class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             RG
                         </dt>
@@ -240,12 +424,10 @@
                         <dd class="mt-2 text-sm font-medium text-slate-800">
                             {{ client.rg|default:"Não informado" }}
                         </dd>
-
                     </div>
 
 
-                    <div>
-
+                    <div class="border-b border-slate-100 px-6 py-5 md:border-r">
                         <dt class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             Estado civil
                         </dt>
@@ -253,31 +435,25 @@
                         <dd class="mt-2 text-sm font-medium text-slate-800">
                             {{ client.get_estado_civil_display|default:"Não informado" }}
                         </dd>
-
                     </div>
 
 
-                    <div>
-
+                    <div class="border-b border-slate-100 px-6 py-5">
                         <dt class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             Data de nascimento
                         </dt>
 
                         <dd class="mt-2 text-sm font-medium text-slate-800">
-
                             {% if client.data_nascimento %}
                                 {{ client.data_nascimento|date:"d/m/Y" }}
                             {% else %}
                                 Não informado
                             {% endif %}
-
                         </dd>
-
                     </div>
 
 
-                    <div>
-
+                    <div class="px-6 py-5 md:border-r">
                         <dt class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             Carteira de trabalho
                         </dt>
@@ -285,12 +461,10 @@
                         <dd class="mt-2 text-sm font-medium text-slate-800">
                             {{ client.carteira_trabalho|default:"Não informado" }}
                         </dd>
-
                     </div>
 
 
-                    <div>
-
+                    <div class="px-6 py-5">
                         <dt class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             Título de eleitor
                         </dt>
@@ -298,7 +472,6 @@
                         <dd class="mt-2 text-sm font-medium text-slate-800">
                             {{ client.titulo_eleitor|default:"Não informado" }}
                         </dd>
-
                     </div>
 
                 </dl>
@@ -306,124 +479,227 @@
             </section>
 
 
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+            <!-- CASOS -->
 
-                <div class="divide-y divide-slate-100">
+            <section
+                class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
+            >
 
-    {% for case in cases %}
+                <div
+                    class="flex flex-col justify-between gap-4 border-b border-slate-100 px-6 py-5 sm:flex-row sm:items-center"
+                >
 
-        <div class="flex items-center justify-between gap-6 px-7 py-5">
+                    <div>
+                        <h2 class="font-semibold text-slate-950">
+                            Casos jurídicos
+                        </h2>
 
-                <div>
-
-                    <div class="flex items-center gap-3">
-
-                        <a
-                            href="{% url 'cases:detail' case.pk %}"
-                            class="font-semibold text-slate-900 transition hover:text-amber-700"
-                        >
-                            {{ case.titulo }}
-                        </a>
-
-                        <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
-                            {{ case.status.nome }}
-                        </span>
-
+                        <p class="mt-1 text-sm text-slate-500">
+                            Processos e demandas vinculados a este cliente.
+                        </p>
                     </div>
 
-                    <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-500">
-
-                        {% if case.area_juridica %}
-                            <span>
-                                {{ case.area_juridica }}
-                            </span>
-                        {% endif %}
-
-                        <span>
-                            Aberto em {{ case.data_abertura|date:"d/m/Y" }}
-                        </span>
-
-                        {% if case.numero_processo %}
-                            <span>
-                                Processo {{ case.numero_processo }}
-                            </span>
-                        {% endif %}
-
-                    </div>
+                    <a
+                        href="{% url 'cases:create' client.pk %}"
+                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 transition hover:text-slate-950"
+                    >
+                        <span class="text-lg leading-none">+</span>
+                        Adicionar caso
+                    </a>
 
                 </div>
 
 
-                <a
-                    href="{% url 'cases:detail' case.pk %}"
-                    class="text-slate-400 transition hover:text-slate-900"
-                >
-                    →
-                </a>
+                <div class="divide-y divide-slate-100">
 
-            </div>
+                    {% for case in cases %}
 
-                {% empty %}
+                        <a
+                            href="{% url 'cases:detail' case.pk %}"
+                            class="group block px-6 py-5 transition hover:bg-slate-50/80"
+                        >
 
-                    <div class="px-7 py-12 text-center">
+                            <div
+                                class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
+                            >
 
-                        <p class="font-medium text-slate-800">
-                            Nenhum caso cadastrado
-                        </p>
+                                <div class="min-w-0">
 
-                        <p class="mt-1 text-sm text-slate-500">
-                            Os casos jurídicos deste cliente aparecerão aqui.
-                        </p>
+                                    <div class="flex flex-wrap items-center gap-3">
 
-                    </div>
+                                        <h3
+                                            class="font-semibold text-slate-900 transition group-hover:text-amber-700"
+                                        >
+                                            {{ case.titulo }}
+                                        </h3>
 
-                {% endfor %}
+                                        {% if case.status %}
+                                            <span
+                                                class="inline-flex rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 ring-1 ring-inset ring-amber-200"
+                                            >
+                                                {{ case.status.nome }}
+                                            </span>
+                                        {% endif %}
 
-            </div>
+                                    </div>
+
+
+                                    <div
+                                        class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-500"
+                                    >
+
+                                        {% if case.area_juridica %}
+                                            <span>
+                                                {{ case.area_juridica }}
+                                            </span>
+                                        {% endif %}
+
+                                        {% if case.data_abertura %}
+                                            <span>
+                                                Aberto em {{ case.data_abertura|date:"d/m/Y" }}
+                                            </span>
+                                        {% endif %}
+
+                                        {% if case.numero_processo %}
+                                            <span>
+                                                Processo {{ case.numero_processo }}
+                                            </span>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+
+                                <div
+                                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition group-hover:bg-white group-hover:text-slate-900 group-hover:shadow-sm"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.8"
+                                        stroke="currentColor"
+                                        class="h-4 w-4"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="m9 18 6-6-6-6"
+                                        />
+                                    </svg>
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                    {% empty %}
+
+                        <div class="px-6 py-14 text-center">
+
+                            <div
+                                class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.6"
+                                    stroke="currentColor"
+                                    class="h-6 w-6"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M3.75 9.75h16.5m-13.5-6h10.5A2.25 2.25 0 0 1 19.5 6v12A2.25 2.25 0 0 1 17.25 20.25H6.75A2.25 2.25 0 0 1 4.5 18V6a2.25 2.25 0 0 1 2.25-2.25Z"
+                                    />
+                                </svg>
+                            </div>
+
+                            <h3 class="mt-4 font-semibold text-slate-900">
+                                Nenhum caso cadastrado
+                            </h3>
+
+                            <p class="mx-auto mt-1 max-w-sm text-sm text-slate-500">
+                                Cadastre a primeira demanda jurídica para começar o acompanhamento deste cliente.
+                            </p>
+
+                            <a
+                                href="{% url 'cases:create' client.pk %}"
+                                class="mt-5 inline-flex items-center justify-center rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+                            >
+                                Criar primeiro caso
+                            </a>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
 
             </section>
 
         </div>
 
 
+        <!-- =====================================================
+             COLUNA LATERAL
+        ====================================================== -->
+
         <aside class="space-y-6">
 
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+            <!-- CONTATO -->
+
+            <section
+                class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
+            >
 
                 <div class="border-b border-slate-100 px-6 py-5">
-
                     <h2 class="font-semibold text-slate-950">
                         Contato
                     </h2>
-
                 </div>
-
 
                 <div class="space-y-5 p-6">
 
                     <div>
-
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             Telefone
                         </p>
 
-                        <p class="mt-2 text-sm font-medium text-slate-800">
-                            {{ client.telefone|default:"Não informado" }}
-                        </p>
-
+                        {% if client.telefone %}
+                            <a
+                                href="tel:{{ client.telefone }}"
+                                class="mt-2 block text-sm font-medium text-slate-800 transition hover:text-amber-700"
+                            >
+                                {{ client.telefone_formatado }}
+                            </a>
+                        {% else %}
+                            <p class="mt-2 text-sm text-slate-400">
+                                Não informado
+                            </p>
+                        {% endif %}
                     </div>
 
 
                     <div>
-
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
                             E-mail
                         </p>
 
-                        <p class="mt-2 break-all text-sm font-medium text-slate-800">
-                            {{ client.email|default:"Não informado" }}
-                        </p>
-
+                        {% if client.email %}
+                            <a
+                                href="mailto:{{ client.email }}"
+                                class="mt-2 block break-all text-sm font-medium text-slate-800 transition hover:text-amber-700"
+                            >
+                                {{ client.email }}
+                            </a>
+                        {% else %}
+                            <p class="mt-2 text-sm text-slate-400">
+                                Não informado
+                            </p>
+                        {% endif %}
                     </div>
 
                 </div>
@@ -431,56 +707,66 @@
             </section>
 
 
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+            <!-- ENDEREÇO -->
+
+            <section
+                class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
+            >
 
                 <div class="border-b border-slate-100 px-6 py-5">
-
                     <h2 class="font-semibold text-slate-950">
                         Endereço
                     </h2>
-
                 </div>
 
-
-                <div class="p-6 text-sm leading-6 text-slate-600">
+                <div class="p-6">
 
                     {% if client.logradouro %}
 
-                        <p>
-                            {{ client.logradouro }}
+                        <div class="text-sm leading-6 text-slate-600">
 
-                            {% if client.numero %}
-                                , {{ client.numero }}
-                            {% endif %}
-                        </p>
-
-                        {% if client.complemento %}
-                            <p>{{ client.complemento }}</p>
-                        {% endif %}
-
-                        {% if client.bairro %}
-                            <p>{{ client.bairro }}</p>
-                        {% endif %}
-
-                        {% if client.cidade %}
-                            <p>
-                                {{ client.cidade }}
-
-                                {% if client.uf %}
-                                    · {{ client.uf }}
+                            <p class="font-medium text-slate-800">
+                                {{ client.logradouro }}
+                                {% if client.numero %}
+                                    , {{ client.numero }}
                                 {% endif %}
                             </p>
-                        {% endif %}
 
-                        {% if client.cep %}
-                            <p class="mt-2 text-slate-400">
-                                CEP {{ client.cep }}
-                            </p>
-                        {% endif %}
+                            {% if client.complemento %}
+                                <p>{{ client.complemento }}</p>
+                            {% endif %}
+
+                            {% if client.bairro %}
+                                <p>{{ client.bairro }}</p>
+                            {% endif %}
+
+                            {% if client.cidade or client.uf %}
+                                <p>
+                                    {% if client.cidade %}
+                                        {{ client.cidade }}
+                                    {% endif %}
+
+                                    {% if client.cidade and client.uf %}
+                                        ·
+                                    {% endif %}
+
+                                    {% if client.uf %}
+                                        {{ client.uf }}
+                                    {% endif %}
+                                </p>
+                            {% endif %}
+
+                            {% if client.cep %}
+                                <p class="mt-2 text-slate-400">
+                                    CEP {{ client.cep_formatado }}
+                                </p>
+                            {% endif %}
+
+                        </div>
 
                     {% else %}
 
-                        <p class="text-slate-400">
+                        <p class="text-sm text-slate-400">
                             Endereço não informado.
                         </p>
 
@@ -491,15 +777,60 @@
             </section>
 
 
-            {% if client.observacoes %}
+            <!-- PRÓXIMO COMPROMISSO -->
 
-                <section class="rounded-2xl border border-amber-200/70 bg-amber-50/70 p-6">
+            {% if next_event %}
 
-                    <p class="text-xs font-semibold uppercase tracking-wider text-amber-700">
-                        Observações
+                <section
+                    class="rounded-2xl border border-amber-200/70 bg-amber-50/70 p-6"
+                >
+
+                    <p
+                        class="text-xs font-semibold uppercase tracking-wider text-amber-700"
+                    >
+                        Próximo compromisso
                     </p>
 
-                    <p class="mt-3 whitespace-pre-line text-sm leading-6 text-amber-950/80">
+                    <h3 class="mt-3 font-semibold text-amber-950">
+                        {{ next_event.titulo }}
+                    </h3>
+
+                    <p class="mt-2 text-sm text-amber-900/70">
+                        {{ next_event.data|date:"d/m/Y" }}
+
+                        {% if next_event.hora %}
+                            às {{ next_event.hora|time:"H:i" }}
+                        {% endif %}
+                    </p>
+
+                    {% if next_event.caso %}
+                        <p class="mt-3 text-xs text-amber-800/70">
+                            {{ next_event.caso.titulo }}
+                        </p>
+                    {% endif %}
+
+                </section>
+
+            {% endif %}
+
+
+            <!-- OBSERVAÇÕES -->
+
+            {% if client.observacoes %}
+
+                <section
+                    class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
+                >
+
+                    <div class="border-b border-slate-100 px-6 py-5">
+                        <h2 class="font-semibold text-slate-950">
+                            Observações
+                        </h2>
+                    </div>
+
+                    <p
+                        class="whitespace-pre-line p-6 text-sm leading-6 text-slate-600"
+                    >
                         {{ client.observacoes }}
                     </p>
 
@@ -513,91 +844,94 @@
 
 </div>
 
-    <!-- MODAL: EDITAR CLIENTE -->
+
+<!-- =============================================================
+     MODAL — EDITAR CLIENTE
+============================================================== -->
+
+<div
+    id="edit-client-modal"
+    class="fixed inset-0 z-50 hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="edit-client-modal-title"
+>
+
     <div
-        id="edit-client-modal"
-        class="fixed inset-0 z-50 hidden"
-        aria-labelledby="edit-client-modal-title"
-        aria-modal="true"
-        role="dialog"
+        id="edit-client-modal-backdrop"
+        class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
+    ></div>
+
+
+    <div
+        class="relative flex min-h-full items-start justify-center overflow-y-auto p-4 sm:p-6"
     >
 
-        <!-- Fundo -->
         <div
-            id="edit-client-modal-backdrop"
-            class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
-        ></div>
-
-
-        <!-- Conteúdo -->
-        <div class="relative flex min-h-full items-center justify-center p-4 sm:p-6">
+            class="my-4 w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl sm:my-8"
+        >
 
             <div
-                class="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+                class="flex items-center justify-between border-b border-slate-100 px-6 py-5"
             >
 
-                <!-- Cabeçalho -->
-                <div class="flex shrink-0 items-start justify-between border-b border-slate-100 px-6 py-5 sm:px-7">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-amber-700">
+                        Cadastro
+                    </p>
 
-                    <div>
-
-                        <p class="text-xs font-semibold uppercase tracking-[0.15em] text-amber-700">
-                            Edição de cadastro
-                        </p>
-
-                        <h2
-                            id="edit-client-modal-title"
-                            class="mt-1 text-xl font-semibold tracking-tight text-slate-950"
-                        >
-                            Editar cliente
-                        </h2>
-
-                        <p class="mt-1 text-sm text-slate-500">
-                            Atualize os dados pessoais e informações de contato do cliente.
-                        </p>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        id="close-edit-client-modal"
-                        class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-                        aria-label="Fechar"
+                    <h2
+                        id="edit-client-modal-title"
+                        class="mt-1 text-lg font-semibold text-slate-950"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.8"
-                            stroke="currentColor"
-                            class="h-5 w-5"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M6 18 18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </button>
-
+                        Editar cliente
+                    </h2>
                 </div>
 
-
-                <!-- Corpo -->
-                <div
-                    id="edit-client-modal-content"
-                    class="min-h-0 flex-1 overflow-y-auto bg-slate-50/40 px-5 py-5 sm:px-6"
+                <button
+                    type="button"
+                    id="close-edit-client-modal"
+                    class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-900"
+                    aria-label="Fechar"
                 >
-                    <div class="flex min-h-[300px] items-center justify-center">
-                        <div class="text-center">
-                            <p class="font-medium text-slate-700">
-                                Carregando formulário...
-                            </p>
-                            <p class="mt-1 text-sm text-slate-500">
-                                Aguarde um momento.
-                            </p>
-                        </div>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 18 18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
+
+            </div>
+
+
+            <div
+                id="edit-client-modal-content"
+                class="min-h-48"
+            >
+
+                <div
+                    id="edit-client-modal-loading"
+                    class="flex items-center justify-center px-6 py-16"
+                >
+                    <div class="text-center">
+
+                        <div
+                            class="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-slate-950"
+                        ></div>
+
+                        <p class="mt-4 text-sm text-slate-500">
+                            Carregando cadastro...
+                        </p>
+
                     </div>
                 </div>
 
@@ -607,106 +941,105 @@
 
     </div>
 
+</div>
 
-    <!-- MODAL: GERAR DOSSIÊ -->
+
+<!-- =============================================================
+     MODAL — GERAR DOSSIÊ
+============================================================== -->
+
+<div
+    id="dossier-modal"
+    class="fixed inset-0 z-50 hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="dossier-modal-title"
+>
+
     <div
-        id="dossier-modal"
-        class="fixed inset-0 z-50 hidden"
-        aria-labelledby="dossier-modal-title"
-        aria-modal="true"
-        role="dialog"
+        id="dossier-modal-backdrop"
+        class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
+    ></div>
+
+
+    <div
+        class="relative flex min-h-full items-start justify-center overflow-y-auto p-4 sm:p-6"
     >
 
-        <!-- Fundo -->
         <div
-            id="dossier-modal-backdrop"
-            class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
-        ></div>
-
-
-        <!-- Conteúdo -->
-        <div class="relative flex min-h-full items-center justify-center p-4 sm:p-6">
+            class="my-4 w-full max-w-3xl overflow-hidden rounded-3xl bg-white shadow-2xl sm:my-8"
+        >
 
             <div
-                class="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+                class="flex items-center justify-between border-b border-slate-100 px-6 py-5"
             >
 
-                <!-- Cabeçalho -->
-                <div class="flex items-start justify-between border-b border-slate-100 px-6 py-5 sm:px-7">
+                <div>
 
-                    <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-amber-700">
+                        Relatório
+                    </p>
 
-                        <p class="text-xs font-semibold uppercase tracking-[0.15em] text-amber-700">
-                            Relatório
-                        </p>
-
-                        <h2
-                            id="dossier-modal-title"
-                            class="mt-1 text-xl font-semibold tracking-tight text-slate-950"
-                        >
-                            Gerar dossiê
-                        </h2>
-
-                        <p class="mt-1 text-sm text-slate-500">
-                            Escolha o conteúdo que deseja incluir no documento.
-                        </p>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        id="close-dossier-modal"
-                        class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-                        aria-label="Fechar"
+                    <h2
+                        id="dossier-modal-title"
+                        class="mt-1 text-lg font-semibold text-slate-950"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.8"
-                            stroke="currentColor"
-                            class="h-5 w-5"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M6 18 18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </button>
+                        Gerar dossiê do cliente
+                    </h2>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        Escolha os casos e as informações que deverão constar no PDF.
+                    </p>
 
                 </div>
 
 
-                <form
-                    method="post"
-                    action="{% url 'reports:client_dossier' client.pk %}"
-                    target="_blank"
+                <button
+                    type="button"
+                    id="close-dossier-modal"
+                    class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-900"
+                    aria-label="Fechar"
                 >
-                    {% csrf_token %}
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 18 18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
 
-                    <!-- Corpo -->
-                    <div class="space-y-7 px-6 py-6 sm:px-7">
+            </div>
 
 
-                    <!-- FINALIDADE -->
+            <form
+                method="post"
+                action="{% url 'reports:client_dossier' client.pk %}"
+                target="_blank"
+                id="dossier-form"
+            >
+
+                {% csrf_token %}
+
+                <div class="max-h-[70vh] space-y-7 overflow-y-auto p-6">
+
+
+                    <!-- TIPO -->
+
                     <section>
 
-                        <div class="mb-4">
+                        <h3 class="text-sm font-semibold text-slate-900">
+                            Tipo de dossiê
+                        </h3>
 
-                            <h3 class="text-sm font-semibold text-slate-900">
-                                Finalidade do documento
-                            </h3>
-
-                            <p class="mt-1 text-xs text-slate-500">
-                                A finalidade ajuda a definir a apresentação do dossiê.
-                            </p>
-
-                        </div>
-
-
-                        <div class="grid gap-3 md:grid-cols-3">
+                        <div class="mt-3 grid gap-3 sm:grid-cols-3">
 
                             <label class="cursor-pointer">
 
@@ -714,20 +1047,20 @@
                                     type="radio"
                                     name="dossier_type"
                                     value="complete"
-                                    class="peer sr-only"
                                     checked
+                                    class="peer sr-only"
                                 >
 
-                                <div class="rounded-xl border border-slate-200 p-4 transition peer-checked:border-amber-500 peer-checked:bg-amber-50/50 peer-checked:ring-2 peer-checked:ring-amber-500/10">
-
+                                <div
+                                    class="h-full rounded-xl border border-slate-200 p-4 transition peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-500/10"
+                                >
                                     <p class="text-sm font-semibold text-slate-900">
-                                        Dossiê completo
+                                        Completo
                                     </p>
 
                                     <p class="mt-1 text-xs leading-5 text-slate-500">
-                                        Reúne todas as informações selecionadas.
+                                        Todas as informações selecionadas.
                                     </p>
-
                                 </div>
 
                             </label>
@@ -742,16 +1075,16 @@
                                     class="peer sr-only"
                                 >
 
-                                <div class="rounded-xl border border-slate-200 p-4 transition peer-checked:border-amber-500 peer-checked:bg-amber-50/50 peer-checked:ring-2 peer-checked:ring-amber-500/10">
-
+                                <div
+                                    class="h-full rounded-xl border border-slate-200 p-4 transition peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-500/10"
+                                >
                                     <p class="text-sm font-semibold text-slate-900">
-                                        Relatório para cliente
+                                        Cliente
                                     </p>
 
                                     <p class="mt-1 text-xs leading-5 text-slate-500">
-                                        Formato mais adequado para compartilhamento.
+                                        Foco nos dados cadastrais.
                                     </p>
-
                                 </div>
 
                             </label>
@@ -766,16 +1099,16 @@
                                     class="peer sr-only"
                                 >
 
-                                <div class="rounded-xl border border-slate-200 p-4 transition peer-checked:border-amber-500 peer-checked:bg-amber-50/50 peer-checked:ring-2 peer-checked:ring-amber-500/10">
-
+                                <div
+                                    class="h-full rounded-xl border border-slate-200 p-4 transition peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:ring-2 peer-checked:ring-amber-500/10"
+                                >
                                     <p class="text-sm font-semibold text-slate-900">
-                                        Resumo do caso
+                                        Resumido
                                     </p>
 
                                     <p class="mt-1 text-xs leading-5 text-slate-500">
-                                        Uma versão mais objetiva e resumida.
+                                        Versão compacta do acompanhamento.
                                     </p>
-
                                 </div>
 
                             </label>
@@ -786,540 +1119,726 @@
 
 
                     <!-- CASOS -->
+
                     <section>
 
-                        <div class="mb-4">
+                        <div class="flex items-center justify-between gap-4">
 
-                            <h3 class="text-sm font-semibold text-slate-900">
-                                Casos incluídos
-                            </h3>
+                            <div>
+                                <h3 class="text-sm font-semibold text-slate-900">
+                                    Casos incluídos
+                                </h3>
 
-                            <p class="mt-1 text-xs text-slate-500">
-                                Selecione os casos que farão parte do dossiê.
-                            </p>
+                                <p class="mt-1 text-xs text-slate-500">
+                                    Selecione ao menos um caso.
+                                </p>
+                            </div>
+
+                            {% if cases %}
+                                <button
+                                    type="button"
+                                    id="toggle-dossier-cases"
+                                    class="cursor-pointer text-xs font-semibold text-amber-700 hover:text-amber-800"
+                                >
+                                    Desmarcar todos
+                                </button>
+                            {% endif %}
 
                         </div>
 
 
-                        <div class="divide-y divide-slate-100 rounded-xl border border-slate-200">
+                        {% if cases %}
 
-                            {% for case in cases %}
+                            <div
+                                class="mt-3 divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200"
+                            >
 
-                                <label class="flex cursor-pointer items-start gap-3 p-4 transition hover:bg-slate-50">
+                                {% for case in cases %}
 
-                                    <input
-                                        type="checkbox"
-                                        name="cases"
-                                        value="{{ case.pk }}"
-                                        class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
-                                        checked
+                                    <label
+                                        class="flex cursor-pointer items-start gap-3 p-4 transition hover:bg-slate-50"
                                     >
 
-                                    <span class="min-w-0 flex-1">
+                                        <input
+                                            type="checkbox"
+                                            name="cases"
+                                            value="{{ case.pk }}"
+                                            checked
+                                            class="dossier-case mt-0.5 h-4 w-4 rounded border-slate-300 text-slate-950"
+                                        >
 
-                                        <span class="flex flex-wrap items-center gap-2">
+                                        <span class="min-w-0">
 
-                                            <span class="text-sm font-semibold text-slate-900">
+                                            <span class="block text-sm font-medium text-slate-800">
                                                 {{ case.titulo }}
                                             </span>
 
-                                            <span class="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700">
-                                                {{ case.status.nome }}
+                                            <span class="mt-1 block text-xs text-slate-500">
+
+                                                {% if case.numero_processo %}
+                                                    {{ case.numero_processo }}
+                                                {% else %}
+                                                    Processo não informado
+                                                {% endif %}
+
+                                                {% if case.status %}
+                                                    · {{ case.status.nome }}
+                                                {% endif %}
+
                                             </span>
 
                                         </span>
 
+                                    </label>
 
-                                        <span class="mt-1 block text-xs text-slate-500">
+                                {% endfor %}
 
-                                            {% if case.area_juridica %}
-                                                {{ case.area_juridica }}
-                                            {% endif %}
+                            </div>
 
-                                            {% if case.numero_processo %}
-                                                · {{ case.numero_processo }}
-                                            {% endif %}
+                        {% else %}
 
-                                        </span>
+                            <div
+                                class="mt-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-slate-500"
+                            >
+                                Este cliente ainda não possui casos. O dossiê exige pelo menos um caso vinculado.
+                            </div>
 
-                                    </span>
-
-                                </label>
-
-                            {% empty %}
-
-                                <div class="p-5 text-sm text-slate-500">
-                                    Nenhum caso cadastrado para este cliente.
-                                </div>
-
-                            {% endfor %}
-
-                        </div>
+                        {% endif %}
 
                     </section>
 
 
-                    <!-- CONTEÚDO -->
+                    <!-- SEÇÕES -->
+
                     <section>
 
-                        <div class="mb-4">
+                        <div class="flex items-center justify-between gap-4">
 
-                            <h3 class="text-sm font-semibold text-slate-900">
-                                Conteúdo do dossiê
-                            </h3>
+                            <div>
+                                <h3 class="text-sm font-semibold text-slate-900">
+                                    Seções do documento
+                                </h3>
 
-                            <p class="mt-1 text-xs text-slate-500">
-                                Escolha quais informações devem aparecer no documento.
-                            </p>
+                                <p class="mt-1 text-xs text-slate-500">
+                                    Defina quais informações serão incluídas.
+                                </p>
+                            </div>
+
+                            <button
+                                type="button"
+                                id="toggle-dossier-sections"
+                                class="cursor-pointer text-xs font-semibold text-amber-700 hover:text-amber-800"
+                            >
+                                Desmarcar todas
+                            </button>
 
                         </div>
 
 
-                        <div class="grid gap-3 sm:grid-cols-2">
+                        <div class="mt-3 grid gap-3 sm:grid-cols-2">
 
-                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
-
+                            <label
+                                class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50"
+                            >
                                 <input
                                     type="checkbox"
                                     name="sections"
                                     value="client"
-                                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
                                     checked
+                                    class="dossier-section mt-0.5 h-4 w-4 rounded border-slate-300"
                                 >
 
                                 <span>
-
-                                    <span class="block text-sm font-semibold text-slate-900">
+                                    <span class="block text-sm font-medium text-slate-800">
                                         Dados do cliente
                                     </span>
-
                                     <span class="mt-1 block text-xs text-slate-500">
-                                        Dados pessoais e informações de contato.
+                                        Cadastro, contato e endereço.
                                     </span>
-
                                 </span>
-
                             </label>
 
 
-                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
-
+                            <label
+                                class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50"
+                            >
                                 <input
                                     type="checkbox"
                                     name="sections"
                                     value="cases"
-                                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
                                     checked
+                                    class="dossier-section mt-0.5 h-4 w-4 rounded border-slate-300"
                                 >
 
                                 <span>
-
-                                    <span class="block text-sm font-semibold text-slate-900">
-                                        Informações dos processos
+                                    <span class="block text-sm font-medium text-slate-800">
+                                        Casos
                                     </span>
-
                                     <span class="mt-1 block text-xs text-slate-500">
-                                        Dados e situação dos casos selecionados.
+                                        Informações das demandas jurídicas.
                                     </span>
-
                                 </span>
-
                             </label>
 
 
-                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
-
+                            <label
+                                class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50"
+                            >
                                 <input
                                     type="checkbox"
                                     name="sections"
                                     value="history"
-                                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
                                     checked
+                                    class="dossier-section mt-0.5 h-4 w-4 rounded border-slate-300"
                                 >
 
                                 <span>
-
-                                    <span class="block text-sm font-semibold text-slate-900">
+                                    <span class="block text-sm font-medium text-slate-800">
                                         Histórico
                                     </span>
-
                                     <span class="mt-1 block text-xs text-slate-500">
-                                        Registros históricos dos processos.
+                                        Histórico relacionado aos casos.
                                     </span>
-
                                 </span>
-
                             </label>
 
 
-                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
-
+                            <label
+                                class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50"
+                            >
                                 <input
                                     type="checkbox"
                                     name="sections"
                                     value="movements"
-                                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
                                     checked
+                                    class="dossier-section mt-0.5 h-4 w-4 rounded border-slate-300"
                                 >
 
                                 <span>
-
-                                    <span class="block text-sm font-semibold text-slate-900">
+                                    <span class="block text-sm font-medium text-slate-800">
                                         Movimentações
                                     </span>
-
                                     <span class="mt-1 block text-xs text-slate-500">
-                                        Andamentos e movimentações registradas.
+                                        Andamentos registrados.
                                     </span>
-
                                 </span>
-
                             </label>
 
 
-                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
-
+                            <label
+                                class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50"
+                            >
                                 <input
                                     type="checkbox"
                                     name="sections"
                                     value="documents"
-                                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
                                     checked
+                                    class="dossier-section mt-0.5 h-4 w-4 rounded border-slate-300"
                                 >
 
                                 <span>
-
-                                    <span class="block text-sm font-semibold text-slate-900">
-                                        Documentação
+                                    <span class="block text-sm font-medium text-slate-800">
+                                        Documentos
                                     </span>
-
                                     <span class="mt-1 block text-xs text-slate-500">
-                                        Documentos e checklist documental.
+                                        Documentos vinculados.
                                     </span>
-
                                 </span>
-
                             </label>
 
 
-                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50">
-
+                            <label
+                                class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50"
+                            >
                                 <input
                                     type="checkbox"
                                     name="sections"
                                     value="agenda"
-                                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
                                     checked
+                                    class="dossier-section mt-0.5 h-4 w-4 rounded border-slate-300"
                                 >
 
                                 <span>
-
-                                    <span class="block text-sm font-semibold text-slate-900">
+                                    <span class="block text-sm font-medium text-slate-800">
                                         Agenda
                                     </span>
-
                                     <span class="mt-1 block text-xs text-slate-500">
-                                        Audiências, reuniões, prazos e compromissos.
+                                        Compromissos e prazos.
                                     </span>
-
                                 </span>
-
                             </label>
 
                         </div>
 
                     </section>
 
+
+                    <div
+                        id="dossier-error"
+                        class="hidden rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                    ></div>
+
                 </div>
 
 
-                <!-- Rodapé -->
-                <div class="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50/70 px-6 py-4 sm:flex-row sm:items-center sm:justify-end sm:px-7">
+                <div
+                    class="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50/60 px-6 py-4 sm:flex-row sm:justify-end"
+                >
 
                     <button
                         type="button"
                         id="cancel-dossier-modal"
-                        class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 cursor-pointer"
+                        class="cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
                     >
                         Cancelar
                     </button>
 
                     <button
                         type="submit"
-                        id="generate-dossier"
-                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 cursor-pointer"
+                        {% if not cases %}disabled{% endif %}
+                        class="rounded-xl bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                        Gerar dossiê
-
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.8"
-                            stroke="currentColor"
-                            class="h-4 w-4"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="m9 12.75 3 3 3-3m-3 3V3.75M5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V8.25L15.75 3H5.25A2.25 2.25 0 0 0 3 5.25v13.5A2.25 2.25 0 0 0 5.25 21Z"
-                            />
-                        </svg>
-
+                        Gerar PDF
                     </button>
 
                 </div>
 
-                </form>
-
-            </div>
+            </form>
 
         </div>
 
     </div>
 
-
-    <!-- CONTROLE DO MODAL -->
-    <script>
-        const editClientModal = document.getElementById("edit-client-modal");
-        const openEditClientModal = document.getElementById("open-edit-client-modal");
-        const closeEditClientModal = document.getElementById("close-edit-client-modal");
-        const editClientModalBackdrop = document.getElementById("edit-client-modal-backdrop");
-        const editClientModalContent = document.getElementById("edit-client-modal-content");
-        const editClientUrl = "{% url 'clients:update' client.pk %}";
+</div>
 
 
-        function bindEditClientForm() {
-            const form = editClientModalContent.querySelector("#client-form");
+<!-- =============================================================
+     JAVASCRIPT DA PÁGINA
+============================================================== -->
 
-            if (!form) {
-                return;
-            }
+<script>
+document.addEventListener("DOMContentLoaded", () => {
 
-            form.action = editClientUrl;
-            form.addEventListener("submit", submitEditClientForm);
+    /*
+    ==============================================================
+    HELPERS DE MODAL
+    ==============================================================
+    */
+
+    const lockBody = () => {
+        document.body.classList.add("overflow-hidden");
+    };
+
+    const unlockBody = () => {
+        document.body.classList.remove("overflow-hidden");
+    };
+
+
+    /*
+    ==============================================================
+    MODAL DE EDIÇÃO
+    ==============================================================
+    */
+
+    const editModal = document.getElementById("edit-client-modal");
+    const editOpenButton = document.getElementById("open-edit-client-modal");
+    const editCloseButton = document.getElementById("close-edit-client-modal");
+    const editBackdrop = document.getElementById("edit-client-modal-backdrop");
+    const editContent = document.getElementById("edit-client-modal-content");
+
+    const editUrl = "{% url 'clients:update' client.pk %}";
+
+
+    const closeEditModal = () => {
+        editModal.classList.add("hidden");
+        unlockBody();
+    };
+
+
+    const bindEditForm = () => {
+
+        const form = editContent.querySelector("form");
+
+        if (!form) {
+            return;
         }
 
+        form.addEventListener("submit", async (event) => {
 
-        function initializeEditClientForm() {
-            const cpfField = editClientModalContent.querySelector("#id_cpf");
-            const cepField = editClientModalContent.querySelector("#id_cep");
-            const logradouroField = editClientModalContent.querySelector("#id_logradouro");
-            const bairroField = editClientModalContent.querySelector("#id_bairro");
-            const cidadeField = editClientModalContent.querySelector("#id_cidade");
-            const ufField = editClientModalContent.querySelector("#id_uf");
-
-            function formatCpf(value) {
-                const digits = value.replace(/\D/g, "").slice(0, 11);
-                if (digits.length <= 3) return digits;
-                if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
-                if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
-                return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
-            }
-
-            function formatCep(value) {
-                const digits = value.replace(/\D/g, "").slice(0, 8);
-                if (digits.length <= 5) return digits;
-                return `${digits.slice(0, 5)}-${digits.slice(5)}`;
-            }
-
-            if (cpfField) {
-                cpfField.maxLength = 14;
-                cpfField.inputMode = "numeric";
-                cpfField.addEventListener("input", function() {
-                    cpfField.value = formatCpf(cpfField.value);
-                });
-            }
-
-            let ultimoCepConsultado = "";
-            let temporizadorCep = null;
-
-            async function lookupCep() {
-                if (!cepField) return;
-                const cep = cepField.value.replace(/\D/g, "");
-                if (cep.length !== 8 || cep === ultimoCepConsultado) return;
-
-                try {
-                    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                    if (!response.ok) throw new Error("Não foi possível consultar o CEP.");
-                    const data = await response.json();
-                    if (data.erro) return;
-
-                    if (logradouroField) logradouroField.value = data.logradouro || "";
-                    if (bairroField) bairroField.value = data.bairro || "";
-                    if (cidadeField) cidadeField.value = data.localidade || "";
-                    if (ufField) ufField.value = data.uf || "";
-                    ultimoCepConsultado = cep;
-                } catch (error) {
-                    console.error("Erro ao consultar o CEP:", error);
-                }
-            }
-
-            if (cepField) {
-                cepField.maxLength = 9;
-                cepField.inputMode = "numeric";
-                cepField.addEventListener("input", function() {
-                    cepField.value = formatCep(cepField.value);
-                    clearTimeout(temporizadorCep);
-                    if (cepField.value.replace(/\D/g, "").length === 8) {
-                        temporizadorCep = setTimeout(lookupCep, 300);
-                    }
-                });
-                cepField.addEventListener("blur", function() {
-                    clearTimeout(temporizadorCep);
-                    lookupCep();
-                });
-            }
-        }
-
-
-        async function loadEditClientForm() {
-            editClientModalContent.innerHTML = `
-                <div class="flex min-h-[300px] items-center justify-center">
-                    <div class="text-center">
-                        <p class="font-medium text-slate-700">Carregando formulário...</p>
-                        <p class="mt-1 text-sm text-slate-500">Aguarde um momento.</p>
-                    </div>
-                </div>
-            `;
-
-            try {
-                const response = await fetch(editClientUrl, {
-                    headers: { "X-Requested-With": "XMLHttpRequest" }
-                });
-
-                const html = await response.text();
-
-                if (!response.ok) {
-                    throw new Error("Não foi possível carregar o formulário.");
-                }
-
-                editClientModalContent.innerHTML = html;
-                initializeEditClientForm();
-                bindEditClientForm();
-            } catch (error) {
-                console.error("Erro ao carregar edição do cliente:", error);
-                editClientModalContent.innerHTML = `
-                    <div class="flex min-h-[300px] items-center justify-center">
-                        <div class="text-center">
-                            <p class="font-medium text-slate-700">Não foi possível carregar o formulário.</p>
-                            <p class="mt-1 text-sm text-slate-500">Tente fechar a janela e abrir novamente.</p>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-
-        async function submitEditClientForm(event) {
             event.preventDefault();
 
-            const form = event.currentTarget;
-            const submitButton = form.querySelector('button[type="submit"]');
+            const submitButton = form.querySelector(
+                'button[type="submit"]'
+            );
+
+            const originalText = submitButton
+                ? submitButton.innerHTML
+                : "";
 
             if (submitButton) {
                 submitButton.disabled = true;
-                submitButton.style.opacity = "0.7";
+                submitButton.innerHTML = "Salvando...";
             }
 
             try {
-                const response = await fetch(editClientUrl, {
+
+                const response = await fetch(editUrl, {
                     method: "POST",
                     body: new FormData(form),
-                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
                 });
 
-                const contentType = response.headers.get("content-type") || "";
+                const contentType =
+                    response.headers.get("content-type") || "";
 
-                if (contentType.includes("application/json")) {
+                if (
+                    response.ok &&
+                    contentType.includes("application/json")
+                ) {
                     const data = await response.json();
 
-                    if (!response.ok || !data.success) {
-                        throw new Error(data.message || "Não foi possível salvar as alterações.");
+                    if (data.success) {
+                        window.location.reload();
+                        return;
                     }
-
-                    closeEditClient();
-                    window.location.reload();
-                    return;
                 }
 
                 const html = await response.text();
-                editClientModalContent.innerHTML = html;
-                initializeEditClientForm();
-                bindEditClientForm();
+
+                editContent.innerHTML = html;
+
+                bindEditForm();
+
             } catch (error) {
-                console.error("Erro ao salvar cliente:", error);
-                const errorMessage = document.createElement("div");
-                errorMessage.className = "mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700";
-                errorMessage.textContent = error.message || "Não foi possível salvar as alterações.";
-                editClientModalContent.prepend(errorMessage);
+
+                console.error(
+                    "Erro ao salvar cliente:",
+                    error
+                );
+
+                editContent.innerHTML = `
+                    <div class="p-8 text-center">
+                        <p class="font-semibold text-red-700">
+                            Não foi possível salvar o cliente.
+                        </p>
+
+                        <p class="mt-2 text-sm text-slate-500">
+                            Verifique sua conexão e tente novamente.
+                        </p>
+                    </div>
+                `;
+
             } finally {
-                const currentButton = editClientModalContent.querySelector('button[type="submit"]');
-                if (currentButton) {
-                    currentButton.disabled = false;
-                    currentButton.style.opacity = "1";
+
+                if (
+                    submitButton &&
+                    document.body.contains(submitButton)
+                ) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalText;
                 }
-            }
-        }
 
-
-        function openEditClient() {
-            editClientModal.classList.remove("hidden");
-            document.body.classList.add("overflow-hidden");
-            loadEditClientForm();
-        }
-
-
-        function closeEditClient() {
-            editClientModal.classList.add("hidden");
-            document.body.classList.remove("overflow-hidden");
-        }
-
-
-        openEditClientModal.addEventListener("click", openEditClient);
-        closeEditClientModal.addEventListener("click", closeEditClient);
-        editClientModalBackdrop.addEventListener("click", closeEditClient);
-
-        const dossierModal = document.getElementById("dossier-modal");
-        const openDossierModal = document.getElementById("open-dossier-modal");
-        const closeDossierModal = document.getElementById("close-dossier-modal");
-        const cancelDossierModal = document.getElementById("cancel-dossier-modal");
-        const dossierModalBackdrop = document.getElementById("dossier-modal-backdrop");
-
-
-        function openDossier() {
-            dossierModal.classList.remove("hidden");
-            document.body.classList.add("overflow-hidden");
-        }
-
-
-        function closeDossier() {
-            dossierModal.classList.add("hidden");
-            document.body.classList.remove("overflow-hidden");
-        }
-
-
-        openDossierModal.addEventListener("click", openDossier);
-        closeDossierModal.addEventListener("click", closeDossier);
-        cancelDossierModal.addEventListener("click", closeDossier);
-        dossierModalBackdrop.addEventListener("click", closeDossier);
-
-
-        document.addEventListener("keydown", function(event) {
-            if (event.key !== "Escape") {
-                return;
             }
 
-            if (!editClientModal.classList.contains("hidden")) {
-                closeEditClient();
-                return;
-            }
-
-            if (!dossierModal.classList.contains("hidden")) {
-                closeDossier();
-            }
         });
-    </script>
 
+    };
+
+
+    const openEditModal = async () => {
+
+        editModal.classList.remove("hidden");
+        lockBody();
+
+        editContent.innerHTML = `
+            <div class="flex items-center justify-center px-6 py-16">
+                <div class="text-center">
+                    <div
+                        class="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-slate-950"
+                    ></div>
+
+                    <p class="mt-4 text-sm text-slate-500">
+                        Carregando cadastro...
+                    </p>
+                </div>
+            </div>
+        `;
+
+        try {
+
+            const response = await fetch(editUrl, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    `HTTP ${response.status}`
+                );
+            }
+
+            editContent.innerHTML =
+                await response.text();
+
+            bindEditForm();
+
+        } catch (error) {
+
+            console.error(
+                "Erro ao carregar formulário:",
+                error
+            );
+
+            editContent.innerHTML = `
+                <div class="p-8 text-center">
+                    <p class="font-semibold text-red-700">
+                        Não foi possível carregar o cadastro.
+                    </p>
+
+                    <p class="mt-2 text-sm text-slate-500">
+                        Atualize a página e tente novamente.
+                    </p>
+                </div>
+            `;
+
+        }
+
+    };
+
+
+    editOpenButton?.addEventListener(
+        "click",
+        openEditModal
+    );
+
+    editCloseButton?.addEventListener(
+        "click",
+        closeEditModal
+    );
+
+    editBackdrop?.addEventListener(
+        "click",
+        closeEditModal
+    );
+
+
+    /*
+    ==============================================================
+    MODAL DE DOSSIÊ
+    ==============================================================
+    */
+
+    const dossierModal =
+        document.getElementById("dossier-modal");
+
+    const dossierOpenButton =
+        document.getElementById("open-dossier-modal");
+
+    const dossierCloseButton =
+        document.getElementById("close-dossier-modal");
+
+    const dossierCancelButton =
+        document.getElementById("cancel-dossier-modal");
+
+    const dossierBackdrop =
+        document.getElementById("dossier-modal-backdrop");
+
+    const dossierForm =
+        document.getElementById("dossier-form");
+
+    const dossierError =
+        document.getElementById("dossier-error");
+
+
+    const openDossierModal = () => {
+        dossierModal.classList.remove("hidden");
+        dossierError.classList.add("hidden");
+        lockBody();
+    };
+
+
+    const closeDossierModal = () => {
+        dossierModal.classList.add("hidden");
+        unlockBody();
+    };
+
+
+    dossierOpenButton?.addEventListener(
+        "click",
+        openDossierModal
+    );
+
+    dossierCloseButton?.addEventListener(
+        "click",
+        closeDossierModal
+    );
+
+    dossierCancelButton?.addEventListener(
+        "click",
+        closeDossierModal
+    );
+
+    dossierBackdrop?.addEventListener(
+        "click",
+        closeDossierModal
+    );
+
+
+    /*
+    ==============================================================
+    SELECIONAR / DESMARCAR CASOS
+    ==============================================================
+    */
+
+    const toggleCasesButton =
+        document.getElementById("toggle-dossier-cases");
+
+    toggleCasesButton?.addEventListener("click", () => {
+
+        const checkboxes = [
+            ...document.querySelectorAll(".dossier-case")
+        ];
+
+        const allChecked =
+            checkboxes.length > 0 &&
+            checkboxes.every(
+                checkbox => checkbox.checked
+            );
+
+        checkboxes.forEach(
+            checkbox => {
+                checkbox.checked = !allChecked;
+            }
+        );
+
+        toggleCasesButton.textContent =
+            allChecked
+                ? "Selecionar todos"
+                : "Desmarcar todos";
+
+    });
+
+
+    /*
+    ==============================================================
+    SELECIONAR / DESMARCAR SEÇÕES
+    ==============================================================
+    */
+
+    const toggleSectionsButton =
+        document.getElementById(
+            "toggle-dossier-sections"
+        );
+
+    toggleSectionsButton?.addEventListener("click", () => {
+
+        const checkboxes = [
+            ...document.querySelectorAll(".dossier-section")
+        ];
+
+        const allChecked =
+            checkboxes.every(
+                checkbox => checkbox.checked
+            );
+
+        checkboxes.forEach(
+            checkbox => {
+                checkbox.checked = !allChecked;
+            }
+        );
+
+        toggleSectionsButton.textContent =
+            allChecked
+                ? "Selecionar todas"
+                : "Desmarcar todas";
+
+    });
+
+
+    /*
+    ==============================================================
+    VALIDAÇÃO DO DOSSIÊ
+    ==============================================================
+    */
+
+    dossierForm?.addEventListener("submit", (event) => {
+
+        const selectedCases =
+            dossierForm.querySelectorAll(
+                'input[name="cases"]:checked'
+            );
+
+        const selectedSections =
+            dossierForm.querySelectorAll(
+                'input[name="sections"]:checked'
+            );
+
+        let message = "";
+
+        if (!selectedCases.length) {
+            message =
+                "Selecione pelo menos um caso para gerar o dossiê.";
+        } else if (!selectedSections.length) {
+            message =
+                "Selecione pelo menos uma seção para gerar o dossiê.";
+        }
+
+        if (message) {
+
+            event.preventDefault();
+
+            dossierError.textContent = message;
+            dossierError.classList.remove("hidden");
+
+            dossierError.scrollIntoView({
+                behavior: "smooth",
+                block: "nearest"
+            });
+
+            return;
+        }
+
+        dossierError.classList.add("hidden");
+
+        /*
+         * O PDF abre em nova aba devido ao target="_blank".
+         * Fechamos o modal sem interromper o envio.
+         */
+        setTimeout(
+            closeDossierModal,
+            100
+        );
+
+    });
+
+
+    /*
+    ==============================================================
+    TECLA ESC
+    ==============================================================
+    */
+
+    document.addEventListener("keydown", (event) => {
+
+        if (event.key !== "Escape") {
+            return;
+        }
+
+        if (!editModal.classList.contains("hidden")) {
+            closeEditModal();
+            return;
+        }
+
+        if (!dossierModal.classList.contains("hidden")) {
+            closeDossierModal();
+        }
+
+    });
+
+});
+</script>
 
 {% endblock %}
