@@ -1089,22 +1089,6 @@
         const editClientUrl = "{% url 'clients:update' client.pk %}";
 
 
-        function executeEditClientScripts(container) {
-            const scripts = container.querySelectorAll("script");
-
-            scripts.forEach(function(script) {
-                const newScript = document.createElement("script");
-
-                Array.from(script.attributes).forEach(function(attribute) {
-                    newScript.setAttribute(attribute.name, attribute.value);
-                });
-
-                newScript.textContent = script.textContent;
-                script.replaceWith(newScript);
-            });
-        }
-
-
         function bindEditClientForm() {
             const form = editClientModalContent.querySelector("#client-form");
 
@@ -1113,63 +1097,79 @@
             }
 
             form.action = editClientUrl;
+            form.addEventListener("submit", submitEditClientForm);
+        }
 
-            form.addEventListener("submit", async function(event) {
-                event.preventDefault();
 
-                const submitButton = form.querySelector('button[type="submit"]');
+        function initializeEditClientForm() {
+            const cpfField = editClientModalContent.querySelector("#id_cpf");
+            const cepField = editClientModalContent.querySelector("#id_cep");
+            const logradouroField = editClientModalContent.querySelector("#id_logradouro");
+            const bairroField = editClientModalContent.querySelector("#id_bairro");
+            const cidadeField = editClientModalContent.querySelector("#id_cidade");
+            const ufField = editClientModalContent.querySelector("#id_uf");
 
-                if (submitButton) {
-                    submitButton.disabled = true;
-                    submitButton.style.opacity = "0.7";
-                }
+            function formatCpf(value) {
+                const digits = value.replace(/\D/g, "").slice(0, 11);
+                if (digits.length <= 3) return digits;
+                if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+                if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+                return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+            }
+
+            function formatCep(value) {
+                const digits = value.replace(/\D/g, "").slice(0, 8);
+                if (digits.length <= 5) return digits;
+                return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+            }
+
+            if (cpfField) {
+                cpfField.maxLength = 14;
+                cpfField.inputMode = "numeric";
+                cpfField.addEventListener("input", function() {
+                    cpfField.value = formatCpf(cpfField.value);
+                });
+            }
+
+            let ultimoCepConsultado = "";
+            let temporizadorCep = null;
+
+            async function lookupCep() {
+                if (!cepField) return;
+                const cep = cepField.value.replace(/\D/g, "");
+                if (cep.length !== 8 || cep === ultimoCepConsultado) return;
 
                 try {
-                    const formData = new FormData(form);
+                    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    if (!response.ok) throw new Error("Não foi possível consultar o CEP.");
+                    const data = await response.json();
+                    if (data.erro) return;
 
-                    const saveResponse = await fetch(editClientUrl, {
-                        method: "POST",
-                        body: formData,
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest"
-                        }
-                    });
-
-                    if (!saveResponse.ok) {
-                        throw new Error("Não foi possível salvar as alterações.");
-                    }
-
-                    if (saveResponse.redirected) {
-                        closeEditClient();
-                        window.location.reload();
-                        return;
-                    }
-
-                    const saveHtml = await saveResponse.text();
-                    const saveParser = new DOMParser();
-                    const saveDocument = saveParser.parseFromString(saveHtml, "text/html");
-                    const returnedFormContent = saveDocument.querySelector("#client-form-content");
-
-                    if (returnedFormContent) {
-                        editClientModalContent.innerHTML = returnedFormContent.innerHTML;
-                        bindEditClientForm();
-                        executeEditClientScripts(editClientModalContent);
-                        return;
-                    }
-
-                    closeEditClient();
-                    window.location.reload();
+                    if (logradouroField) logradouroField.value = data.logradouro || "";
+                    if (bairroField) bairroField.value = data.bairro || "";
+                    if (cidadeField) cidadeField.value = data.localidade || "";
+                    if (ufField) ufField.value = data.uf || "";
+                    ultimoCepConsultado = cep;
                 } catch (error) {
-                    console.error("Erro ao salvar cliente:", error);
-
-                    if (submitButton) {
-                        submitButton.disabled = false;
-                        submitButton.style.opacity = "1";
-                    }
-
-                    alert("Não foi possível salvar as alterações. Tente novamente.");
+                    console.error("Erro ao consultar o CEP:", error);
                 }
-            });
+            }
+
+            if (cepField) {
+                cepField.maxLength = 9;
+                cepField.inputMode = "numeric";
+                cepField.addEventListener("input", function() {
+                    cepField.value = formatCep(cepField.value);
+                    clearTimeout(temporizadorCep);
+                    if (cepField.value.replace(/\D/g, "").length === 8) {
+                        temporizadorCep = setTimeout(lookupCep, 300);
+                    }
+                });
+                cepField.addEventListener("blur", function() {
+                    clearTimeout(temporizadorCep);
+                    lookupCep();
+                });
+            }
         }
 
 
@@ -1177,55 +1177,88 @@
             editClientModalContent.innerHTML = `
                 <div class="flex min-h-[300px] items-center justify-center">
                     <div class="text-center">
-                        <p class="font-medium text-slate-700">
-                            Carregando formulário...
-                        </p>
-                        <p class="mt-1 text-sm text-slate-500">
-                            Aguarde um momento.
-                        </p>
+                        <p class="font-medium text-slate-700">Carregando formulário...</p>
+                        <p class="mt-1 text-sm text-slate-500">Aguarde um momento.</p>
                     </div>
                 </div>
             `;
 
             try {
                 const response = await fetch(editClientUrl, {
-                    headers: {
-                        "X-Requested-With": "XMLHttpRequest"
-                    }
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
                 });
+
+                const html = await response.text();
 
                 if (!response.ok) {
                     throw new Error("Não foi possível carregar o formulário.");
                 }
 
-                const html = await response.text();
-                const parser = new DOMParser();
-                const documentHtml = parser.parseFromString(html, "text/html");
-                const formContent = documentHtml.querySelector("#client-form-content");
-
-                if (!formContent) {
-                    throw new Error("O formulário de edição não foi encontrado.");
-                }
-
-                editClientModalContent.innerHTML = formContent.innerHTML;
-
+                editClientModalContent.innerHTML = html;
+                initializeEditClientForm();
                 bindEditClientForm();
-                executeEditClientScripts(editClientModalContent);
             } catch (error) {
                 console.error("Erro ao carregar edição do cliente:", error);
-
                 editClientModalContent.innerHTML = `
                     <div class="flex min-h-[300px] items-center justify-center">
                         <div class="text-center">
-                            <p class="font-medium text-slate-700">
-                                Não foi possível carregar o formulário.
-                            </p>
-                            <p class="mt-1 text-sm text-slate-500">
-                                Tente fechar a janela e abrir novamente.
-                            </p>
+                            <p class="font-medium text-slate-700">Não foi possível carregar o formulário.</p>
+                            <p class="mt-1 text-sm text-slate-500">Tente fechar a janela e abrir novamente.</p>
                         </div>
                     </div>
                 `;
+            }
+        }
+
+
+        async function submitEditClientForm(event) {
+            event.preventDefault();
+
+            const form = event.currentTarget;
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.style.opacity = "0.7";
+            }
+
+            try {
+                const response = await fetch(editClientUrl, {
+                    method: "POST",
+                    body: new FormData(form),
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                });
+
+                const contentType = response.headers.get("content-type") || "";
+
+                if (contentType.includes("application/json")) {
+                    const data = await response.json();
+
+                    if (!response.ok || !data.success) {
+                        throw new Error(data.message || "Não foi possível salvar as alterações.");
+                    }
+
+                    closeEditClient();
+                    window.location.reload();
+                    return;
+                }
+
+                const html = await response.text();
+                editClientModalContent.innerHTML = html;
+                initializeEditClientForm();
+                bindEditClientForm();
+            } catch (error) {
+                console.error("Erro ao salvar cliente:", error);
+                const errorMessage = document.createElement("div");
+                errorMessage.className = "mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700";
+                errorMessage.textContent = error.message || "Não foi possível salvar as alterações.";
+                editClientModalContent.prepend(errorMessage);
+            } finally {
+                const currentButton = editClientModalContent.querySelector('button[type="submit"]');
+                if (currentButton) {
+                    currentButton.disabled = false;
+                    currentButton.style.opacity = "1";
+                }
             }
         }
 
@@ -1246,7 +1279,6 @@
         openEditClientModal.addEventListener("click", openEditClient);
         closeEditClientModal.addEventListener("click", closeEditClient);
         editClientModalBackdrop.addEventListener("click", closeEditClient);
-
 
         const dossierModal = document.getElementById("dossier-modal");
         const openDossierModal = document.getElementById("open-dossier-modal");

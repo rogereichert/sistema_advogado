@@ -1,13 +1,17 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+
+from apps.agenda.models import AgendaEvent
 
 from .forms import ClientForm
 from .models import Client
 
-from django.utils import timezone
 
-from apps.agenda.models import AgendaEvent
+
+def _is_ajax(request):
+    return request.headers.get("x-requested-with") == "XMLHttpRequest"
 
 
 @login_required
@@ -31,7 +35,7 @@ def client_create(request):
         if form.is_valid():
             client = form.save()
 
-            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            if _is_ajax(request):
                 return JsonResponse(
                     {
                         "success": True,
@@ -40,51 +44,34 @@ def client_create(request):
                     }
                 )
 
-            return redirect(
-                "clients:detail",
-                pk=client.pk,
-            )
-
+            return redirect("clients:detail", pk=client.pk)
     else:
         form = ClientForm()
 
-    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+    context = {"form": form}
+
+    if _is_ajax(request) or request.GET.get("modal") == "1":
         return render(
             request,
-            "clients/client_form.html",
-            {
-                "form": form,
-                "modal": True,
-            },
+            "clients/partials/client_form_modal.html",
+            context,
             status=400 if request.method == "POST" else 200,
         )
 
-    return render(
-        request,
-        "clients/client_form.html",
-        {
-            "form": form,
-        },
-    )
+    return render(request, "clients/client_form.html", context)
 
 
 @login_required
 def client_update(request, pk):
-    client = get_object_or_404(
-        Client,
-        pk=pk,
-    )
+    client = get_object_or_404(Client, pk=pk)
 
     if request.method == "POST":
-        form = ClientForm(
-            request.POST,
-            instance=client,
-        )
+        form = ClientForm(request.POST, instance=client)
 
         if form.is_valid():
             form.save()
 
-            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            if _is_ajax(request):
                 return JsonResponse(
                     {
                         "success": True,
@@ -93,86 +80,31 @@ def client_update(request, pk):
                     }
                 )
 
-            return redirect(
-                "clients:detail",
-                pk=client.pk,
-            )
-
+            return redirect("clients:detail", pk=client.pk)
     else:
-        form = ClientForm(
-            instance=client,
-        )
+        form = ClientForm(instance=client)
 
-    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+    context = {
+        "form": form,
+        "client": client,
+    }
+
+    if _is_ajax(request) or request.GET.get("modal") == "1":
         return render(
             request,
-            "clients/client_form.html",
-            {
-                "form": form,
-                "client": client,
-                "modal": True,
-            },
+            "clients/partials/client_form_modal.html",
+            context,
             status=400 if request.method == "POST" else 200,
         )
 
-    return render(
-        request,
-        "clients/client_form.html",
-        {
-            "form": form,
-            "client": client,
-        },
-    )
+    return render(request, "clients/client_form.html", context)
 
 
 @login_required
 def client_detail(request, pk):
-    client = get_object_or_404(
-        Client,
-        pk=pk,
-    )
+    client = get_object_or_404(Client, pk=pk)
 
-    cases = client.casos.select_related(
-        "status"
-    ).all()
-
-    today = timezone.localdate()
-
-    next_event = (
-        AgendaEvent.objects
-        .select_related("caso")
-        .filter(
-            caso__cliente=client,
-            data__gte=today,
-        )
-        .order_by(
-            "data",
-            "hora",
-        )
-        .first()
-    )
-
-    return render(
-        request,
-        "clients/client_detail.html",
-        {
-            "client": client,
-            "cases": cases,
-            "next_event": next_event,
-        },
-    )
-
-
-@login_required
-def client_detail(request, pk):
-    client = get_object_or_404(
-        Client,
-        pk=pk,
-    )
-
-    cases = client.casos.select_related(
-        "status"
-    ).all()
+    cases = client.casos.select_related("status").all()
 
     closed_statuses = [
         "Concluído",
@@ -184,6 +116,19 @@ def client_detail(request, pk):
         status__nome__in=closed_statuses
     ).count()
 
+    today = timezone.localdate()
+
+    next_event = (
+        AgendaEvent.objects
+        .select_related("caso")
+        .filter(
+            caso__cliente=client,
+            data__gte=today,
+        )
+        .order_by("data", "hora")
+        .first()
+    )
+
     return render(
         request,
         "clients/client_detail.html",
@@ -191,5 +136,6 @@ def client_detail(request, pk):
             "client": client,
             "cases": cases,
             "active_cases_count": active_cases_count,
+            "next_event": next_event,
         },
     )

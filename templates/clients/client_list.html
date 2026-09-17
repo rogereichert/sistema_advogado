@@ -250,6 +250,7 @@
                                         <button
                                             type="button"
                                             data-edit-client="{{ client.pk }}"
+                                            data-edit-url="{% url 'clients:update' client.pk %}"
                                             class="inline-flex items-center rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 cursor-pointer"
                                         >
                                             Editar
@@ -624,38 +625,29 @@
         openClientModal();
 
         try {
-            const response = await fetch(`${url}${url.includes("?") ? "&" : "?"}_=${Date.now()}`, {
-                cache: "no-store",
+            const response = await fetch(url, {
                 headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "Cache-Control": "no-cache"
+                    "X-Requested-With": "XMLHttpRequest"
                 }
             });
+
+            const html = await response.text();
 
             if (!response.ok) {
                 throw new Error("Não foi possível carregar o formulário.");
             }
 
-            const html = await response.text();
-            const parser = new DOMParser();
-            const documentResponse = parser.parseFromString(html, "text/html");
-            const formContent = documentResponse.getElementById("client-form-content");
+            clientModalBody.innerHTML = html;
+            initializeClientForm();
 
-            if (!formContent) {
+            const form = clientModalBody.querySelector("#client-form");
+
+            if (!form) {
                 throw new Error("Formulário de cliente não encontrado.");
             }
 
-            clientModalBody.innerHTML = formContent.outerHTML;
-
-            initializeClientForm();
-
-            const form = document.getElementById("client-form");
-
-            if (form) {
-                form.action = url;
-                form.addEventListener("submit", submitClientForm);
-            }
-
+            form.action = url;
+            form.addEventListener("submit", submitClientForm);
         } catch (error) {
             clientModalBody.innerHTML = `
                 <div class="flex min-h-64 items-center justify-center text-center">
@@ -681,16 +673,13 @@
 
         const form = event.currentTarget;
         const submitButton = form.querySelector('button[type="submit"]');
+        const textoOriginal = submitButton ? submitButton.textContent.trim() : "Salvar";
 
-        if (!submitButton) {
-            return;
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.classList.add("opacity-60", "cursor-not-allowed");
+            submitButton.textContent = "Salvando...";
         }
-
-        const textoOriginal = submitButton.textContent.trim();
-
-        submitButton.disabled = true;
-        submitButton.classList.add("opacity-60", "cursor-not-allowed");
-        submitButton.textContent = "Salvando...";
 
         try {
             const response = await fetch(form.action || clientModalUrl, {
@@ -713,40 +702,34 @@
                 closeClientModal();
                 await refreshClientList();
                 showClientToast(data.message);
-
                 return;
             }
 
             const html = await response.text();
-            const parser = new DOMParser();
-            const documentResponse = parser.parseFromString(html, "text/html");
-            const formContent = documentResponse.getElementById("client-form-content");
 
-            if (!formContent) {
-                throw new Error("Não foi possível processar a resposta do servidor.");
+            if (!response.ok) {
+                clientModalBody.innerHTML = html;
+                initializeClientForm();
+                const returnedForm = clientModalBody.querySelector("#client-form");
+
+                if (returnedForm) {
+                    returnedForm.action = clientModalUrl;
+                    returnedForm.addEventListener("submit", submitClientForm);
+                }
+
+                return;
             }
 
-            clientModalBody.innerHTML = formContent.outerHTML;
-            initializeClientForm();
-
-            const newForm = document.getElementById("client-form");
-
-            if (newForm) {
-                newForm.action = clientModalUrl;
-                newForm.addEventListener("submit", submitClientForm);
-            }
-
+            throw new Error("Resposta inesperada do servidor.");
         } catch (error) {
             console.error("Erro ao salvar cliente:", error);
 
             const errorMessage = document.createElement("div");
             errorMessage.className = "mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700";
             errorMessage.textContent = error.message || "Não foi possível salvar o cliente.";
-
             clientModalBody.prepend(errorMessage);
-
         } finally {
-            const currentForm = document.getElementById("client-form");
+            const currentForm = clientModalBody.querySelector("#client-form");
             const currentSubmitButton = currentForm
                 ? currentForm.querySelector('button[type="submit"]')
                 : null;
@@ -762,11 +745,9 @@
 
     async function refreshClientList() {
         try {
-            const response = await fetch(`${window.location.href}${window.location.href.includes("?") ? "&" : "?"}_=${Date.now()}`, {
-                cache: "no-store",
+            const response = await fetch(window.location.href, {
                 headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "Cache-Control": "no-cache"
+                    "X-Requested-With": "XMLHttpRequest"
                 }
             });
 
@@ -795,22 +776,14 @@
     function initializeClientEditButtons() {
         document.querySelectorAll("[data-edit-client]").forEach(function(button) {
             button.addEventListener("click", function() {
-                const clientId = button.dataset.editClient;
-
-                loadClientForm(
-                    `{% url 'clients:list' %}${clientId}/editar/`,
-                    true
-                );
+                loadClientForm(button.dataset.editUrl, true);
             });
         });
     }
 
 
     document.getElementById("open-create-client").addEventListener("click", function() {
-        loadClientForm(
-            "{% url 'clients:create' %}",
-            false
-        );
+        loadClientForm("{% url 'clients:create' %}?modal=1", false);
     });
 
 
