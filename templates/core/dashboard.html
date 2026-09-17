@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
     Visão Geral | Advogado Company
@@ -34,9 +35,10 @@
 
         <div class="flex flex-wrap items-center gap-3">
 
-            <a
-                href="{% url 'clients:create' %}"
-                class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 hover:text-slate-950"
+            <button
+                type="button"
+                id="open-create-client-modal"
+                class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-brand-200 bg-white px-5 py-3 text-sm font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
             >
 
                 <svg
@@ -46,6 +48,7 @@
                     stroke-width="1.8"
                     stroke="currentColor"
                     class="h-4 w-4"
+                    aria-hidden="true"
                 >
                     <path
                         stroke-linecap="round"
@@ -56,7 +59,7 @@
 
                 Novo cliente
 
-            </a>
+            </button>
 
 
             <a
@@ -664,4 +667,19 @@
 
 </div>
 
+{% include "clients/_client_modal.html" %}
+
+<div
+    id="client-list-config"
+    class="hidden"
+    aria-hidden="true"
+    data-create-url="{% url 'clients:create' %}"
+    data-edit-url-template="{% url 'clients:update' 999999999 %}"
+></div>
+
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'js/clients/client-modal.js' %}"></script>
 {% endblock %}
