@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ClientForm
@@ -30,6 +31,15 @@ def client_create(request):
         if form.is_valid():
             client = form.save()
 
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "client_id": client.pk,
+                        "message": "Cliente cadastrado com sucesso.",
+                    }
+                )
+
             return redirect(
                 "clients:detail",
                 pk=client.pk,
@@ -37,6 +47,17 @@ def client_create(request):
 
     else:
         form = ClientForm()
+
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(
+            request,
+            "clients/client_form.html",
+            {
+                "form": form,
+                "modal": True,
+            },
+            status=400 if request.method == "POST" else 200,
+        )
 
     return render(
         request,
@@ -63,6 +84,15 @@ def client_update(request, pk):
         if form.is_valid():
             form.save()
 
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "client_id": client.pk,
+                        "message": "Cliente atualizado com sucesso.",
+                    }
+                )
+
             return redirect(
                 "clients:detail",
                 pk=client.pk,
@@ -71,6 +101,18 @@ def client_update(request, pk):
     else:
         form = ClientForm(
             instance=client,
+        )
+
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(
+            request,
+            "clients/client_form.html",
+            {
+                "form": form,
+                "client": client,
+                "modal": True,
+            },
+            status=400 if request.method == "POST" else 200,
         )
 
     return render(

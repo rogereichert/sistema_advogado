@@ -81,9 +81,10 @@
                 Gerar dossiê
             </button>
 
-            <a
-                href="{% url 'clients:update' client.pk %}"
-                class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+            <button
+                type="button"
+                id="open-edit-client-modal"
+                class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 cursor-pointer"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -106,7 +107,7 @@
                 </svg>
 
                 Editar cliente
-            </a>
+            </button>
 
             <a
                 href="{% url 'cases:create' client.pk %}"
@@ -511,6 +512,101 @@
     </div>
 
 </div>
+
+    <!-- MODAL: EDITAR CLIENTE -->
+    <div
+        id="edit-client-modal"
+        class="fixed inset-0 z-50 hidden"
+        aria-labelledby="edit-client-modal-title"
+        aria-modal="true"
+        role="dialog"
+    >
+
+        <!-- Fundo -->
+        <div
+            id="edit-client-modal-backdrop"
+            class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
+        ></div>
+
+
+        <!-- Conteúdo -->
+        <div class="relative flex min-h-full items-center justify-center p-4 sm:p-6">
+
+            <div
+                class="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+            >
+
+                <!-- Cabeçalho -->
+                <div class="flex shrink-0 items-start justify-between border-b border-slate-100 px-6 py-5 sm:px-7">
+
+                    <div>
+
+                        <p class="text-xs font-semibold uppercase tracking-[0.15em] text-amber-700">
+                            Edição de cadastro
+                        </p>
+
+                        <h2
+                            id="edit-client-modal-title"
+                            class="mt-1 text-xl font-semibold tracking-tight text-slate-950"
+                        >
+                            Editar cliente
+                        </h2>
+
+                        <p class="mt-1 text-sm text-slate-500">
+                            Atualize os dados pessoais e informações de contato do cliente.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="close-edit-client-modal"
+                        class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                        aria-label="Fechar"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-5 w-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6 18 18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button>
+
+                </div>
+
+
+                <!-- Corpo -->
+                <div
+                    id="edit-client-modal-content"
+                    class="min-h-0 flex-1 overflow-y-auto bg-slate-50/40 px-5 py-5 sm:px-6"
+                >
+                    <div class="flex min-h-[300px] items-center justify-center">
+                        <div class="text-center">
+                            <p class="font-medium text-slate-700">
+                                Carregando formulário...
+                            </p>
+                            <p class="mt-1 text-sm text-slate-500">
+                                Aguarde um momento.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 
     <!-- MODAL: GERAR DOSSIÊ -->
     <div
@@ -985,6 +1081,173 @@
 
     <!-- CONTROLE DO MODAL -->
     <script>
+        const editClientModal = document.getElementById("edit-client-modal");
+        const openEditClientModal = document.getElementById("open-edit-client-modal");
+        const closeEditClientModal = document.getElementById("close-edit-client-modal");
+        const editClientModalBackdrop = document.getElementById("edit-client-modal-backdrop");
+        const editClientModalContent = document.getElementById("edit-client-modal-content");
+        const editClientUrl = "{% url 'clients:update' client.pk %}";
+
+
+        function executeEditClientScripts(container) {
+            const scripts = container.querySelectorAll("script");
+
+            scripts.forEach(function(script) {
+                const newScript = document.createElement("script");
+
+                Array.from(script.attributes).forEach(function(attribute) {
+                    newScript.setAttribute(attribute.name, attribute.value);
+                });
+
+                newScript.textContent = script.textContent;
+                script.replaceWith(newScript);
+            });
+        }
+
+
+        function bindEditClientForm() {
+            const form = editClientModalContent.querySelector("#client-form");
+
+            if (!form) {
+                return;
+            }
+
+            form.action = editClientUrl;
+
+            form.addEventListener("submit", async function(event) {
+                event.preventDefault();
+
+                const submitButton = form.querySelector('button[type="submit"]');
+
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    submitButton.style.opacity = "0.7";
+                }
+
+                try {
+                    const formData = new FormData(form);
+
+                    const saveResponse = await fetch(editClientUrl, {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    });
+
+                    if (!saveResponse.ok) {
+                        throw new Error("Não foi possível salvar as alterações.");
+                    }
+
+                    if (saveResponse.redirected) {
+                        closeEditClient();
+                        window.location.reload();
+                        return;
+                    }
+
+                    const saveHtml = await saveResponse.text();
+                    const saveParser = new DOMParser();
+                    const saveDocument = saveParser.parseFromString(saveHtml, "text/html");
+                    const returnedFormContent = saveDocument.querySelector("#client-form-content");
+
+                    if (returnedFormContent) {
+                        editClientModalContent.innerHTML = returnedFormContent.innerHTML;
+                        bindEditClientForm();
+                        executeEditClientScripts(editClientModalContent);
+                        return;
+                    }
+
+                    closeEditClient();
+                    window.location.reload();
+                } catch (error) {
+                    console.error("Erro ao salvar cliente:", error);
+
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.style.opacity = "1";
+                    }
+
+                    alert("Não foi possível salvar as alterações. Tente novamente.");
+                }
+            });
+        }
+
+
+        async function loadEditClientForm() {
+            editClientModalContent.innerHTML = `
+                <div class="flex min-h-[300px] items-center justify-center">
+                    <div class="text-center">
+                        <p class="font-medium text-slate-700">
+                            Carregando formulário...
+                        </p>
+                        <p class="mt-1 text-sm text-slate-500">
+                            Aguarde um momento.
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(editClientUrl, {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Não foi possível carregar o formulário.");
+                }
+
+                const html = await response.text();
+                const parser = new DOMParser();
+                const documentHtml = parser.parseFromString(html, "text/html");
+                const formContent = documentHtml.querySelector("#client-form-content");
+
+                if (!formContent) {
+                    throw new Error("O formulário de edição não foi encontrado.");
+                }
+
+                editClientModalContent.innerHTML = formContent.innerHTML;
+
+                bindEditClientForm();
+                executeEditClientScripts(editClientModalContent);
+            } catch (error) {
+                console.error("Erro ao carregar edição do cliente:", error);
+
+                editClientModalContent.innerHTML = `
+                    <div class="flex min-h-[300px] items-center justify-center">
+                        <div class="text-center">
+                            <p class="font-medium text-slate-700">
+                                Não foi possível carregar o formulário.
+                            </p>
+                            <p class="mt-1 text-sm text-slate-500">
+                                Tente fechar a janela e abrir novamente.
+                            </p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+
+        function openEditClient() {
+            editClientModal.classList.remove("hidden");
+            document.body.classList.add("overflow-hidden");
+            loadEditClientForm();
+        }
+
+
+        function closeEditClient() {
+            editClientModal.classList.add("hidden");
+            document.body.classList.remove("overflow-hidden");
+        }
+
+
+        openEditClientModal.addEventListener("click", openEditClient);
+        closeEditClientModal.addEventListener("click", closeEditClient);
+        editClientModalBackdrop.addEventListener("click", closeEditClient);
+
+
         const dossierModal = document.getElementById("dossier-modal");
         const openDossierModal = document.getElementById("open-dossier-modal");
         const closeDossierModal = document.getElementById("close-dossier-modal");
@@ -1011,11 +1274,18 @@
 
 
         document.addEventListener("keydown", function(event) {
-
-            if (event.key === "Escape" && !dossierModal.classList.contains("hidden")) {
-                closeDossier();
+            if (event.key !== "Escape") {
+                return;
             }
 
+            if (!editClientModal.classList.contains("hidden")) {
+                closeEditClient();
+                return;
+            }
+
+            if (!dossierModal.classList.contains("hidden")) {
+                closeDossier();
+            }
         });
     </script>
 
