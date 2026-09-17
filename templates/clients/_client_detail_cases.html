@@ -1,0 +1,457 @@
+<!-- =============================================================
+     CASOS JURÍDICOS DO CLIENTE
+============================================================== -->
+
+<section
+    class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+    aria-labelledby="client-cases-title"
+>
+
+    <!-- =========================================================
+         CABEÇALHO
+    ========================================================== -->
+
+    <header
+        class="flex flex-col justify-between gap-4 border-b border-brand-100 px-5 py-5 sm:flex-row sm:items-center sm:px-6"
+    >
+
+        <div class="flex min-w-0 items-center gap-3">
+
+            <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-700"
+                aria-hidden="true"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.7"
+                    stroke="currentColor"
+                    class="h-[18px] w-[18px]"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 6.75V5.625A2.625 2.625 0 0 1 11.625 3h.75A2.625 2.625 0 0 1 15 5.625V6.75m-10.5 0h15A1.5 1.5 0 0 1 21 8.25v9A1.5 1.5 0 0 1 19.5 18.75h-15A1.5 1.5 0 0 1 3 17.25v-9A1.5 1.5 0 0 1 4.5 6.75Z"
+                    />
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 11.25c2.846 1.167 5.858 1.75 9 1.75s6.154-.583 9-1.75"
+                    />
+                </svg>
+            </div>
+
+
+            <div class="min-w-0">
+
+                <p
+                    class="text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+                >
+                    Acompanhamento
+                </p>
+
+                <h2
+                    id="client-cases-title"
+                    class="mt-0.5 font-semibold tracking-tight text-brand-950"
+                >
+                    Casos jurídicos
+                </h2>
+
+                <p
+                    class="mt-1 text-sm leading-5 text-slate-500"
+                >
+                    Processos e demandas vinculados a este cliente.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             NOVO CASO
+        ====================================================== -->
+
+        <a
+            href="{% url 'cases:create' client.pk %}"
+            class="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-xl border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-100 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="h-4 w-4"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                />
+            </svg>
+
+            <span>Adicionar caso</span>
+        </a>
+
+    </header>
+
+
+    <!-- =========================================================
+         LISTAGEM
+    ========================================================== -->
+
+    {% if cases %}
+
+        <div class="divide-y divide-brand-50">
+
+            {% for case in cases %}
+
+                <article
+                    class="group relative transition-colors duration-150 hover:bg-brand-50/40"
+                >
+
+                    <a
+                        href="{% url 'cases:detail' case.pk %}"
+                        class="block px-5 py-5 focus:outline-none focus-visible:bg-brand-50 sm:px-6"
+                        aria-label="Abrir caso {{ case.titulo }}"
+                    >
+
+                        <div
+                            class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
+                        >
+
+                            <!-- =================================
+                                 INFORMAÇÕES
+                            ================================== -->
+
+                            <div class="min-w-0">
+
+                                <div
+                                    class="flex flex-wrap items-center gap-2.5"
+                                >
+
+                                    <!-- STATUS -->
+
+                                    {% if case.status %}
+
+                                        <span
+                                            class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-gold-200 bg-gold-50 px-2.5 py-1 text-[11px] font-semibold text-gold-700"
+                                        >
+                                            <span
+                                                class="h-1.5 w-1.5 rounded-full bg-gold-500"
+                                                aria-hidden="true"
+                                            ></span>
+
+                                            {{ case.status.nome }}
+                                        </span>
+
+                                    {% else %}
+
+                                        <span
+                                            class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-slate-500"
+                                        >
+                                            <span
+                                                class="h-1.5 w-1.5 rounded-full bg-slate-400"
+                                                aria-hidden="true"
+                                            ></span>
+
+                                            Sem status
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    <!-- TÍTULO -->
+
+                                    <h3
+                                        class="min-w-0 text-base font-semibold tracking-tight text-brand-950 transition group-hover:text-brand-700"
+                                    >
+                                        {{ case.titulo }}
+                                    </h3>
+
+                                </div>
+
+
+                                <!-- =============================
+                                     METADADOS
+                                ============================== -->
+
+                                <div
+                                    class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-500"
+                                >
+
+                                    <!-- ÁREA JURÍDICA -->
+
+                                    {% if case.area_juridica %}
+
+                                        <span
+                                            class="inline-flex items-center gap-1.5"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.7"
+                                                stroke="currentColor"
+                                                class="h-4 w-4 shrink-0 text-brand-400"
+                                                aria-hidden="true"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M12 3v18m-6.75-13.5h13.5M5.25 7.5 2.25 13.5h6L5.25 7.5Zm13.5 0-3 6h6l-3-6ZM7.5 21h9"
+                                                />
+                                            </svg>
+
+                                            <span>
+                                                {{ case.area_juridica }}
+                                            </span>
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    <!-- DATA DE ABERTURA -->
+
+                                    {% if case.data_abertura %}
+
+                                        <span
+                                            class="inline-flex items-center gap-1.5"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.7"
+                                                stroke="currentColor"
+                                                class="h-4 w-4 shrink-0 text-brand-400"
+                                                aria-hidden="true"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M6.75 3v2.25M17.25 3v2.25M3.75 9.75h16.5m-15 11.25h13.5A1.5 1.5 0 0 0 20.25 19.5V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5V19.5A1.5 1.5 0 0 0 5.25 21Z"
+                                                />
+                                            </svg>
+
+                                            <span>
+                                                Aberto em
+                                                {{ case.data_abertura|date:"d/m/Y" }}
+                                            </span>
+                                        </span>
+
+                                    {% endif %}
+
+
+                                    <!-- NÚMERO DO PROCESSO -->
+
+                                    {% if case.numero_processo %}
+
+                                        <span
+                                            class="inline-flex min-w-0 items-center gap-1.5"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.7"
+                                                stroke="currentColor"
+                                                class="h-4 w-4 shrink-0 text-brand-400"
+                                                aria-hidden="true"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M19.5 14.25v-9A2.25 2.25 0 0 0 17.25 3h-10A2.25 2.25 0 0 0 5 5.25v13.5A2.25 2.25 0 0 0 7.25 21h10a2.25 2.25 0 0 0 2.25-2.25v-4.5M9 7.5h6M9 11.25h6M9 15h3"
+                                                />
+                                            </svg>
+
+                                            <span class="break-all">
+                                                Processo
+                                                {{ case.numero_processo }}
+                                            </span>
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =================================
+                                 AÇÃO VISUAL
+                            ================================== -->
+
+                            <div
+                                class="flex shrink-0 items-center gap-2"
+                                aria-hidden="true"
+                            >
+
+                                <span
+                                    class="hidden text-xs font-semibold text-brand-600 opacity-0 transition duration-150 group-hover:opacity-100 lg:block"
+                                >
+                                    Ver detalhes
+                                </span>
+
+                                <span
+                                    class="flex h-9 w-9 items-center justify-center rounded-xl border border-transparent text-slate-400 transition duration-150 group-hover:border-brand-100 group-hover:bg-white group-hover:text-brand-700 group-hover:shadow-sm"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.8"
+                                        stroke="currentColor"
+                                        class="h-4 w-4"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="m9 18 6-6-6-6"
+                                        />
+                                    </svg>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <!-- =====================================================
+             ESTADO VAZIO
+        ====================================================== -->
+
+        <div
+            class="flex min-h-[310px] flex-col items-center justify-center px-6 py-12 text-center"
+        >
+
+            <!-- ÍCONE -->
+
+            <div
+                class="relative flex h-16 w-16 items-center justify-center"
+                aria-hidden="true"
+            >
+
+                <div
+                    class="absolute inset-0 rounded-2xl bg-brand-50"
+                ></div>
+
+                <div
+                    class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gold-400 text-white ring-4 ring-white"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="2.5"
+                        stroke="currentColor"
+                        class="h-3 w-3"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 4.5v15m7.5-7.5h-15"
+                        />
+                    </svg>
+                </div>
+
+                <div
+                    class="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-brand-100 text-brand-600"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.6"
+                        stroke="currentColor"
+                        class="h-7 w-7"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M9 6.75V5.625A2.625 2.625 0 0 1 11.625 3h.75A2.625 2.625 0 0 1 15 5.625V6.75m-10.5 0h15A1.5 1.5 0 0 1 21 8.25v9A1.5 1.5 0 0 1 19.5 18.75h-15A1.5 1.5 0 0 1 3 17.25v-9A1.5 1.5 0 0 1 4.5 6.75Z"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M3 11.25c2.846 1.167 5.858 1.75 9 1.75s6.154-.583 9-1.75"
+                        />
+                    </svg>
+                </div>
+
+            </div>
+
+
+            <!-- TEXTO -->
+
+            <div class="mt-5 max-w-md">
+
+                <p
+                    class="text-xs font-semibold uppercase tracking-[0.12em] text-gold-700"
+                >
+                    Acompanhamento jurídico
+                </p>
+
+                <h3
+                    class="mt-1.5 text-lg font-semibold tracking-tight text-brand-950"
+                >
+                    Nenhum caso cadastrado
+                </h3>
+
+                <p
+                    class="mt-2 text-sm leading-6 text-slate-500"
+                >
+                    Este cliente ainda não possui demandas jurídicas.
+                    Cadastre o primeiro caso para iniciar o acompanhamento
+                    de processos, documentos, movimentações e prazos.
+                </p>
+
+            </div>
+
+
+            <!-- CTA -->
+
+            <a
+                href="{% url 'cases:create' client.pk %}"
+                class="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                </svg>
+
+                <span>Criar primeiro caso</span>
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>

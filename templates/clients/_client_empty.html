@@ -1,0 +1,296 @@
+<!-- =============================================================
+     ESTADO VAZIO — NENHUM CLIENTE CADASTRADO
+============================================================== -->
+
+<div
+    id="client-empty-state"
+    class="bg-white"
+>
+
+    <div
+        class="flex min-h-[390px] flex-col items-center justify-center px-6 py-14 text-center sm:px-10"
+    >
+
+
+        <!-- =====================================================
+             ILUSTRAÇÃO
+        ====================================================== -->
+
+        <div
+            class="relative"
+            aria-hidden="true"
+        >
+
+            <!-- fundo decorativo -->
+
+            <div
+                class="absolute -inset-4 rounded-[2rem] bg-brand-50/70"
+            ></div>
+
+
+            <!-- detalhe dourado -->
+
+            <div
+                class="absolute -right-2 -top-2 z-10 flex h-7 w-7 items-center justify-center rounded-xl border-4 border-white bg-gold-400 shadow-sm"
+            >
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2.2"
+                    stroke="currentColor"
+                    class="h-3.5 w-3.5 text-white"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 5v14M5 12h14"
+                    />
+                </svg>
+
+            </div>
+
+
+            <!-- ícone principal -->
+
+            <div
+                class="relative flex h-20 w-20 items-center justify-center rounded-[1.4rem] border border-brand-100 bg-white text-brand-700 shadow-sm"
+            >
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.6"
+                    stroke="currentColor"
+                    class="h-9 w-9"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"
+                    />
+                </svg>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CONTEÚDO
+        ====================================================== -->
+
+        <div class="mt-8 max-w-lg">
+
+            <p
+                class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700"
+            >
+                Primeiros passos
+            </p>
+
+
+            <h2
+                class="mt-2 text-xl font-semibold tracking-tight text-brand-950 sm:text-2xl"
+            >
+                Cadastre seu primeiro cliente
+            </h2>
+
+
+            <p
+                class="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-500"
+            >
+                Comece adicionando os dados do cliente para organizar
+                casos jurídicos, documentos, compromissos e demais
+                informações relacionadas ao atendimento.
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             AÇÃO PRINCIPAL
+        ====================================================== -->
+
+        <button
+            type="button"
+            data-open-create-client
+            class="mt-7 inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200"
+        >
+
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="h-4 w-4"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                />
+            </svg>
+
+
+            <span>
+                Cadastrar primeiro cliente
+            </span>
+
+        </button>
+
+
+        <!-- =====================================================
+             INFORMAÇÕES DE APOIO
+        ====================================================== -->
+
+        <div
+            class="mt-9 grid w-full max-w-2xl grid-cols-1 gap-3 border-t border-brand-50 pt-7 sm:grid-cols-3"
+        >
+
+
+            <!-- CLIENTES -->
+
+            <div
+                class="rounded-xl bg-app-soft px-4 py-3.5"
+            >
+
+                <div
+                    class="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-600"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"
+                        />
+                    </svg>
+
+                </div>
+
+
+                <p
+                    class="mt-2.5 text-xs font-semibold text-brand-950"
+                >
+                    Dados centralizados
+                </p>
+
+                <p
+                    class="mt-1 text-[11px] leading-4 text-slate-500"
+                >
+                    Identificação, endereço e contato em um só lugar.
+                </p>
+
+            </div>
+
+
+            <!-- CASOS -->
+
+            <div
+                class="rounded-xl bg-app-soft px-4 py-3.5"
+            >
+
+                <div
+                    class="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-600"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6.75 6.75V5.625A2.625 2.625 0 0 1 9.375 3h5.25a2.625 2.625 0 0 1 2.625 2.625V6.75m-13.5 0h16.5A1.75 1.75 0 0 1 22 8.5v9.75A1.75 1.75 0 0 1 20.25 20H3.75A1.75 1.75 0 0 1 2 18.25V8.5a1.75 1.75 0 0 1 1.75-1.75Z"
+                        />
+                    </svg>
+
+                </div>
+
+
+                <p
+                    class="mt-2.5 text-xs font-semibold text-brand-950"
+                >
+                    Casos organizados
+                </p>
+
+                <p
+                    class="mt-1 text-[11px] leading-4 text-slate-500"
+                >
+                    Vincule processos e atendimentos ao cliente.
+                </p>
+
+            </div>
+
+
+            <!-- DOCUMENTOS -->
+
+            <div
+                class="rounded-xl bg-app-soft px-4 py-3.5"
+            >
+
+                <div
+                    class="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-600"
+                    aria-hidden="true"
+                >
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6.75 3.75h7.5L19.5 9v11.25H6.75V3.75Z"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M14.25 3.75V9h5.25M9.75 13.5h6M9.75 16.5h4.5"
+                        />
+                    </svg>
+
+                </div>
+
+
+                <p
+                    class="mt-2.5 text-xs font-semibold text-brand-950"
+                >
+                    Histórico jurídico
+                </p>
+
+                <p
+                    class="mt-1 text-[11px] leading-4 text-slate-500"
+                >
+                    Mantenha informações importantes do atendimento.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

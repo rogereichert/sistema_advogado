@@ -1,35 +1,40 @@
 {% extends "base.html" %}
+{% load static %}
+
 
 {% block title %}
     Clientes | Advogado Company
 {% endblock %}
 
+
 {% block content %}
 
 <div class="mx-auto max-w-[1600px]">
 
+
     <!-- =========================================================
-         CABEÇALHO
+         CABEÇALHO DA PÁGINA
     ========================================================== -->
 
-    <div
+    <header
         class="mb-7 flex flex-col justify-between gap-5 lg:flex-row lg:items-end"
     >
 
-        <div>
+        <div class="min-w-0">
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3.5">
 
                 <div
-                    class="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-950 text-white shadow-sm"
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-700 shadow-sm"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke-width="1.7"
+                        stroke-width="1.8"
                         stroke="currentColor"
                         class="h-5 w-5"
+                        aria-hidden="true"
                     >
                         <path
                             stroke-linecap="round"
@@ -43,13 +48,13 @@
                 <div>
 
                     <p
-                        class="text-xs font-semibold uppercase tracking-[0.14em] text-amber-700"
+                        class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700"
                     >
                         Gestão
                     </p>
 
                     <h1
-                        class="mt-1 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl"
+                        class="mt-0.5 text-2xl font-semibold tracking-tight text-brand-950 sm:text-3xl"
                     >
                         Clientes
                     </h1>
@@ -59,7 +64,9 @@
             </div>
 
 
-            <p class="mt-4 max-w-2xl text-sm leading-6 text-slate-500">
+            <p
+                class="mt-4 max-w-2xl text-sm leading-6 text-slate-500"
+            >
                 Consulte clientes cadastrados e acesse rapidamente seus
                 casos, contatos e informações jurídicas.
             </p>
@@ -67,10 +74,14 @@
         </div>
 
 
+        <!-- =====================================================
+             AÇÃO PRINCIPAL
+        ====================================================== -->
+
         <button
             type="button"
             id="open-create-client-modal"
-            class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+            class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200"
         >
 
             <svg
@@ -80,6 +91,7 @@
                 stroke-width="2"
                 stroke="currentColor"
                 class="h-4 w-4"
+                aria-hidden="true"
             >
                 <path
                     stroke-linecap="round"
@@ -88,11 +100,13 @@
                 />
             </svg>
 
-            Novo cliente
+            <span>
+                Novo cliente
+            </span>
 
         </button>
 
-    </div>
+    </header>
 
 
     <!-- =========================================================
@@ -100,16 +114,20 @@
     ========================================================== -->
 
     <section
-        class="mb-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm"
+        class="mb-5 rounded-2xl border border-brand-100 bg-white p-4 shadow-sm"
+        aria-label="Ferramentas da listagem de clientes"
     >
 
         <div
             class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
         >
 
-            <!-- BUSCA -->
 
-            <div class="relative w-full md:max-w-md">
+            <!-- =================================================
+                 BUSCA
+            ================================================== -->
+
+            <div class="relative w-full md:max-w-lg">
 
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -117,7 +135,8 @@
                     viewBox="0 0 24 24"
                     stroke-width="1.8"
                     stroke="currentColor"
-                    class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                    class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-500"
+                    aria-hidden="true"
                 >
                     <path
                         stroke-linecap="round"
@@ -127,31 +146,80 @@
                 </svg>
 
 
+                <label
+                    for="client-search"
+                    class="sr-only"
+                >
+                    Buscar clientes
+                </label>
+
+
                 <input
                     type="search"
                     id="client-search"
                     autocomplete="off"
                     placeholder="Buscar por nome, CPF, telefone ou e-mail..."
-                    class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-300 focus:bg-white focus:ring-4 focus:ring-slate-100"
+                    class="w-full rounded-xl border border-brand-100 bg-app-soft py-2.5 pl-10 pr-10 text-sm text-brand-950 outline-none transition placeholder:text-slate-400 hover:border-brand-200 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100"
                 >
+
+
+                <button
+                    type="button"
+                    id="client-search-clear-inline"
+                    class="absolute right-2 top-1/2 hidden h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition hover:bg-brand-50 hover:text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                    aria-label="Limpar pesquisa"
+                    title="Limpar pesquisa"
+                >
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 18 18 6M6 6l12 12"
+                        />
+                    </svg>
+
+                </button>
 
             </div>
 
 
-            <!-- CONTADOR -->
+            <!-- =================================================
+                 CONTADOR
+            ================================================== -->
 
             <div
-                class="flex items-center gap-2 text-sm text-slate-500"
+                class="flex shrink-0 items-center gap-2.5 rounded-xl bg-brand-50 px-3.5 py-2 text-sm text-brand-700"
+                aria-live="polite"
             >
 
                 <span
-                    class="inline-block h-2 w-2 rounded-full bg-emerald-500"
-                ></span>
+                    class="relative flex h-2.5 w-2.5"
+                    aria-hidden="true"
+                >
+                    <span
+                        class="absolute inline-flex h-full w-full rounded-full bg-brand-300 opacity-50"
+                    ></span>
+
+                    <span
+                        class="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand-600"
+                    ></span>
+                </span>
+
 
                 <span>
+
                     <strong
                         id="visible-client-count"
-                        class="font-semibold text-slate-900"
+                        class="font-semibold text-brand-950"
                     >
                         {{ clients|length }}
                     </strong>
@@ -163,6 +231,7 @@
                             clientes
                         {% endif %}
                     </span>
+
                 </span>
 
             </div>
@@ -177,1324 +246,62 @@
     ========================================================== -->
 
     <section
-        class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm"
+        class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+        aria-label="Clientes cadastrados"
     >
 
         {% if clients %}
 
-            <!-- =================================================
-                 TABELA — DESKTOP
-            ================================================== -->
+            {% include "clients/_client_table.html" %}
 
-            <div class="hidden overflow-x-auto md:block">
+            {% include "clients/_client_mobile_list.html" %}
 
-                <table class="w-full">
-
-                    <thead>
-
-                        <tr
-                            class="border-b border-slate-100 bg-slate-50/70"
-                        >
-
-                            <th
-                                class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400"
-                            >
-                                Cliente
-                            </th>
-
-                            <th
-                                class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400"
-                            >
-                                CPF
-                            </th>
-
-                            <th
-                                class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400"
-                            >
-                                Contato
-                            </th>
-
-                            <th
-                                class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400"
-                            >
-                                Cidade
-                            </th>
-
-                            <th
-                                class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-400"
-                            >
-                                Ações
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody
-                        id="client-table-body"
-                        class="divide-y divide-slate-100"
-                    >
-
-                        {% for client in clients %}
-
-                            <tr
-                                class="client-row transition hover:bg-slate-50/80"
-                                data-search="{{ client.nome_completo|lower }} {{ client.cpf }} {{ client.cpf_formatado }} {{ client.telefone }} {{ client.telefone_formatado }} {{ client.email|lower }} {{ client.cidade|lower }} {{ client.uf|lower }}"
-                            >
-
-                                <!-- CLIENTE -->
-
-                                <td class="px-6 py-4">
-
-                                    <a
-                                        href="{% url 'clients:detail' client.pk %}"
-                                        class="group flex min-w-0 items-center gap-3"
-                                    >
-
-                                        <div
-                                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-sm font-semibold text-slate-600 transition group-hover:bg-slate-950 group-hover:text-white"
-                                        >
-                                            {{ client.nome_completo|slice:":1"|upper }}
-                                        </div>
-
-
-                                        <div class="min-w-0">
-
-                                            <p
-                                                class="truncate text-sm font-semibold text-slate-900 transition group-hover:text-amber-700"
-                                            >
-                                                {{ client.nome_completo }}
-                                            </p>
-
-                                            <p
-                                                class="mt-0.5 text-xs text-slate-400"
-                                            >
-                                                ID #{{ client.pk }}
-                                            </p>
-
-                                        </div>
-
-                                    </a>
-
-                                </td>
-
-
-                                <!-- CPF -->
-
-                                <td
-                                    class="whitespace-nowrap px-6 py-4 text-sm text-slate-600"
-                                >
-                                    {{ client.cpf_formatado }}
-                                </td>
-
-
-                                <!-- CONTATO -->
-
-                                <td class="px-6 py-4">
-
-                                    {% if client.telefone or client.email %}
-
-                                        <div
-                                            class="max-w-[260px] text-sm text-slate-600"
-                                        >
-
-                                            {% if client.telefone %}
-                                                <p class="truncate">
-                                                    {{ client.telefone_formatado }}
-                                                </p>
-                                            {% endif %}
-
-                                            {% if client.email %}
-                                                <p
-                                                    class="{% if client.telefone %}mt-0.5{% endif %} truncate text-xs text-slate-400"
-                                                >
-                                                    {{ client.email }}
-                                                </p>
-                                            {% endif %}
-
-                                        </div>
-
-                                    {% else %}
-
-                                        <span class="text-sm text-slate-400">
-                                            Não informado
-                                        </span>
-
-                                    {% endif %}
-
-                                </td>
-
-
-                                <!-- CIDADE -->
-
-                                <td class="px-6 py-4">
-
-                                    {% if client.cidade %}
-
-                                        <p class="text-sm text-slate-600">
-                                            {{ client.cidade }}
-
-                                            {% if client.uf %}
-                                                <span class="text-slate-400">
-                                                    /{{ client.uf }}
-                                                </span>
-                                            {% endif %}
-                                        </p>
-
-                                    {% else %}
-
-                                        <span class="text-sm text-slate-400">
-                                            Não informado
-                                        </span>
-
-                                    {% endif %}
-
-                                </td>
-
-
-                                <!-- AÇÕES -->
-
-                                <td class="px-6 py-4">
-
-                                    <div
-                                        class="flex items-center justify-end gap-1"
-                                    >
-
-                                        <button
-                                            type="button"
-                                            class="edit-client-button flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-900"
-                                            data-client-id="{{ client.pk }}"
-                                            data-client-name="{{ client.nome_completo }}"
-                                            title="Editar cliente"
-                                            aria-label="Editar {{ client.nome_completo }}"
-                                        >
-
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.8"
-                                                stroke="currentColor"
-                                                class="h-4 w-4"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13l-2.507.716.716-2.507a4.5 4.5 0 0 1 1.13-1.897L16.862 4.487Z"
-                                                />
-                                            </svg>
-
-                                        </button>
-
-
-                                        <a
-                                            href="{% url 'clients:detail' client.pk %}"
-                                            class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-900"
-                                            title="Abrir cliente"
-                                            aria-label="Abrir {{ client.nome_completo }}"
-                                        >
-
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.8"
-                                                stroke="currentColor"
-                                                class="h-4 w-4"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="m9 18 6-6-6-6"
-                                                />
-                                            </svg>
-
-                                        </a>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-
-            <!-- =================================================
-                 CARDS — MOBILE
-            ================================================== -->
-
-            <div
-                id="client-mobile-list"
-                class="divide-y divide-slate-100 md:hidden"
-            >
-
-                {% for client in clients %}
-
-                    <article
-                        class="client-card p-5"
-                        data-search="{{ client.nome_completo|lower }} {{ client.cpf }} {{ client.cpf_formatado }} {{ client.telefone }} {{ client.telefone_formatado }} {{ client.email|lower }} {{ client.cidade|lower }} {{ client.uf|lower }}"
-                    >
-
-                        <div
-                            class="flex items-start justify-between gap-4"
-                        >
-
-                            <a
-                                href="{% url 'clients:detail' client.pk %}"
-                                class="flex min-w-0 items-center gap-3"
-                            >
-
-                                <div
-                                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-sm font-semibold text-slate-600"
-                                >
-                                    {{ client.nome_completo|slice:":1"|upper }}
-                                </div>
-
-
-                                <div class="min-w-0">
-
-                                    <h2
-                                        class="truncate text-sm font-semibold text-slate-900"
-                                    >
-                                        {{ client.nome_completo }}
-                                    </h2>
-
-                                    <p class="mt-1 text-xs text-slate-400">
-                                        CPF {{ client.cpf_formatado }}
-                                    </p>
-
-                                </div>
-
-                            </a>
-
-
-                            <button
-                                type="button"
-                                class="edit-client-button flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-900"
-                                data-client-id="{{ client.pk }}"
-                                data-client-name="{{ client.nome_completo }}"
-                                aria-label="Editar {{ client.nome_completo }}"
-                            >
-
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.8"
-                                    stroke="currentColor"
-                                    class="h-4 w-4"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13l-2.507.716.716-2.507a4.5 4.5 0 0 1 1.13-1.897L16.862 4.487Z"
-                                    />
-                                </svg>
-
-                            </button>
-
-                        </div>
-
-
-                        <div
-                            class="mt-4 grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-3"
-                        >
-
-                            <div>
-
-                                <p
-                                    class="text-[10px] font-semibold uppercase tracking-wider text-slate-400"
-                                >
-                                    Telefone
-                                </p>
-
-                                <p
-                                    class="mt-1 truncate text-xs font-medium text-slate-700"
-                                >
-                                    {{ client.telefone_formatado|default:"Não informado" }}
-                                </p>
-
-                            </div>
-
-
-                            <div>
-
-                                <p
-                                    class="text-[10px] font-semibold uppercase tracking-wider text-slate-400"
-                                >
-                                    Localização
-                                </p>
-
-                                <p
-                                    class="mt-1 truncate text-xs font-medium text-slate-700"
-                                >
-                                    {% if client.cidade %}
-                                        {{ client.cidade }}{% if client.uf %}/{{ client.uf }}{% endif %}
-                                    {% else %}
-                                        Não informado
-                                    {% endif %}
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <a
-                            href="{% url 'clients:detail' client.pk %}"
-                            class="mt-4 flex items-center justify-between text-xs font-semibold text-slate-600"
-                        >
-
-                            Ver cliente
-
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.8"
-                                stroke="currentColor"
-                                class="h-4 w-4"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="m9 18 6-6-6-6"
-                                />
-                            </svg>
-
-                        </a>
-
-                    </article>
-
-                {% endfor %}
-
-            </div>
-
-
-            <!-- =================================================
-                 NENHUM RESULTADO DA BUSCA
-            ================================================== -->
-
-            <div
-                id="client-search-empty"
-                class="hidden px-6 py-16 text-center"
-            >
-
-                <div
-                    class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-400"
-                >
-
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.7"
-                        stroke="currentColor"
-                        class="h-6 w-6"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
-                        />
-                    </svg>
-
-                </div>
-
-
-                <h3 class="mt-4 font-semibold text-slate-900">
-                    Nenhum cliente encontrado
-                </h3>
-
-                <p class="mt-1 text-sm text-slate-500">
-                    Tente pesquisar utilizando outro nome, CPF,
-                    telefone ou e-mail.
-                </p>
-
-                <button
-                    type="button"
-                    id="clear-client-search"
-                    class="mt-5 cursor-pointer text-sm font-semibold text-amber-700 transition hover:text-amber-800"
-                >
-                    Limpar pesquisa
-                </button>
-
-            </div>
-
+            {% include "clients/_client_search_empty.html" %}
 
         {% else %}
 
-            <!-- =================================================
-                 SISTEMA SEM CLIENTES
-            ================================================== -->
-
-            <div class="px-6 py-20 text-center">
-
-                <div
-                    class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400"
-                >
-
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.7"
-                        stroke="currentColor"
-                        class="h-7 w-7"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"
-                        />
-                    </svg>
-
-                </div>
-
-
-                <h2
-                    class="mt-5 text-lg font-semibold text-slate-900"
-                >
-                    Nenhum cliente cadastrado
-                </h2>
-
-                <p
-                    class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500"
-                >
-                    Cadastre o primeiro cliente para começar a organizar
-                    casos, documentos, agenda e histórico jurídico.
-                </p>
-
-
-                <button
-                    type="button"
-                    data-open-create-client
-                    class="mt-6 inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
-                >
-                    <span class="text-lg leading-none">
-                        +
-                    </span>
-
-                    Cadastrar primeiro cliente
-                </button>
-
-            </div>
+            {% include "clients/_client_empty.html" %}
 
         {% endif %}
 
     </section>
 
+
 </div>
 
 
 <!-- =============================================================
-     MODAL — CRIAR / EDITAR CLIENTE
+     MODAL
+============================================================== -->
+
+{% include "clients/_client_modal.html" %}
+
+
+<!-- =============================================================
+     CONFIGURAÇÃO PARA O JAVASCRIPT
 ============================================================== -->
 
 <div
-    id="client-modal"
-    class="fixed inset-0 z-50 hidden"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="client-modal-title"
->
+    id="client-list-config"
+    class="hidden"
+    aria-hidden="true"
+    data-create-url="{% url 'clients:create' %}"
+    data-edit-url-template="{% url 'clients:update' 999999999 %}"
+></div>
 
-    <!-- BACKDROP -->
+{% endblock %}
 
-    <div
-        id="client-modal-backdrop"
-        class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"
-    ></div>
 
+{% block extra_js %}
 
-    <!--
-        Esta camada ocupa toda a viewport.
+    {{ block.super }}
 
-        O scroll fica nela, e não no body da página.
-        Dessa forma a tela de Clientes permanece parada ao fundo,
-        enquanto o conteúdo do modal pode ser rolado normalmente.
-    -->
+    <script
+        src="{% static 'js/clients/client-list.js' %}"
+    ></script>
 
-    <div
-        class="absolute inset-0 overflow-y-auto overscroll-contain"
-    >
-
-        <div
-            class="flex min-h-full items-start justify-center p-4 sm:p-6 lg:p-8"
-        >
-
-            <!-- JANELA DO MODAL -->
-
-            <div
-                class="relative my-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl"
-            >
-
-                <!-- =================================================
-                     CABEÇALHO FIXO
-                ================================================== -->
-
-                <div
-                    class="sticky top-0 z-20 flex shrink-0 items-center justify-between border-b border-slate-100 bg-white px-6 py-5"
-                >
-
-                    <div class="min-w-0">
-
-                        <p
-                            class="text-xs font-semibold uppercase tracking-wider text-amber-700"
-                        >
-                            Cadastro
-                        </p>
-
-                        <h2
-                            id="client-modal-title"
-                            class="mt-1 truncate text-lg font-semibold text-slate-950"
-                        >
-                            Novo cliente
-                        </h2>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        id="close-client-modal"
-                        class="ml-4 flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-900"
-                        aria-label="Fechar"
-                    >
-
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.8"
-                            stroke="currentColor"
-                            class="h-5 w-5"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M6 18 18 6M6 6l12 12"
-                            />
-                        </svg>
-
-                    </button>
-
-                </div>
-
-
-                <!-- =================================================
-                     CONTEÚDO
-                ================================================== -->
-
-                <div
-                    id="client-modal-content"
-                    class="min-h-48 bg-white"
-                ></div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =============================================================
-     JAVASCRIPT
-============================================================== -->
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-    /*
-    ==============================================================
-    PESQUISA DE CLIENTES
-    ==============================================================
-    */
-
-    const searchInput =
-        document.getElementById("client-search");
-
-    const desktopRows = [
-        ...document.querySelectorAll(".client-row")
-    ];
-
-    const mobileCards = [
-        ...document.querySelectorAll(".client-card")
-    ];
-
-    const emptySearch =
-        document.getElementById("client-search-empty");
-
-    const clearSearchButton =
-        document.getElementById("clear-client-search");
-
-    const visibleCount =
-        document.getElementById("visible-client-count");
-
-    const countLabel =
-        document.getElementById("client-count-label");
-
-
-    const normalizeSearch = (value) => {
-
-        return String(value || "")
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toLowerCase()
-            .trim();
-
-    };
-
-
-    const updateCount = (count) => {
-
-        if (visibleCount) {
-            visibleCount.textContent = count;
-        }
-
-        if (countLabel) {
-            countLabel.textContent =
-                count === 1
-                    ? "cliente"
-                    : "clientes";
-        }
-
-    };
-
-
-    const filterClients = () => {
-
-        if (!searchInput) {
-            return;
-        }
-
-        const query =
-            normalizeSearch(searchInput.value);
-
-        let visible = 0;
-
-
-        /*
-         * Desktop e mobile possuem representações diferentes
-         * do mesmo cliente. Contamos apenas a tabela desktop
-         * para não duplicar o número.
-         */
-
-        desktopRows.forEach((row) => {
-
-            const searchable =
-                normalizeSearch(
-                    row.dataset.search
-                );
-
-            const match =
-                !query ||
-                searchable.includes(query);
-
-            row.classList.toggle(
-                "hidden",
-                !match
-            );
-
-            if (match) {
-                visible += 1;
-            }
-
-        });
-
-
-        mobileCards.forEach((card) => {
-
-            const searchable =
-                normalizeSearch(
-                    card.dataset.search
-                );
-
-            const match =
-                !query ||
-                searchable.includes(query);
-
-            card.classList.toggle(
-                "hidden",
-                !match
-            );
-
-        });
-
-
-        /*
-         * Caso a tabela desktop não exista, utilizamos
-         * os cards como fonte da contagem.
-         */
-
-        if (
-            desktopRows.length === 0 &&
-            mobileCards.length > 0
-        ) {
-
-            visible =
-                mobileCards.filter(
-                    card =>
-                        !card.classList.contains(
-                            "hidden"
-                        )
-                ).length;
-
-        }
-
-
-        updateCount(visible);
-
-
-        if (emptySearch) {
-
-            emptySearch.classList.toggle(
-                "hidden",
-                visible !== 0
-            );
-
-        }
-
-    };
-
-
-    searchInput?.addEventListener(
-        "input",
-        filterClients
-    );
-
-
-    clearSearchButton?.addEventListener(
-        "click",
-        () => {
-
-            searchInput.value = "";
-
-            filterClients();
-
-            searchInput.focus();
-
-        }
-    );
-
-
-    /*
-    ==============================================================
-    MODAL
-    ==============================================================
-    */
-
-    const modal =
-        document.getElementById("client-modal");
-
-    const modalBackdrop =
-        document.getElementById(
-            "client-modal-backdrop"
-        );
-
-    const modalContent =
-        document.getElementById(
-            "client-modal-content"
-        );
-
-    const modalTitle =
-        document.getElementById(
-            "client-modal-title"
-        );
-
-    const closeModalButton =
-        document.getElementById(
-            "close-client-modal"
-        );
-
-    const createButton =
-        document.getElementById(
-            "open-create-client-modal"
-        );
-
-    const secondaryCreateButtons = [
-        ...document.querySelectorAll(
-            "[data-open-create-client]"
-        )
-    ];
-
-
-    let currentUrl = null;
-
-
-    const createUrl =
-        "{% url 'clients:create' %}";
-
-
-    const lockBody = () => {
-        document.body.classList.add(
-            "overflow-hidden"
-        );
-    };
-
-
-    const unlockBody = () => {
-        document.body.classList.remove(
-            "overflow-hidden"
-        );
-    };
-
-
-    const loadingHtml = () => `
-        <div
-            class="flex items-center justify-center px-6 py-16"
-        >
-            <div class="text-center">
-
-                <div
-                    class="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-slate-950"
-                ></div>
-
-                <p class="mt-4 text-sm text-slate-500">
-                    Carregando cadastro...
-                </p>
-
-            </div>
-        </div>
-    `;
-
-
-    const errorHtml = () => `
-        <div class="p-10 text-center">
-
-            <div
-                class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-600"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.8"
-                    stroke="currentColor"
-                    class="h-6 w-6"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 9v3.75m9-1.5a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 15.75h.008v.008H12v-.008Z"
-                    />
-                </svg>
-            </div>
-
-            <p
-                class="mt-4 font-semibold text-slate-900"
-            >
-                Não foi possível carregar o cadastro.
-            </p>
-
-            <p class="mt-1 text-sm text-slate-500">
-                Atualize a página e tente novamente.
-            </p>
-
-        </div>
-    `;
-
-
-    const closeModal = () => {
-
-        modal.classList.add("hidden");
-
-        unlockBody();
-
-        currentUrl = null;
-
-        /*
-         * Limpamos o HTML para impedir IDs duplicados
-         * e listeners antigos quando o modal for
-         * utilizado novamente.
-         */
-        modalContent.innerHTML = "";
-
-    };
-
-
-    /*
-    ==============================================================
-    FORMULÁRIO AJAX
-    ==============================================================
-    */
-
-    const bindClientForm = () => {
-
-        const form =
-            modalContent.querySelector(
-                "#client-form"
-            );
-
-        if (!form || !currentUrl) {
-            return;
-        }
-
-
-        form.addEventListener(
-            "submit",
-            async (event) => {
-
-                event.preventDefault();
-
-
-                const submitButton =
-                    form.querySelector(
-                        'button[type="submit"]'
-                    );
-
-                const submitLabel =
-                    form.querySelector(
-                        "[data-submit-label]"
-                    );
-
-                const originalLabel =
-                    submitLabel
-                        ? submitLabel.textContent
-                        : "";
-
-
-                if (submitButton) {
-                    submitButton.disabled = true;
-                }
-
-
-                if (submitLabel) {
-                    submitLabel.textContent =
-                        "Salvando...";
-                }
-
-
-                try {
-
-                    const response =
-                        await fetch(
-                            currentUrl,
-                            {
-                                method: "POST",
-
-                                body:
-                                    new FormData(
-                                        form
-                                    ),
-
-                                headers: {
-                                    "X-Requested-With":
-                                        "XMLHttpRequest"
-                                }
-                            }
-                        );
-
-
-                    const contentType =
-                        response.headers.get(
-                            "content-type"
-                        ) || "";
-
-
-                    /*
-                     * O backend devolve JSON somente
-                     * quando o cadastro foi concluído.
-                     */
-
-                    if (
-                        response.ok &&
-                        contentType.includes(
-                            "application/json"
-                        )
-                    ) {
-
-                        const data =
-                            await response.json();
-
-
-                        if (data.success) {
-
-                            window.location.reload();
-
-                            return;
-
-                        }
-
-                    }
-
-
-                    /*
-                     * Status 400 é esperado quando o
-                     * formulário contém erros de
-                     * validação. O backend devolve o
-                     * formulário novamente com os erros.
-                     */
-
-                    const html =
-                        await response.text();
-
-
-                    modalContent.innerHTML =
-                        html;
-
-
-                    bindClientForm();
-
-
-                } catch (error) {
-
-                    console.error(
-                        "Erro ao salvar cliente:",
-                        error
-                    );
-
-
-                    modalContent.innerHTML =
-                        errorHtml();
-
-                } finally {
-
-                    if (
-                        submitButton &&
-                        document.body.contains(
-                            submitButton
-                        )
-                    ) {
-
-                        submitButton.disabled =
-                            false;
-
-                    }
-
-
-                    if (
-                        submitLabel &&
-                        document.body.contains(
-                            submitLabel
-                        )
-                    ) {
-
-                        submitLabel.textContent =
-                            originalLabel;
-
-                    }
-
-                }
-
-            }
-        );
-
-    };
-
-
-    /*
-    ==============================================================
-    ABERTURA
-    ==============================================================
-    */
-
-    const openModal = async ({
-        url,
-        title
-    }) => {
-
-        currentUrl = url;
-
-        modalTitle.textContent = title;
-
-        modalContent.innerHTML =
-            loadingHtml();
-
-        modal.classList.remove(
-            "hidden"
-        );
-
-        lockBody();
-
-
-        try {
-
-            const response =
-                await fetch(
-                    url,
-                    {
-                        headers: {
-                            "X-Requested-With":
-                                "XMLHttpRequest"
-                        }
-                    }
-                );
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    `HTTP ${response.status}`
-                );
-
-            }
-
-
-            modalContent.innerHTML =
-                await response.text();
-
-
-            bindClientForm();
-
-
-        } catch (error) {
-
-            console.error(
-                "Erro ao carregar cadastro:",
-                error
-            );
-
-
-            modalContent.innerHTML =
-                errorHtml();
-
-        }
-
-    };
-
-
-    const openCreateModal = () => {
-
-        openModal({
-            url: createUrl,
-            title: "Novo cliente"
-        });
-
-    };
-
-
-    createButton?.addEventListener(
-        "click",
-        openCreateModal
-    );
-
-
-    secondaryCreateButtons.forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                openCreateModal
-            );
-
-        }
-    );
-
-
-    /*
-    ==============================================================
-    EDIÇÃO
-    ==============================================================
-    */
-
-    const editButtons = [
-        ...document.querySelectorAll(
-            ".edit-client-button"
-        )
-    ];
-
-
-    editButtons.forEach((button) => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                const clientId =
-                    button.dataset.clientId;
-
-                const clientName =
-                    button.dataset.clientName;
-
-
-                /*
-                 * Evitamos hardcode da URL completa.
-                 *
-                 * A URL base vem do Django e trocamos
-                 * somente o ID utilizado para gerar
-                 * a rota.
-                 */
-
-                const editUrlTemplate =
-                    "{% url 'clients:update' 999999999 %}";
-
-                const editUrl =
-                    editUrlTemplate.replace(
-                        "999999999",
-                        clientId
-                    );
-
-
-                openModal({
-                    url: editUrl,
-                    title:
-                        `Editar ${clientName}`
-                });
-
-            }
-        );
-
-    });
-
-
-    /*
-    ==============================================================
-    FECHAMENTO
-    ==============================================================
-    */
-
-    closeModalButton?.addEventListener(
-        "click",
-        closeModal
-    );
-
-
-    modalBackdrop?.addEventListener(
-        "click",
-        closeModal
-    );
-
-
-    /*
-     * Evento disparado pelo client_form.html.
-     */
-
-    document.addEventListener(
-        "client-form:cancel",
-        closeModal
-    );
-
-
-    document.addEventListener(
-        "keydown",
-        (event) => {
-
-            if (
-                event.key === "Escape" &&
-                !modal.classList.contains(
-                    "hidden"
-                )
-            ) {
-
-                closeModal();
-
-            }
-
-        }
-    );
-
-});
-</script>
+    <script
+        src="{% static 'js/clients/client-modal.js' %}"
+    ></script>
 
 {% endblock %}

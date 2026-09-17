@@ -1,0 +1,178 @@
+<!-- =============================================================
+     MODAL — CRIAR / EDITAR CLIENTE
+============================================================== -->
+
+<div
+    id="client-modal"
+    class="fixed inset-0 z-50 hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="client-modal-title"
+    aria-describedby="client-modal-description"
+>
+
+
+    <!-- =========================================================
+         BACKDROP
+    ========================================================== -->
+
+    <div
+        id="client-modal-backdrop"
+        class="absolute inset-0 bg-brand-950/55 backdrop-blur-[2px]"
+        aria-hidden="true"
+    ></div>
+
+
+    <!-- =========================================================
+         CAMADA DE ROLAGEM
+         
+         O scroll pertence a esta camada, e não ao body.
+         Assim a página permanece parada ao fundo enquanto
+         formulários maiores podem ser rolados normalmente.
+    ========================================================== -->
+
+    <div
+        id="client-modal-scroll"
+        class="absolute inset-0 overflow-y-auto overscroll-contain"
+    >
+
+        <div
+            class="flex min-h-full items-start justify-center p-3 sm:p-6 lg:p-8"
+        >
+
+
+            <!-- =================================================
+                 JANELA
+            ================================================== -->
+
+            <div
+                id="client-modal-panel"
+                class="relative my-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-2xl sm:rounded-3xl"
+            >
+
+
+                <!-- =============================================
+                     CABEÇALHO
+                ============================================== -->
+
+                <header
+                    class="sticky top-0 z-30 shrink-0 border-b border-brand-100 bg-white/95 px-5 py-4 backdrop-blur sm:px-6 sm:py-5"
+                >
+
+                    <div
+                        class="flex items-center justify-between gap-4"
+                    >
+
+
+                        <!-- =====================================
+                             IDENTIFICAÇÃO
+                        ====================================== -->
+
+                        <div
+                            class="flex min-w-0 items-center gap-3"
+                        >
+
+                            <div
+                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-700"
+                                aria-hidden="true"
+                            >
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-[18px] w-[18px]"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"
+                                    />
+                                </svg>
+
+                            </div>
+
+
+                            <div class="min-w-0">
+
+                                <p
+                                    class="text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+                                >
+                                    Cadastro
+                                </p>
+
+
+                                <h2
+                                    id="client-modal-title"
+                                    class="mt-0.5 truncate text-lg font-semibold tracking-tight text-brand-950 sm:text-xl"
+                                >
+                                    Novo cliente
+                                </h2>
+
+
+                                <p
+                                    id="client-modal-description"
+                                    class="sr-only"
+                                >
+                                    Formulário para cadastro ou edição
+                                    dos dados do cliente.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             FECHAR
+                        ====================================== -->
+
+                        <button
+                            type="button"
+                            id="close-client-modal"
+                            class="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-xl text-slate-400 transition hover:bg-brand-50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                            aria-label="Fechar cadastro de cliente"
+                            title="Fechar"
+                        >
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-5 w-5"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18 18 6M6 6l12 12"
+                                />
+                            </svg>
+
+                        </button>
+
+                    </div>
+
+                </header>
+
+
+                <!-- =============================================
+                     CONTEÚDO AJAX
+                ============================================== -->
+
+                <div
+                    id="client-modal-content"
+                    class="min-h-48 bg-white"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

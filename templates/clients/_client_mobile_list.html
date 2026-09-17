@@ -1,0 +1,394 @@
+<!-- =============================================================
+     LISTAGEM DE CLIENTES — MOBILE / TABLET
+============================================================== -->
+
+<div
+    id="client-mobile-container"
+    class="lg:hidden"
+>
+
+    <div
+        id="client-mobile-list"
+        class="divide-y divide-brand-100"
+    >
+
+        {% for client in clients %}
+
+            <article
+                class="client-mobile-item group relative bg-white transition-colors duration-150 hover:bg-brand-50/40"
+                data-client-id="{{ client.pk }}"
+                data-search-text="{{ client.nome_completo|default:'' }} {{ client.cpf|default:'' }} {{ client.cpf_formatado|default:'' }} {{ client.telefone|default:'' }} {{ client.telefone_formatado|default:'' }} {{ client.email|default:'' }} {{ client.cidade|default:'' }} {{ client.uf|default:'' }}"
+            >
+
+                <div class="p-4 sm:p-5">
+
+
+                    <!-- =================================================
+                         LINHA PRINCIPAL
+                    ================================================== -->
+
+                    <div class="flex items-start gap-3.5">
+
+
+                        <!-- =============================================
+                             AVATAR
+                        ============================================== -->
+
+                        <a
+                            href="{% url 'clients:detail' client.pk %}"
+                            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-sm font-semibold uppercase text-brand-700 transition hover:border-brand-200 hover:bg-brand-100 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                            aria-label="Abrir cliente {{ client.nome_completo }}"
+                        >
+                            {{ client.nome_completo|slice:":1" }}
+                        </a>
+
+
+                        <!-- =============================================
+                             IDENTIFICAÇÃO
+                        ============================================== -->
+
+                        <div class="min-w-0 flex-1">
+
+                            <a
+                                href="{% url 'clients:detail' client.pk %}"
+                                class="inline-block max-w-full rounded-md text-[15px] font-semibold text-brand-950 transition hover:text-brand-700 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                            >
+                                <span
+                                    class="block truncate"
+                                    title="{{ client.nome_completo }}"
+                                >
+                                    {{ client.nome_completo }}
+                                </span>
+                            </a>
+
+
+                            <!-- CPF -->
+
+                            {% if client.cpf %}
+
+                                <div class="mt-1.5">
+
+                                    <span
+                                        class="inline-flex items-center rounded-md bg-slate-50 px-2 py-1 font-mono text-[11px] font-medium tabular-nums text-slate-600"
+                                    >
+                                        {{ client.cpf_formatado }}
+                                    </span>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =============================================
+                             AÇÕES
+                        ============================================== -->
+
+                        <div
+                            class="flex shrink-0 items-center gap-1"
+                        >
+
+                            <!-- Visualizar -->
+
+                            <a
+                                href="{% url 'clients:detail' client.pk %}"
+                                class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition hover:bg-brand-50 hover:text-brand-700 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                                aria-label="Visualizar {{ client.nome_completo }}"
+                                title="Visualizar cliente"
+                            >
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-[18px] w-[18px]"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12 18 18.75 12 18.75 2.25 12 2.25 12Z"
+                                    />
+
+                                    <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="2.75"
+                                    />
+                                </svg>
+
+                            </a>
+
+
+                            <!-- Editar -->
+
+                            <button
+                                type="button"
+                                class="edit-client-button inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition hover:bg-gold-50 hover:text-gold-700 focus:outline-none focus:ring-4 focus:ring-gold-100"
+                                data-client-id="{{ client.pk }}"
+                                data-client-name="{{ client.nome_completo }}"
+                                aria-label="Editar {{ client.nome_completo }}"
+                                title="Editar cliente"
+                            >
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-[18px] w-[18px]"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897L18.549 2.799M16.862 4.487 19.5 7.125"
+                                    />
+
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M19.5 13.5v5.25A2.25 2.25 0 0 1 17.25 21H5.25A2.25 2.25 0 0 1 3 18.75V6.75A2.25 2.25 0 0 1 5.25 4.5h5.25"
+                                    />
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         INFORMAÇÕES SECUNDÁRIAS
+                    ================================================== -->
+
+                    <div
+                        class="mt-4 grid grid-cols-1 gap-2.5 border-t border-brand-50 pt-3.5 sm:grid-cols-2"
+                    >
+
+
+                        <!-- =============================================
+                             TELEFONE
+                        ============================================== -->
+
+                        <div
+                            class="flex min-w-0 items-center gap-2.5"
+                        >
+
+                            <div
+                                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-500"
+                                aria-hidden="true"
+                            >
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-3.5 w-3.5"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102A1.125 1.125 0 0 0 5.872 2.25H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
+                                    />
+                                </svg>
+
+                            </div>
+
+
+                            <div class="min-w-0">
+
+                                <p
+                                    class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-400"
+                                >
+                                    Telefone
+                                </p>
+
+                                {% if client.telefone %}
+
+                                    <p
+                                        class="mt-0.5 truncate text-xs font-medium text-slate-700"
+                                    >
+                                        {{ client.telefone_formatado }}
+                                    </p>
+
+                                {% else %}
+
+                                    <p
+                                        class="mt-0.5 text-xs text-slate-400"
+                                    >
+                                        Não informado
+                                    </p>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =============================================
+                             LOCALIZAÇÃO
+                        ============================================== -->
+
+                        <div
+                            class="flex min-w-0 items-center gap-2.5"
+                        >
+
+                            <div
+                                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-500"
+                                aria-hidden="true"
+                            >
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-3.5 w-3.5"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 21s7-5.25 7-11a7 7 0 1 0-14 0c0 5.75 7 11 7 11Z"
+                                    />
+
+                                    <circle
+                                        cx="12"
+                                        cy="10"
+                                        r="2.2"
+                                    />
+                                </svg>
+
+                            </div>
+
+
+                            <div class="min-w-0">
+
+                                <p
+                                    class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-400"
+                                >
+                                    Localização
+                                </p>
+
+
+                                {% if client.cidade or client.uf %}
+
+                                    <p
+                                        class="mt-0.5 truncate text-xs font-medium text-slate-700"
+                                        title="{% if client.cidade %}{{ client.cidade }}{% endif %}{% if client.cidade and client.uf %}/{% endif %}{% if client.uf %}{{ client.uf }}{% endif %}"
+                                    >
+
+                                        {% if client.cidade %}
+                                            {{ client.cidade }}
+                                        {% endif %}
+
+                                        {% if client.cidade and client.uf %}
+                                            <span class="text-slate-300">
+                                                /
+                                            </span>
+                                        {% endif %}
+
+                                        {% if client.uf %}
+                                            {{ client.uf }}
+                                        {% endif %}
+
+                                    </p>
+
+                                {% else %}
+
+                                    <p
+                                        class="mt-0.5 text-xs text-slate-400"
+                                    >
+                                        Não informado
+                                    </p>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         E-MAIL
+                    ================================================== -->
+
+                    <div
+                        class="mt-2.5 flex min-w-0 items-center gap-2.5"
+                    >
+
+                        <div
+                            class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-500"
+                            aria-hidden="true"
+                        >
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-3.5 w-3.5"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0-8.69 5.793a1.875 1.875 0 0 1-2.12 0L2.25 6.75"
+                                />
+                            </svg>
+
+                        </div>
+
+
+                        <div class="min-w-0">
+
+                            <p
+                                class="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-400"
+                            >
+                                E-mail
+                            </p>
+
+
+                            {% if client.email %}
+
+                                <p
+                                    class="mt-0.5 truncate text-xs font-medium text-slate-700"
+                                    title="{{ client.email }}"
+                                >
+                                    {{ client.email }}
+                                </p>
+
+                            {% else %}
+
+                                <p
+                                    class="mt-0.5 text-xs text-slate-400"
+                                >
+                                    Não informado
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        {% endfor %}
+
+    </div>
+
+</div>

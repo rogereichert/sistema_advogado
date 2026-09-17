@@ -1,0 +1,147 @@
+<!-- =============================================================
+     ESTADO VAZIO — NENHUM RESULTADO NA PESQUISA
+============================================================== -->
+
+<div
+    id="client-search-empty"
+    class="hidden"
+    role="status"
+    aria-live="polite"
+>
+
+    <div
+        class="flex min-h-[320px] flex-col items-center justify-center px-6 py-12 text-center"
+    >
+
+
+        <!-- =====================================================
+             ÍCONE
+        ====================================================== -->
+
+        <div
+            class="relative flex h-16 w-16 items-center justify-center"
+            aria-hidden="true"
+        >
+
+            <!-- detalhe decorativo -->
+
+            <div
+                class="absolute inset-0 rounded-2xl bg-brand-50"
+            ></div>
+
+            <div
+                class="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-gold-400 ring-4 ring-white"
+            ></div>
+
+
+            <!-- ícone principal -->
+
+            <div
+                class="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-brand-100 text-brand-600"
+            >
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.7"
+                    stroke="currentColor"
+                    class="h-7 w-7"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
+                    />
+                </svg>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             TEXTO
+        ====================================================== -->
+
+        <div class="mt-5 max-w-md">
+
+            <p
+                class="text-xs font-semibold uppercase tracking-[0.12em] text-gold-700"
+            >
+                Pesquisa
+            </p>
+
+
+            <h3
+                class="mt-1.5 text-lg font-semibold tracking-tight text-brand-950"
+            >
+                Nenhum cliente encontrado
+            </h3>
+
+
+            <p
+                class="mt-2 text-sm leading-6 text-slate-500"
+            >
+                Não encontramos clientes correspondentes a
+
+                <span
+                    id="client-search-term"
+                    class="font-semibold text-brand-800"
+                ></span>.
+
+                Verifique o termo informado ou limpe a pesquisa para
+                visualizar todos os clientes.
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             AÇÃO
+        ====================================================== -->
+
+        <button
+            type="button"
+            id="client-search-clear"
+            class="mt-5 inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-100 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
+        >
+
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.8"
+                stroke="currentColor"
+                class="h-4 w-4"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 6v6l4 2"
+                />
+
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3.75 12a8.25 8.25 0 1 0 2.416-5.834L3.75 8.582"
+                />
+
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3.75 4.5v4.082h4.082"
+                />
+            </svg>
+
+
+            <span>
+                Limpar pesquisa
+            </span>
+
+        </button>
+
+    </div>
+
+</div>

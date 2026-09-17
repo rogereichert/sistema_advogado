@@ -1,0 +1,234 @@
+<!-- =============================================================
+     MODAL — EDITAR CLIENTE
+============================================================== -->
+
+<div
+    id="edit-client-modal"
+    class="fixed inset-0 z-50 hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="edit-client-modal-title"
+    aria-describedby="edit-client-modal-description"
+    aria-hidden="true"
+>
+
+    <!-- =========================================================
+         BACKDROP
+    ========================================================== -->
+
+    <div
+        id="edit-client-modal-backdrop"
+        class="absolute inset-0 bg-brand-950/55 backdrop-blur-[2px]"
+        aria-hidden="true"
+    ></div>
+
+
+    <!-- =========================================================
+         ÁREA DE ROLAGEM
+    ========================================================== -->
+
+    <div
+        id="edit-client-modal-scroll"
+        class="absolute inset-0 overflow-y-auto overscroll-contain p-4 sm:p-6"
+    >
+
+        <div
+            class="flex min-h-full items-center justify-center"
+        >
+
+            <!-- =================================================
+                 PAINEL
+            ================================================== -->
+
+            <div
+                id="edit-client-modal-panel"
+                class="relative my-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-2xl"
+                tabindex="-1"
+            >
+
+                <!-- =============================================
+                     DESTAQUE SUPERIOR
+                ============================================== -->
+
+                <div
+                    class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-900 via-brand-700 to-gold-400"
+                    aria-hidden="true"
+                ></div>
+
+
+                <!-- =============================================
+                     CABEÇALHO
+                ============================================== -->
+
+                <header
+                    class="flex items-start justify-between gap-4 border-b border-brand-100 bg-white px-5 pb-4 pt-6 sm:px-6"
+                >
+
+                    <div class="flex min-w-0 items-start gap-3">
+
+                        <!-- ÍCONE -->
+
+                        <div
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-700"
+                            aria-hidden="true"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-[18px] w-[18px]"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13l-2.507.716.716-2.507a4.5 4.5 0 0 1 1.13-1.897L16.862 4.487Z"
+                                />
+
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M19.5 7.125 16.875 4.5"
+                                />
+                            </svg>
+                        </div>
+
+
+                        <!-- TEXTO -->
+
+                        <div class="min-w-0">
+
+                            <div
+                                class="flex flex-wrap items-center gap-2"
+                            >
+
+                                <span
+                                    class="inline-flex items-center gap-1.5 rounded-full border border-gold-200 bg-gold-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-gold-700"
+                                >
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-gold-500"
+                                        aria-hidden="true"
+                                    ></span>
+
+                                    Cadastro
+                                </span>
+
+                            </div>
+
+
+                            <h2
+                                id="edit-client-modal-title"
+                                class="mt-2 text-lg font-semibold tracking-tight text-brand-950 sm:text-xl"
+                            >
+                                Editar cliente
+                            </h2>
+
+
+                            <p
+                                id="edit-client-modal-description"
+                                class="mt-1 text-sm leading-5 text-slate-500"
+                            >
+                                Atualize os dados cadastrais de
+                                <span class="font-medium text-slate-700">
+                                    {{ client.nome_completo }}
+                                </span>.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         FECHAR
+                    ========================================== -->
+
+                    <button
+                        type="button"
+                        id="close-edit-client-modal"
+                        class="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-transparent text-slate-400 transition hover:border-brand-100 hover:bg-brand-50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                        aria-label="Fechar edição do cliente"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-5 w-5"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6 18 18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button>
+
+                </header>
+
+
+                <!-- =============================================
+                     CONTEÚDO DINÂMICO
+                ============================================== -->
+
+                <div
+                    id="edit-client-modal-content"
+                    class="min-h-[240px] bg-app-soft"
+                    aria-live="polite"
+                >
+
+                    <!-- =========================================
+                         ESTADO INICIAL / CARREGAMENTO
+                    ========================================== -->
+
+                    <div
+                        id="edit-client-modal-loading"
+                        class="flex min-h-[300px] items-center justify-center px-6 py-16"
+                    >
+
+                        <div class="text-center">
+
+                            <!-- SPINNER -->
+
+                            <div
+                                class="relative mx-auto h-10 w-10"
+                                aria-hidden="true"
+                            >
+                                <div
+                                    class="absolute inset-0 rounded-full border-[3px] border-brand-100"
+                                ></div>
+
+                                <div
+                                    class="absolute inset-0 animate-spin rounded-full border-[3px] border-transparent border-t-brand-700"
+                                ></div>
+                            </div>
+
+
+                            <p
+                                class="mt-4 text-sm font-semibold text-brand-950"
+                            >
+                                Carregando cadastro
+                            </p>
+
+                            <p
+                                class="mt-1 text-xs text-slate-500"
+                            >
+                                Aguarde enquanto preparamos os dados do cliente.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
