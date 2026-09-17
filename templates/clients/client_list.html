@@ -624,9 +624,11 @@
         openClientModal();
 
         try {
-            const response = await fetch(url, {
+            const response = await fetch(`${url}${url.includes("?") ? "&" : "?"}_=${Date.now()}`, {
+                cache: "no-store",
                 headers: {
-                    "X-Requested-With": "XMLHttpRequest"
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Cache-Control": "no-cache"
                 }
             });
 
@@ -760,9 +762,11 @@
 
     async function refreshClientList() {
         try {
-            const response = await fetch(window.location.href, {
+            const response = await fetch(`${window.location.href}${window.location.href.includes("?") ? "&" : "?"}_=${Date.now()}`, {
+                cache: "no-store",
                 headers: {
-                    "X-Requested-With": "XMLHttpRequest"
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Cache-Control": "no-cache"
                 }
             });
 
