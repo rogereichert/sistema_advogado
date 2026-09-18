@@ -101,6 +101,8 @@
 
 {% include "cases/_case_detail_movement_modal.html" %}
 
+{% include "documents/_required_document_modal.html" %}
+
 {% endblock %}
 
 
@@ -108,8 +110,19 @@
 
     {{ block.super }}
 
+
+    <!-- MODAL — NOVA MOVIMENTAÇÃO -->
+
     <script
         src="{% static 'js/cases/case-movement-modal.js' %}"
+        defer
+    ></script>
+
+
+    <!-- MODAL — SOLICITAR DOCUMENTO -->
+
+    <script
+        src="{% static 'js/documents/required-document-modal.js' %}"
         defer
     ></script>
 

@@ -1,8 +1,8 @@
-<!-- =============================================================
-     CONTEXTO DO CASO
-============================================================== -->
-
 <div class="required-document-modal-content">
+
+    <!-- =========================================================
+         CONTEXTO DO CASO
+    ========================================================== -->
 
     <div
         class="mb-6 rounded-xl border border-brand-100 bg-brand-50/40 px-4 py-3.5"
@@ -36,9 +36,7 @@
 
                 </div>
 
-                <p
-                    class="mt-1 truncate text-sm font-semibold text-brand-950"
-                >
+                <p class="mt-1 truncate text-sm font-semibold text-brand-950">
                     {{ case.titulo }}
                 </p>
 
@@ -83,9 +81,7 @@
 
         <div class="space-y-6">
 
-            <!-- =================================================
-                 DOCUMENTO
-            ================================================== -->
+            <!-- DOCUMENTO -->
 
             <div>
 
@@ -122,28 +118,10 @@
                 {% if form.nome.errors %}
 
                     <div
-                        class="mt-2 flex items-start gap-1.5 text-sm text-red-600"
+                        class="mt-2 text-sm text-red-600"
                         role="alert"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.8"
-                            stroke="currentColor"
-                            class="mt-0.5 h-4 w-4 shrink-0"
-                            aria-hidden="true"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 9v3.75m9-1.5a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 15.75h.008v.008H12v-.008Z"
-                            />
-                        </svg>
-
-                        <div>
-                            {{ form.nome.errors }}
-                        </div>
+                        {{ form.nome.errors }}
                     </div>
 
                 {% else %}
@@ -158,9 +136,7 @@
             </div>
 
 
-            <!-- =================================================
-                 DESCRIÇÃO
-            ================================================== -->
+            <!-- DESCRIÇÃO -->
 
             <div>
 
@@ -190,28 +166,10 @@
                 {% if form.descricao.errors %}
 
                     <div
-                        class="mt-2 flex items-start gap-1.5 text-sm text-red-600"
+                        class="mt-2 text-sm text-red-600"
                         role="alert"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.8"
-                            stroke="currentColor"
-                            class="mt-0.5 h-4 w-4 shrink-0"
-                            aria-hidden="true"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 9v3.75m9-1.5a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 15.75h.008v.008H12v-.008Z"
-                            />
-                        </svg>
-
-                        <div>
-                            {{ form.descricao.errors }}
-                        </div>
+                        {{ form.descricao.errors }}
                     </div>
 
                 {% else %}
