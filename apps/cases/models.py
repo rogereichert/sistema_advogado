@@ -26,8 +26,13 @@ class CaseStatus(models.Model):
         verbose_name="Ativo",
     )
 
-    criado_em = models.DateTimeField(auto_now_add=True)
-    atualizado_em = models.DateTimeField(auto_now=True)
+    criado_em = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    atualizado_em = models.DateTimeField(
+        auto_now=True,
+    )
 
     class Meta:
         ordering = ["ordem", "nome"]
@@ -102,8 +107,13 @@ class LegalCase(models.Model):
         verbose_name="Observações",
     )
 
-    criado_em = models.DateTimeField(auto_now_add=True)
-    atualizado_em = models.DateTimeField(auto_now=True)
+    criado_em = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    atualizado_em = models.DateTimeField(
+        auto_now=True,
+    )
 
     class Meta:
         ordering = ["-criado_em"]
@@ -111,7 +121,72 @@ class LegalCase(models.Model):
         verbose_name_plural = "Casos jurídicos"
 
     def __str__(self):
-        return f"{self.titulo} - {self.cliente.nome_completo}"
+        return (
+            f"{self.titulo} - "
+            f"{self.cliente.nome_completo}"
+        )
+
+    def save(self, *args, **kwargs):
+        self.titulo = self._normalizar_texto(
+            self.titulo,
+        )
+
+        self.area_juridica = self._normalizar_texto(
+            self.area_juridica,
+        )
+
+        self.numero_processo = (
+            self.numero_processo.strip()
+            if self.numero_processo
+            else ""
+        )
+
+        self.vara = self._normalizar_texto(
+            self.vara,
+        )
+
+        self.comarca = self._normalizar_texto(
+            self.comarca,
+        )
+
+        self.descricao = (
+            self.descricao.strip()
+            if self.descricao
+            else ""
+        )
+
+        self.observacoes = (
+            self.observacoes.strip()
+            if self.observacoes
+            else ""
+        )
+
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def _normalizar_texto(valor):
+        if not valor:
+            return ""
+
+        return " ".join(
+            valor.strip().split()
+        )
+
+    @property
+    def possui_processo(self):
+        return bool(
+            self.numero_processo.strip()
+            if self.numero_processo
+            else False
+        )
+
+    @property
+    def numero_identificacao(self):
+        return f"#{self.pk:05d}" if self.pk else ""
+
+    @property
+    def encerrado(self):
+        return self.data_encerramento is not None
 
 
 class CaseHistory(models.Model):
@@ -151,7 +226,24 @@ class CaseHistory(models.Model):
         verbose_name_plural = "Históricos das causas"
 
     def __str__(self):
-        return f"{self.caso.titulo} - {self.titulo}"
+        return (
+            f"{self.caso.titulo} - "
+            f"{self.titulo}"
+        )
+
+    def save(self, *args, **kwargs):
+        self.titulo = " ".join(
+            self.titulo.strip().split()
+        )
+
+        self.descricao = (
+            self.descricao.strip()
+            if self.descricao
+            else ""
+        )
+
+        super().save(*args, **kwargs)
+
 
 class CaseMovement(models.Model):
     caso = models.ForeignKey(
@@ -189,4 +281,20 @@ class CaseMovement(models.Model):
         verbose_name_plural = "Movimentações"
 
     def __str__(self):
-        return f"{self.caso.titulo} - {self.titulo}"
+        return (
+            f"{self.caso.titulo} - "
+            f"{self.titulo}"
+        )
+
+    def save(self, *args, **kwargs):
+        self.titulo = " ".join(
+            self.titulo.strip().split()
+        )
+
+        self.descricao = (
+            self.descricao.strip()
+            if self.descricao
+            else ""
+        )
+
+        super().save(*args, **kwargs)

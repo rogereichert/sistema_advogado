@@ -1,277 +1,247 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
     Casos Jurídicos | Advogado Company
 {% endblock %}
 
-{% block page_header %}
-    Casos Jurídicos
-{% endblock %}
-
 {% block content %}
 
-<div>
+<div class="mx-auto max-w-[1600px]">
 
-    <div>
+    <!-- =========================================================
+         CABEÇALHO
+    ========================================================== -->
 
-        <p class="text-sm font-medium text-amber-700">
-            Gestão jurídica
-        </p>
-
-        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-            Casos Jurídicos
-        </h1>
-
-        <p class="mt-2 text-sm text-slate-500">
-            Consulte e acompanhe todos os casos cadastrados no escritório.
-        </p>
-
-    </div>
-
-
-    <form
-        method="get"
-        class="mt-8 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm"
+    <header
+        class="flex flex-col justify-between gap-5 lg:flex-row lg:items-end"
     >
 
-        <div class="grid gap-4 xl:grid-cols-4">
+        <div class="min-w-0">
 
-            <div class="xl:col-span-2">
+            <div class="flex items-center gap-2">
 
-                <label class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
-                    Buscar
-                </label>
-
-                <input
-                    type="text"
-                    name="q"
-                    value="{{ search }}"
-                    placeholder="Cliente, CPF, título ou número do processo..."
-                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                <div
+                    class="flex h-8 w-8 items-center justify-center rounded-lg border border-brand-100 bg-brand-50 text-brand-700"
+                    aria-hidden="true"
                 >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M9 6.75V5.625A2.625 2.625 0 0 1 11.625 3h.75A2.625 2.625 0 0 1 15 5.625V6.75m-10.5 0h15A1.5 1.5 0 0 1 21 8.25v9A1.5 1.5 0 0 1 19.5 18.75h-15A1.5 1.5 0 0 1 3 17.25v-9A1.5 1.5 0 0 1 4.5 6.75Z"
+                        />
+
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M3 11.25c2.846 1.167 5.858 1.75 9 1.75s6.154-.583 9-1.75"
+                        />
+                    </svg>
+                </div>
+
+                <p
+                    class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700"
+                >
+                    Gestão jurídica
+                </p>
 
             </div>
 
 
-            <div>
-
-                <label class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
-                    Status
-                </label>
-
-                <select
-                    name="status"
-                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
-                >
-
-                    <option value="">
-                        Todos
-                    </option>
-
-                    {% for status in statuses %}
-
-                        <option
-                            value="{{ status.pk }}"
-                            {% if selected_status == status.pk|stringformat:"s" %}
-                                selected
-                            {% endif %}
-                        >
-                            {{ status.nome }}
-                        </option>
-
-                    {% endfor %}
-
-                </select>
-
-            </div>
-
-
-            <div>
-
-                <label class="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
-                    Área
-                </label>
-
-                <input
-                    type="text"
-                    name="area"
-                    value="{{ area }}"
-                    placeholder="Ex.: Trabalhista"
-                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
-                >
-
-            </div>
-
-        </div>
-
-
-        <div class="mt-4 flex justify-end gap-3">
-
-            <a
-                href="{% url 'cases:list' %}"
-                class="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+            <h1
+                class="mt-3 text-3xl font-semibold tracking-tight text-brand-950"
             >
-                Limpar
-            </a>
+                Casos Jurídicos
+            </h1>
 
-            <button
-                type="submit"
-                class="rounded-xl bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+
+            <p
+                class="mt-2 max-w-2xl text-sm leading-6 text-slate-500"
             >
-                Filtrar
-            </button>
-
-        </div>
-
-    </form>
-
-
-    <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-        <div class="border-b border-slate-100 px-7 py-5">
-
-            <h2 class="font-semibold text-slate-950">
-                Casos encontrados
-            </h2>
-
-            <p class="mt-1 text-sm text-slate-500">
-                {{ cases|length }} caso{{ cases|length|pluralize:"s" }}
+                Consulte e acompanhe as demandas jurídicas cadastradas
+                no escritório.
             </p>
 
         </div>
 
 
-        <div class="overflow-x-auto">
+        <!-- =====================================================
+             CONTADOR
+        ====================================================== -->
 
-            <table class="w-full">
+        <div
+            class="inline-flex shrink-0 items-center gap-3 rounded-xl border border-brand-100 bg-white px-4 py-3 shadow-sm"
+        >
 
-                <thead class="bg-slate-50">
-
-                    <tr class="text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
-
-                        <th class="px-6 py-4">
-                            Caso
-                        </th>
-
-                        <th class="px-6 py-4">
-                            Cliente
-                        </th>
-
-                        <th class="px-6 py-4">
-                            Status
-                        </th>
-
-                        <th class="px-6 py-4">
-                            Área
-                        </th>
-
-                        <th class="px-6 py-4">
-                            Processo
-                        </th>
-
-                        <th class="px-6 py-4">
-                            Abertura
-                        </th>
-
-                        <th class="px-6 py-4"></th>
-
-                    </tr>
-
-                </thead>
+            <div
+                class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-700"
+                aria-hidden="true"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 6.75V5.625A2.625 2.625 0 0 1 11.625 3h.75A2.625 2.625 0 0 1 15 5.625V6.75m-10.5 0h15A1.5 1.5 0 0 1 21 8.25v9A1.5 1.5 0 0 1 19.5 18.75h-15A1.5 1.5 0 0 1 3 17.25v-9A1.5 1.5 0 0 1 4.5 6.75Z"
+                    />
+                </svg>
+            </div>
 
 
-                <tbody class="divide-y divide-slate-100">
+            <div>
 
-                    {% for case in cases %}
+                <p
+                    class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                >
+                    Resultado atual
+                </p>
 
-                        <tr class="transition hover:bg-slate-50">
+                <p
+                    class="mt-0.5 text-sm font-semibold text-brand-950"
+                >
+                    <span id="case-result-count">
+                        {{ cases|length }}
+                    </span>
 
-                            <td class="px-6 py-5">
+                    caso{{ cases|length|pluralize:"s" }}
+                </p>
 
-                                <p class="font-semibold text-slate-900">
-                                    {{ case.titulo }}
-                                </p>
-
-                                <p class="mt-1 text-xs text-slate-400">
-                                    #{{ case.pk|stringformat:"05d" }}
-                                </p>
-
-                            </td>
-
-
-                            <td class="px-6 py-5 text-sm text-slate-700">
-                                {{ case.cliente.nome_completo }}
-                            </td>
-
-
-                            <td class="px-6 py-5">
-
-                                <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
-                                    {{ case.status.nome }}
-                                </span>
-
-                            </td>
-
-
-                            <td class="px-6 py-5 text-sm text-slate-600">
-                                {{ case.area_juridica|default:"-" }}
-                            </td>
-
-
-                            <td class="px-6 py-5 text-sm text-slate-600">
-                                {{ case.numero_processo|default:"Não ajuizado" }}
-                            </td>
-
-
-                            <td class="px-6 py-5 text-sm text-slate-600">
-                                {{ case.data_abertura|date:"d/m/Y" }}
-                            </td>
-
-
-                            <td class="px-6 py-5 text-right">
-
-                                <a
-                                    href="{% url 'cases:detail' case.pk %}"
-                                    class="text-sm font-semibold text-slate-600 transition hover:text-slate-950"
-                                >
-                                    Visualizar →
-                                </a>
-
-                            </td>
-
-                        </tr>
-
-                    {% empty %}
-
-                        <tr>
-
-                            <td
-                                colspan="7"
-                                class="px-6 py-14 text-center"
-                            >
-
-                                <p class="font-medium text-slate-700">
-                                    Nenhum caso encontrado
-                                </p>
-
-                                <p class="mt-1 text-sm text-slate-500">
-                                    Tente alterar os filtros de pesquisa.
-                                </p>
-
-                            </td>
-
-                        </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
+    </header>
+
+
+    <!-- =========================================================
+         FILTROS
+    ========================================================== -->
+
+    <div class="mt-8">
+
+        {% include "cases/_case_filters.html" %}
+
     </div>
+
+
+    <!-- =========================================================
+         RESULTADOS
+    ========================================================== -->
+
+    <section
+        class="mt-6 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+        aria-labelledby="case-results-title"
+    >
+
+        <!-- CABEÇALHO DOS RESULTADOS -->
+
+        <header
+            class="flex flex-col justify-between gap-3 border-b border-brand-100 px-5 py-5 sm:flex-row sm:items-center sm:px-6"
+        >
+
+            <div>
+
+                <p
+                    class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+                >
+                    Acompanhamento
+                </p>
+
+                <h2
+                    id="case-results-title"
+                    class="mt-1 font-semibold tracking-tight text-brand-950"
+                >
+                    Casos encontrados
+                </h2>
+
+                <p class="mt-1 text-sm text-slate-500">
+
+                    {% if cases %}
+
+                        {{ cases|length }}
+                        caso{{ cases|length|pluralize:"s" }}
+                        correspondente{{ cases|length|pluralize:"s" }}
+                        aos filtros atuais.
+
+                    {% else %}
+
+                        Nenhum caso corresponde aos filtros atuais.
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+
+            {% if search or selected_status or area %}
+
+                <a
+                    href="{% url 'cases:list' %}"
+                    class="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-brand-200 bg-white px-3 text-xs font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-3.5 w-3.5"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 18 18 6M6 6l12 12"
+                        />
+                    </svg>
+
+                    Limpar filtros
+                </a>
+
+            {% endif %}
+
+        </header>
+
+
+        <!-- =====================================================
+             CONTEÚDO
+        ====================================================== -->
+
+        {% if cases %}
+
+            {% include "cases/_case_table.html" %}
+            {% include "cases/_case_mobile_list.html" %}
+
+        {% else %}
+
+            {% include "cases/_case_empty.html" %}
+
+        {% endif %}
+
+    </section>
 
 </div>
 
+{% endblock %}
+
+
+{% block extra_js %}
+    {{ block.super }}
+
+    <script src="{% static 'js/cases/case-list.js' %}"></script>
 {% endblock %}

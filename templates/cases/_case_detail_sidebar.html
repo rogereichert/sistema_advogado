@@ -1,0 +1,453 @@
+<!-- =============================================================
+     SIDEBAR DO CASO
+============================================================== -->
+
+<aside class="min-w-0 space-y-6">
+
+    <!-- =========================================================
+         DADOS PROCESSUAIS
+    ========================================================== -->
+
+    <section
+        class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+    >
+
+        <!-- CABEÇALHO -->
+
+        <header
+            class="flex items-start gap-3 border-b border-brand-100 px-5 py-5 sm:px-6"
+        >
+
+            <div
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700"
+                aria-hidden="true"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 3v18m7.5-13.5h-15M6.75 7.5l-3 6h6l-3-6Zm10.5 0-3 6h6l-3-6ZM5.25 21h13.5"
+                    />
+                </svg>
+            </div>
+
+
+            <div class="min-w-0">
+
+                <p
+                    class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+                >
+                    Processo
+                </p>
+
+                <h2
+                    class="mt-0.5 font-semibold text-brand-950"
+                >
+                    Dados processuais
+                </h2>
+
+                <p
+                    class="mt-1 text-sm leading-5 text-slate-500"
+                >
+                    Informações de identificação e tramitação.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTEÚDO -->
+
+        <div class="divide-y divide-brand-100">
+
+            <!-- NÚMERO DO PROCESSO -->
+
+            <div class="px-5 py-5 sm:px-6">
+
+                <div class="flex items-start gap-3">
+
+                    <div
+                        class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-slate-400"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
+                            />
+                        </svg>
+                    </div>
+
+
+                    <div class="min-w-0">
+
+                        <p
+                            class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                        >
+                            Número do processo
+                        </p>
+
+
+                        {% if case.numero_processo %}
+
+                            <p
+                                class="mt-1.5 break-all font-mono text-sm font-semibold leading-6 text-brand-950"
+                            >
+                                {{ case.numero_processo }}
+                            </p>
+
+                        {% else %}
+
+                            <div class="mt-1.5">
+
+                                <span
+                                    class="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-500 ring-1 ring-inset ring-slate-200"
+                                >
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-slate-400"
+                                        aria-hidden="true"
+                                    ></span>
+
+                                    Não ajuizado
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- VARA -->
+
+            <div class="px-5 py-5 sm:px-6">
+
+                <div class="flex items-start gap-3">
+
+                    <div
+                        class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-slate-400"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M3.75 21h16.5M4.5 8.25h15M6 8.25V18m4-9.75V18m4-9.75V18m4-9.75V18M3.75 8.25 12 3l8.25 5.25"
+                            />
+                        </svg>
+                    </div>
+
+
+                    <div class="min-w-0">
+
+                        <p
+                            class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                        >
+                            Vara
+                        </p>
+
+                        <p
+                            class="
+                                mt-1.5 break-words text-sm leading-6
+                                {% if case.vara %}
+                                    font-medium text-slate-700
+                                {% else %}
+                                    text-slate-400
+                                {% endif %}
+                            "
+                        >
+                            {{ case.vara|default:"Não informada" }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- COMARCA -->
+
+            <div class="px-5 py-5 sm:px-6">
+
+                <div class="flex items-start gap-3">
+
+                    <div
+                        class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-slate-400"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 21s6.75-4.35 6.75-11.25a6.75 6.75 0 1 0-13.5 0C5.25 16.65 12 21 12 21Z"
+                            />
+
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M14.25 9.75a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"
+                            />
+                        </svg>
+                    </div>
+
+
+                    <div class="min-w-0">
+
+                        <p
+                            class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                        >
+                            Comarca
+                        </p>
+
+                        <p
+                            class="
+                                mt-1.5 break-words text-sm leading-6
+                                {% if case.comarca %}
+                                    font-medium text-slate-700
+                                {% else %}
+                                    text-slate-400
+                                {% endif %}
+                            "
+                        >
+                            {{ case.comarca|default:"Não informada" }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EDITAR DADOS -->
+
+        <footer
+            class="border-t border-brand-100 bg-slate-50/40 px-5 py-4 sm:px-6"
+        >
+
+            <a
+                href="{% url 'cases:update' case.pk %}"
+                class="inline-flex min-h-9 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-3.5 w-3.5"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931"
+                    />
+                </svg>
+
+                Editar dados processuais
+            </a>
+
+        </footer>
+
+    </section>
+
+
+    <!-- =========================================================
+         OBSERVAÇÕES INTERNAS
+    ========================================================== -->
+
+    <section
+        class="overflow-hidden rounded-2xl border border-gold-200 bg-white shadow-sm"
+    >
+
+        <!-- CABEÇALHO -->
+
+        <header
+            class="flex items-start gap-3 border-b border-gold-100 bg-gold-50/50 px-5 py-5 sm:px-6"
+        >
+
+            <div
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-gold-700 shadow-sm ring-1 ring-inset ring-gold-200"
+                aria-hidden="true"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M7.5 8.25h9m-9 3h6m-8.25 9 3.75-3h8.25A2.25 2.25 0 0 0 19.5 15V6A2.25 2.25 0 0 0 17.25 3.75H6.75A2.25 2.25 0 0 0 4.5 6v9A2.25 2.25 0 0 0 6.75 17.25H7.5v3Z"
+                    />
+                </svg>
+            </div>
+
+
+            <div class="min-w-0">
+
+                <p
+                    class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+                >
+                    Uso interno
+                </p>
+
+                <h2
+                    class="mt-0.5 font-semibold text-brand-950"
+                >
+                    Observações
+                </h2>
+
+                <p
+                    class="mt-1 text-sm leading-5 text-slate-500"
+                >
+                    Anotações internas relacionadas ao acompanhamento.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTEÚDO -->
+
+        <div class="px-5 py-5 sm:px-6">
+
+            {% if case.observacoes %}
+
+                <div
+                    class="whitespace-pre-line break-words text-sm leading-7 text-slate-600"
+                >{{ case.observacoes }}</div>
+
+            {% else %}
+
+                <div
+                    class="rounded-xl border border-dashed border-gold-200 bg-gold-50/30 px-4 py-6 text-center"
+                >
+
+                    <div
+                        class="mx-auto flex h-9 w-9 items-center justify-center rounded-xl bg-white text-gold-600 shadow-sm ring-1 ring-inset ring-gold-100"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 4.5v15m7.5-7.5h-15"
+                            />
+                        </svg>
+                    </div>
+
+
+                    <p
+                        class="mt-3 text-sm font-semibold text-slate-700"
+                    >
+                        Nenhuma observação
+                    </p>
+
+                    <p
+                        class="mt-1 text-xs leading-5 text-slate-500"
+                    >
+                        Registre aqui informações internas relevantes
+                        ao acompanhamento desta causa.
+                    </p>
+
+
+                    <a
+                        href="{% url 'cases:update' case.pk %}"
+                        class="mt-4 inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-gold-200 bg-white px-3 text-xs font-semibold text-gold-800 shadow-sm transition hover:bg-gold-50 focus:outline-none focus:ring-4 focus:ring-gold-100"
+                    >
+                        Adicionar observação
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if case.observacoes %}
+
+            <footer
+                class="border-t border-gold-100 bg-gold-50/30 px-5 py-4 sm:px-6"
+            >
+
+                <a
+                    href="{% url 'cases:update' case.pk %}"
+                    class="inline-flex items-center gap-1.5 text-xs font-semibold text-gold-800 transition hover:text-gold-900 focus:outline-none focus:ring-4 focus:ring-gold-100"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-3.5 w-3.5"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931"
+                        />
+                    </svg>
+
+                    Editar observações
+                </a>
+
+            </footer>
+
+        {% endif %}
+
+    </section>
+
+</aside>

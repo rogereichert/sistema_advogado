@@ -1,4 +1,8 @@
+import re
+
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from apps.clients.models import Client
@@ -6,7 +10,10 @@ from apps.clients.models import Client
 from .forms import CaseMovementForm, LegalCaseForm
 from .models import CaseHistory, CaseMovement, CaseStatus, LegalCase
 
-from django.db.models import Q
+
+def _is_ajax(request):
+    return request.headers.get("x-requested-with") == "XMLHttpRequest"
+
 
 @login_required
 def case_create(request, client_pk):
@@ -20,9 +27,7 @@ def case_create(request, client_pk):
 
         if form.is_valid():
             legal_case = form.save(commit=False)
-
             legal_case.cliente = client
-
             legal_case.save()
 
             CaseHistory.objects.create(
@@ -52,6 +57,7 @@ def case_create(request, client_pk):
         },
     )
 
+
 @login_required
 def case_detail(request, pk):
     legal_case = get_object_or_404(
@@ -70,7 +76,9 @@ def case_detail(request, pk):
         "enviado_por"
     ).all()
 
-    required_documents = legal_case.documentos_necessarios.all()
+    required_documents = (
+        legal_case.documentos_necessarios.all()
+    )
 
     required_total = required_documents.count()
 
@@ -103,6 +111,7 @@ def case_detail(request, pk):
         },
     )
 
+
 @login_required
 def case_update(request, pk):
     legal_case = get_object_or_404(
@@ -123,7 +132,6 @@ def case_update(request, pk):
 
         if form.is_valid():
             updated_case = form.save(commit=False)
-
             new_status = form.cleaned_data["status"]
 
             updated_case.save()
@@ -161,6 +169,7 @@ def case_update(request, pk):
         },
     )
 
+
 @login_required
 def movement_create(request, pk):
     legal_case = get_object_or_404(
@@ -176,10 +185,8 @@ def movement_create(request, pk):
 
         if form.is_valid():
             movement = form.save(commit=False)
-
             movement.caso = legal_case
             movement.usuario = request.user
-
             movement.save()
 
             CaseHistory.objects.create(
@@ -189,6 +196,17 @@ def movement_create(request, pk):
                 descricao=movement.descricao,
             )
 
+            if _is_ajax(request):
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "movement_id": movement.pk,
+                        "message": (
+                            "Movimentação registrada com sucesso."
+                        ),
+                    }
+                )
+
             return redirect(
                 "cases:detail",
                 pk=legal_case.pk,
@@ -197,14 +215,29 @@ def movement_create(request, pk):
     else:
         form = CaseMovementForm()
 
+    context = {
+        "form": form,
+        "case": legal_case,
+    }
+
+    if _is_ajax(request):
+        return render(
+            request,
+            "cases/_movement_form_content.html",
+            context,
+            status=(
+                400
+                if request.method == "POST"
+                else 200
+            ),
+        )
+
     return render(
         request,
         "cases/movement_form.html",
-        {
-            "form": form,
-            "case": legal_case,
-        },
+        context,
     )
+
 
 @login_required
 def case_list(request):
@@ -233,11 +266,29 @@ def case_list(request):
     ).strip()
 
     if search:
-        cases = cases.filter(
+        search_digits = re.sub(
+            r"\D",
+            "",
+            search,
+        )
+
+        search_filter = (
             Q(titulo__icontains=search)
-            | Q(cliente__nome_completo__icontains=search)
-            | Q(cliente__cpf__icontains=search)
-            | Q(numero_processo__icontains=search)
+            | Q(
+                cliente__nome_completo__icontains=search
+            )
+            | Q(
+                numero_processo__icontains=search
+            )
+        )
+
+        if search_digits:
+            search_filter |= Q(
+                cliente__cpf__icontains=search_digits
+            )
+
+        cases = cases.filter(
+            search_filter
         )
 
     if status:

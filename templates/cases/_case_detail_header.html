@@ -1,0 +1,295 @@
+<!-- =============================================================
+     CABEÇALHO DO CASO
+============================================================== -->
+
+<header
+    class="rounded-2xl border border-brand-100 bg-white p-5 shadow-sm sm:p-6 lg:p-7"
+>
+
+    <div
+        class="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between"
+    >
+
+        <!-- =====================================================
+             IDENTIFICAÇÃO
+        ====================================================== -->
+
+        <div class="min-w-0">
+
+            <div class="flex flex-wrap items-center gap-2.5">
+
+                <!-- IDENTIFICADOR -->
+
+                <span
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-brand-50 px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-brand-700 ring-1 ring-inset ring-brand-100"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-3.5 w-3.5"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M9 6.75V5.625A2.625 2.625 0 0 1 11.625 3h.75A2.625 2.625 0 0 1 15 5.625V6.75m-10.5 0h15A1.5 1.5 0 0 1 21 8.25v9A1.5 1.5 0 0 1 19.5 18.75h-15A1.5 1.5 0 0 1 3 17.25v-9A1.5 1.5 0 0 1 4.5 6.75Z"
+                        />
+                    </svg>
+
+                    {% if case.numero_identificacao %}
+                        Caso {{ case.numero_identificacao }}
+                    {% else %}
+                        Caso #{{ case.pk|stringformat:"05d" }}
+                    {% endif %}
+                </span>
+
+
+                <!-- STATUS -->
+
+                <span
+                    class="inline-flex items-center gap-1.5 rounded-full bg-gold-50 px-2.5 py-1.5 text-xs font-semibold text-gold-800 ring-1 ring-inset ring-gold-200"
+                >
+                    <span
+                        class="h-1.5 w-1.5 rounded-full bg-gold-500"
+                        aria-hidden="true"
+                    ></span>
+
+                    {{ case.status.nome }}
+                </span>
+
+
+                <!-- PROCESSO -->
+
+                {% if case.possui_processo %}
+
+                    <span
+                        class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200"
+                    >
+                        <span
+                            class="h-1.5 w-1.5 rounded-full bg-emerald-500"
+                            aria-hidden="true"
+                        ></span>
+
+                        Processo ajuizado
+                    </span>
+
+                {% else %}
+
+                    <span
+                        class="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-500 ring-1 ring-inset ring-slate-200"
+                    >
+                        Não ajuizado
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 TÍTULO
+            ================================================== -->
+
+            <h1
+                class="mt-4 max-w-4xl text-2xl font-semibold tracking-tight text-brand-950 sm:text-3xl"
+            >
+                {{ case.titulo }}
+            </h1>
+
+
+            <!-- =================================================
+                 CLIENTE
+            ================================================== -->
+
+            <div class="mt-4 flex flex-wrap items-center gap-3">
+
+                <a
+                    href="{% url 'clients:detail' case.cliente.pk %}"
+                    class="group inline-flex min-w-0 items-center gap-2.5 rounded-xl transition focus:outline-none focus:ring-4 focus:ring-brand-100"
+                >
+
+                    <span
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-xs font-semibold uppercase text-brand-700 ring-1 ring-inset ring-brand-100 transition group-hover:bg-brand-100"
+                        aria-hidden="true"
+                    >
+                        {{ case.cliente.nome_completo|slice:":1" }}
+                    </span>
+
+
+                    <span class="min-w-0">
+
+                        <span
+                            class="block text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                        >
+                            Cliente
+                        </span>
+
+                        <span
+                            class="mt-0.5 block max-w-[360px] truncate text-sm font-semibold text-slate-700 transition group-hover:text-brand-800"
+                        >
+                            {{ case.cliente.nome_completo }}
+                        </span>
+
+                    </span>
+
+                </a>
+
+
+                {% if case.area_juridica %}
+
+                    <span
+                        class="hidden h-5 w-px bg-slate-200 sm:block"
+                        aria-hidden="true"
+                    ></span>
+
+
+                    <div class="hidden sm:block">
+
+                        <p
+                            class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                        >
+                            Área jurídica
+                        </p>
+
+                        <p
+                            class="mt-0.5 text-sm font-medium text-slate-600"
+                        >
+                            {{ case.area_juridica }}
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             AÇÕES
+        ====================================================== -->
+
+        <div
+            class="flex shrink-0 flex-col gap-3 sm:flex-row sm:flex-wrap xl:flex-nowrap xl:justify-end"
+        >
+
+            <!-- NOVA MOVIMENTAÇÃO -->
+
+            <a
+                href="{% url 'cases:movement_create' case.pk %}"
+                data-movement-modal-open
+                data-movement-url="{% url 'cases:movement_create' case.pk %}"
+                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-950 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                </svg>
+
+                Nova movimentação
+            </a>
+
+
+            <!-- NOVO COMPROMISSO -->
+
+            <a
+                href="{% url 'agenda:create' case.pk %}"
+                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
+                    />
+                </svg>
+
+                Compromisso
+            </a>
+
+
+            <!-- ANEXAR DOCUMENTO -->
+
+            <a
+                href="{% url 'documents:upload' case.pk %}"
+                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M18.375 12.739 10.682 20.43a4.125 4.125 0 0 1-5.833-5.833l9.177-9.177a2.625 2.625 0 0 1 3.712 3.712l-9.18 9.177a1.125 1.125 0 0 1-1.59-1.591l8.516-8.517"
+                    />
+                </svg>
+
+                Anexar
+            </a>
+
+
+            <!-- EDITAR CASO -->
+
+            <a
+                href="{% url 'cases:update' case.pk %}"
+                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931ZM16.862 4.487 19.5 7.125"
+                    />
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M18 14.25v4.125A2.625 2.625 0 0 1 15.375 21H5.625A2.625 2.625 0 0 1 3 18.375V8.625A2.625 2.625 0 0 1 5.625 6H9.75"
+                    />
+                </svg>
+
+                Editar
+            </a>
+
+        </div>
+
+    </div>
+
+</header>

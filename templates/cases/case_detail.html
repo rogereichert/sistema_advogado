@@ -1,815 +1,116 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
-    {{ case.titulo }} | Advogado Company
+    {{ case.titulo }} | LexControl
 {% endblock %}
 
-{% block page_header %}
-    Caso jurídico
-{% endblock %}
 
 {% block content %}
 
-<div>
+<div class="mx-auto max-w-[1600px]">
 
-    <a
-        href="{% url 'clients:detail' case.cliente.pk %}"
-        class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-900"
+    <!-- =========================================================
+         NAVEGAÇÃO
+    ========================================================== -->
+
+    <nav
+        class="mb-6"
+        aria-label="Navegação do caso"
     >
-        ← {{ case.cliente.nome_completo }}
-    </a>
 
-
-    <div class="mt-6 flex flex-col justify-between gap-6 xl:flex-row xl:items-start">
-
-        <div>
-
-            <div class="flex flex-wrap items-center gap-3">
-
-                <p class="text-sm font-medium text-amber-700">
-                    Caso #{{ case.pk|stringformat:"05d" }}
-                </p>
-
-                <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
-                    {{ case.status.nome }}
-                </span>
-
-            </div>
-
-
-            <h1 class="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
-                {{ case.titulo }}
-            </h1>
-
-
-            <p class="mt-2 text-sm text-slate-500">
-                Cliente:
-
-                <span class="font-medium text-slate-700">
-                    {{ case.cliente.nome_completo }}
-                </span>
-            </p>
-
-        </div>
-
-
-        <div class="flex shrink-0 flex-wrap items-center gap-3">
-
-            <a
-                href="{% url 'cases:movement_create' case.pk %}"
-                class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+        <a
+            href="{% url 'clients:detail' case.cliente.pk %}"
+            class="inline-flex items-center gap-2 rounded-lg text-sm font-medium text-slate-500 transition hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.8"
+                stroke="currentColor"
+                class="h-4 w-4"
+                aria-hidden="true"
             >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                />
+            </svg>
 
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.8"
-                    stroke="currentColor"
-                    class="h-4 w-4"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                    />
-                </svg>
+            <span>
+                Voltar para {{ case.cliente.nome_completo }}
+            </span>
+        </a>
 
-                Nova movimentação
-
-            </a>
+    </nav>
 
 
-            <a
-                href="{% url 'agenda:create' case.pk %}"
-                class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 hover:text-slate-950"
-            >
+    <!-- =========================================================
+         CABEÇALHO DO CASO
+    ========================================================== -->
 
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.8"
-                    stroke="currentColor"
-                    class="h-4 w-4"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
-                    />
-                </svg>
-
-                Novo compromisso
-
-            </a>
+    {% include "cases/_case_detail_header.html" %}
 
 
-            <a
-                href="{% url 'documents:upload' case.pk %}"
-                class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 hover:text-slate-950"
-            >
+    <!-- =========================================================
+         INDICADORES
+    ========================================================== -->
 
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.8"
-                    stroke="currentColor"
-                    class="h-4 w-4"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M18.375 12.739 10.682 20.43a4.125 4.125 0 0 1-5.833-5.833l9.177-9.177a2.625 2.625 0 0 1 3.712 3.712l-9.18 9.177a1.125 1.125 0 0 1-1.59-1.591l8.516-8.517"
-                    />
-                </svg>
-
-                Anexar documentos
-
-            </a>
+    {% include "cases/_case_detail_stats.html" %}
 
 
-            <a
-                href="{% url 'cases:update' case.pk %}"
-                class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 hover:text-slate-950"
-            >
+    <!-- =========================================================
+         CONTEÚDO PRINCIPAL
+    ========================================================== -->
 
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.8"
-                    stroke="currentColor"
-                    class="h-4 w-4"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931ZM16.862 4.487 19.5 7.125"
-                    />
+    <div
+        class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"
+    >
 
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M18 14.25v4.125A2.625 2.625 0 0 1 15.375 21H5.625A2.625 2.625 0 0 1 3 18.375V8.625A2.625 2.625 0 0 1 5.625 6H9.75"
-                    />
-                </svg>
+        <!-- COLUNA PRINCIPAL -->
 
-                Editar causa
+        <div class="min-w-0 space-y-6">
 
-            </a>
+            {% include "cases/_case_detail_description.html" %}
 
-        </div>
+            {% include "cases/_case_detail_required_documents.html" %}
 
-    </div>
+            {% include "cases/_case_detail_agenda.html" %}
 
+            {% include "cases/_case_detail_documents.html" %}
 
-    <div class="mt-8 grid gap-4 md:grid-cols-3">
-
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-
-            <p class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-                Status
-            </p>
-
-            <p class="mt-3 text-lg font-semibold text-slate-950">
-                {{ case.status.nome }}
-            </p>
+            {% include "cases/_case_detail_history.html" %}
 
         </div>
 
 
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+        <!-- SIDEBAR -->
 
-            <p class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-                Área jurídica
-            </p>
-
-            <p class="mt-3 text-lg font-semibold text-slate-950">
-                {{ case.area_juridica|default:"Não informada" }}
-            </p>
-
-        </div>
-
-
-        <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-
-            <p class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
-                Abertura
-            </p>
-
-            <p class="mt-3 text-lg font-semibold text-slate-950">
-                {{ case.data_abertura|date:"d/m/Y" }}
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="mt-8 grid gap-6 xl:grid-cols-3">
-
-        <div class="space-y-6 xl:col-span-2">
-
-            <!-- DESCRIÇÃO -->
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-                <div class="border-b border-slate-100 px-7 py-5">
-
-                    <h2 class="font-semibold text-slate-950">
-                        Descrição da causa
-                    </h2>
-
-                </div>
-
-
-                <div class="p-7">
-
-                    <p class="whitespace-pre-line text-sm leading-7 text-slate-600">
-                        {{ case.descricao }}
-                    </p>
-
-                </div>
-
-            </section>
-
-
-            <!-- DOCUMENTAÇÃO NECESSÁRIA -->
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-                <div class="flex items-center justify-between border-b border-slate-100 px-7 py-5">
-
-                    <div>
-
-                        <h2 class="font-semibold text-slate-950">
-                            Documentação necessária
-                        </h2>
-
-                        <p class="mt-1 text-sm text-slate-500">
-                            Controle dos documentos solicitados ao cliente.
-                        </p>
-
-                    </div>
-
-
-                    <a
-                        href="{% url 'documents:required_create' case.pk %}"
-                        class="text-sm font-semibold text-amber-700 transition hover:text-amber-800"
-                    >
-                        + Solicitar documento
-                    </a>
-
-                </div>
-
-
-                {% if required_total %}
-
-                    <div class="border-b border-slate-100 px-7 py-5">
-
-                        <div class="flex items-center justify-between">
-
-                            <p class="text-sm font-medium text-slate-700">
-                                {{ required_received }} de {{ required_total }} recebidos
-                            </p>
-
-                            <p class="text-sm font-semibold text-slate-900">
-                                {{ required_progress }}%
-                            </p>
-
-                        </div>
-
-
-                        <div class="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
-
-                            <div
-                                class="h-full rounded-full bg-amber-500 transition-all"
-                                style="width: {{ required_progress }}%;"
-                            ></div>
-
-                        </div>
-
-                    </div>
-
-                {% endif %}
-
-
-                <div class="divide-y divide-slate-100">
-
-                    {% for item in required_documents %}
-
-                        <div class="flex items-center justify-between gap-6 px-7 py-4">
-
-                            <div class="flex items-center gap-4">
-
-                                <form
-                                    method="post"
-                                    action="{% url 'documents:required_toggle' item.pk %}"
-                                >
-
-                                    {% csrf_token %}
-
-                                    <button
-                                        type="submit"
-                                        class="
-                                            flex h-7 w-7 items-center justify-center rounded-full border transition
-
-                                            {% if item.recebido %}
-                                                border-emerald-500 bg-emerald-500 text-white
-                                            {% else %}
-                                                border-slate-300 bg-white text-transparent hover:border-amber-400
-                                            {% endif %}
-                                        "
-                                        title="Alterar situação"
-                                    >
-                                        ✓
-                                    </button>
-
-                                </form>
-
-
-                                <div>
-
-                                    <p
-                                        class="
-                                            text-sm font-semibold
-
-                                            {% if item.recebido %}
-                                                text-slate-400 line-through
-                                            {% else %}
-                                                text-slate-900
-                                            {% endif %}
-                                        "
-                                    >
-                                        {{ item.nome }}
-                                    </p>
-
-
-                                    {% if item.descricao %}
-
-                                        <p class="mt-1 text-xs text-slate-500">
-                                            {{ item.descricao }}
-                                        </p>
-
-                                    {% endif %}
-
-
-                                    {% if item.recebido_em %}
-
-                                        <p class="mt-1 text-xs text-emerald-600">
-                                            Recebido em
-                                            {{ item.recebido_em|date:"d/m/Y H:i" }}
-                                        </p>
-
-                                    {% endif %}
-
-                                </div>
-
-                            </div>
-
-
-                            <form
-                                method="post"
-                                action="{% url 'documents:required_delete' item.pk %}"
-                                onsubmit="return confirm('Remover este documento do checklist?');"
-                            >
-
-                                {% csrf_token %}
-
-                                <button
-                                    type="submit"
-                                    class="rounded-lg px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50"
-                                >
-                                    Remover
-                                </button>
-
-                            </form>
-
-                        </div>
-
-                    {% empty %}
-
-                        <div class="px-7 py-10 text-center">
-
-                            <p class="text-sm font-medium text-slate-700">
-                                Nenhum documento solicitado
-                            </p>
-
-                            <p class="mt-1 text-sm text-slate-500">
-                                Adicione os documentos necessários para acompanhar a pendência do cliente.
-                            </p>
-
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-            </section>
-
-
-            <!-- AGENDA -->
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-                <div class="flex items-center justify-between border-b border-slate-100 px-7 py-5">
-
-                    <div>
-
-                        <h2 class="font-semibold text-slate-950">
-                            Agenda
-                        </h2>
-
-                        <p class="mt-1 text-sm text-slate-500">
-                            Compromissos vinculados a este caso.
-                        </p>
-
-                    </div>
-
-
-                    <a
-                        href="{% url 'agenda:create' case.pk %}"
-                        class="text-sm font-semibold text-amber-700 transition hover:text-amber-800"
-                    >
-                        + Novo compromisso
-                    </a>
-
-                </div>
-
-
-                <div class="divide-y divide-slate-100">
-
-                    {% for event in events %}
-
-                        <div class="flex items-center justify-between gap-6 px-7 py-5">
-
-                            <div>
-
-                                <div class="flex flex-wrap items-center gap-3">
-
-                                    <p class="font-semibold text-slate-900">
-                                        {{ event.titulo }}
-                                    </p>
-
-                                    <span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
-                                        {{ event.get_tipo_display }}
-                                    </span>
-
-                                </div>
-
-
-                                <p class="mt-2 text-sm text-slate-500">
-
-                                    {{ event.data|date:"d/m/Y" }}
-
-                                    {% if event.hora %}
-                                        às {{ event.hora|time:"H:i" }}
-                                    {% endif %}
-
-                                    {% if event.local %}
-                                        · {{ event.local }}
-                                    {% endif %}
-
-                                </p>
-
-
-                                {% if event.descricao %}
-
-                                    <p class="mt-2 text-sm leading-6 text-slate-500">
-                                        {{ event.descricao }}
-                                    </p>
-
-                                {% endif %}
-
-                            </div>
-
-
-                            <a
-                                href="{% url 'agenda:update' event.pk %}"
-                                class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-slate-950"
-                            >
-                                Editar
-                            </a>
-
-                        </div>
-
-                    {% empty %}
-
-                        <div class="px-7 py-10 text-center">
-
-                            <p class="text-sm font-medium text-slate-700">
-                                Nenhum compromisso cadastrado
-                            </p>
-
-                            <p class="mt-1 text-sm text-slate-500">
-                                Audiências, prazos e reuniões aparecerão aqui.
-                            </p>
-
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-            </section>
-
-
-            <!-- DOCUMENTOS ANEXADOS -->
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-                <div class="flex items-center justify-between border-b border-slate-100 px-7 py-5">
-
-                    <div>
-
-                        <h2 class="font-semibold text-slate-950">
-                            Documentos
-                        </h2>
-
-                        <p class="mt-1 text-sm text-slate-500">
-                            Arquivos vinculados a este caso.
-                        </p>
-
-                    </div>
-
-
-                    <a
-                        href="{% url 'documents:upload' case.pk %}"
-                        class="text-sm font-semibold text-amber-700 transition hover:text-amber-800"
-                    >
-                        + Anexar
-                    </a>
-
-                </div>
-
-
-                <div class="divide-y divide-slate-100">
-
-                    {% for document in documents %}
-
-                        <div class="flex items-center justify-between gap-6 px-7 py-5">
-
-                            <div class="flex min-w-0 items-center gap-4">
-
-                                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
-
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.5"
-                                        stroke="currentColor"
-                                        class="h-5 w-5"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
-                                        />
-                                    </svg>
-
-                                </div>
-
-
-                                <div class="min-w-0">
-
-                                    <p class="truncate text-sm font-semibold text-slate-900">
-                                        {{ document.nome_original }}
-                                    </p>
-
-
-                                    {% if document.descricao %}
-
-                                        <p class="mt-1 truncate text-sm text-slate-500">
-                                            {{ document.descricao }}
-                                        </p>
-
-                                    {% endif %}
-
-
-                                    <p class="mt-1 text-xs text-slate-400">
-
-                                        {{ document.criado_em|date:"d/m/Y H:i" }}
-
-                                        {% if document.enviado_por %}
-                                            · {{ document.enviado_por.nome_completo|default:document.enviado_por.username }}
-                                        {% endif %}
-
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="flex shrink-0 items-center gap-2">
-
-                                <a
-                                    href="{% url 'documents:download' document.pk %}"
-                                    class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-slate-950"
-                                >
-                                    Baixar
-                                </a>
-
-
-                                <form
-                                    method="post"
-                                    action="{% url 'documents:delete' document.pk %}"
-                                    onsubmit="return confirm('Deseja realmente remover este documento?');"
-                                >
-
-                                    {% csrf_token %}
-
-                                    <button
-                                        type="submit"
-                                        class="rounded-lg px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50"
-                                    >
-                                        Remover
-                                    </button>
-
-                                </form>
-
-                            </div>
-
-                        </div>
-
-                    {% empty %}
-
-                        <div class="px-7 py-10 text-center">
-
-                            <p class="text-sm font-medium text-slate-700">
-                                Nenhum documento anexado
-                            </p>
-
-                            <p class="mt-1 text-sm text-slate-500">
-                                Documentos adicionados ao caso aparecerão aqui.
-                            </p>
-
-                        </div>
-
-                    {% endfor %}
-
-                </div>
-
-            </section>
-
-
-            <!-- HISTÓRICO -->
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-                <div class="border-b border-slate-100 px-7 py-5">
-
-                    <h2 class="font-semibold text-slate-950">
-                        Histórico
-                    </h2>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Movimentações e atualizações deste caso.
-                    </p>
-
-                </div>
-
-
-                <div class="p-7">
-
-                    <div class="space-y-0">
-
-                        {% for item in history %}
-
-                            <div class="relative flex gap-5 pb-8">
-
-                                {% if not forloop.last %}
-                                    <div class="absolute left-[7px] top-4 h-full w-px bg-slate-200"></div>
-                                {% endif %}
-
-
-                                <div class="relative z-10 mt-1.5 h-4 w-4 shrink-0 rounded-full border-4 border-white bg-amber-500 ring-1 ring-amber-200"></div>
-
-
-                                <div>
-
-                                    <p class="font-semibold text-slate-900">
-                                        {{ item.titulo }}
-                                    </p>
-
-
-                                    {% if item.descricao %}
-
-                                        <p class="mt-1 text-sm leading-6 text-slate-500">
-                                            {{ item.descricao }}
-                                        </p>
-
-                                    {% endif %}
-
-
-                                    <p class="mt-2 text-xs text-slate-400">
-
-                                        {{ item.criado_em|date:"d/m/Y H:i" }}
-
-                                        {% if item.usuario %}
-                                            · {{ item.usuario.nome_completo|default:item.usuario.username }}
-                                        {% endif %}
-
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                        {% empty %}
-
-                            <p class="text-sm text-slate-500">
-                                Nenhuma movimentação registrada.
-                            </p>
-
-                        {% endfor %}
-
-                    </div>
-
-                </div>
-
-            </section>
-
-        </div>
-
-
-        <!-- COLUNA DIREITA -->
-        <aside class="space-y-6">
-
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-
-                <div class="border-b border-slate-100 px-6 py-5">
-
-                    <h2 class="font-semibold text-slate-950">
-                        Dados processuais
-                    </h2>
-
-                </div>
-
-
-                <div class="space-y-5 p-6">
-
-                    <div>
-
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                            Número do processo
-                        </p>
-
-                        <p class="mt-2 text-sm font-medium text-slate-800">
-                            {{ case.numero_processo|default:"Não ajuizado" }}
-                        </p>
-
-                    </div>
-
-
-                    <div>
-
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                            Vara
-                        </p>
-
-                        <p class="mt-2 text-sm font-medium text-slate-800">
-                            {{ case.vara|default:"Não informada" }}
-                        </p>
-
-                    </div>
-
-
-                    <div>
-
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                            Comarca
-                        </p>
-
-                        <p class="mt-2 text-sm font-medium text-slate-800">
-                            {{ case.comarca|default:"Não informada" }}
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            {% if case.observacoes %}
-
-                <section class="rounded-2xl border border-amber-200/70 bg-amber-50/70 p-6">
-
-                    <p class="text-xs font-semibold uppercase tracking-wider text-amber-700">
-                        Observações
-                    </p>
-
-                    <p class="mt-3 whitespace-pre-line text-sm leading-6 text-amber-950/80">
-                        {{ case.observacoes }}
-                    </p>
-
-                </section>
-
-            {% endif %}
-
-        </aside>
+        {% include "cases/_case_detail_sidebar.html" %}
 
     </div>
 
 </div>
+
+
+<!-- =============================================================
+     MODAIS
+============================================================== -->
+
+{% include "cases/_case_detail_movement_modal.html" %}
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+    {{ block.super }}
+
+    <script
+        src="{% static 'js/cases/case-movement-modal.js' %}"
+        defer
+    ></script>
 
 {% endblock %}

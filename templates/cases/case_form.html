@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 
-
 {% block title %}
-    Nova causa | Advogado Company
-{% endblock %}
-
-
-{% block page_header %}
-    Nova causa jurídica
+    {% if editing %}
+        Editar causa | Advogado Company
+    {% else %}
+        Nova causa | Advogado Company
+    {% endif %}
 {% endblock %}
 
 
@@ -15,118 +13,436 @@
 
 <div class="mx-auto max-w-6xl">
 
-    <a
-        href="{% url 'clients:detail' client.pk %}"
-        class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-slate-900"
+    <!-- =========================================================
+         NAVEGAÇÃO
+    ========================================================== -->
+
+    <nav aria-label="Navegação do caso">
+
+        {% if editing %}
+
+            <a
+                href="{% url 'cases:detail' case.pk %}"
+                class="inline-flex items-center gap-2 rounded-lg text-sm font-medium text-slate-500 transition hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                    />
+                </svg>
+
+                Voltar para o caso
+            </a>
+
+        {% else %}
+
+            <a
+                href="{% url 'clients:detail' client.pk %}"
+                class="inline-flex items-center gap-2 rounded-lg text-sm font-medium text-slate-500 transition hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                    />
+                </svg>
+
+                Voltar para {{ client.nome_completo }}
+            </a>
+
+        {% endif %}
+
+    </nav>
+
+
+    <!-- =========================================================
+         CABEÇALHO
+    ========================================================== -->
+
+    <header
+        class="mt-6 flex flex-col justify-between gap-5 lg:flex-row lg:items-end"
     >
-        ← {{ client.nome_completo }}
-    </a>
+
+        <div class="min-w-0">
+
+            <div class="flex items-center gap-2">
+
+                <div
+                    class="flex h-8 w-8 items-center justify-center rounded-lg border border-brand-100 bg-brand-50 text-brand-700"
+                    aria-hidden="true"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M9 6.75V5.625A2.625 2.625 0 0 1 11.625 3h.75A2.625 2.625 0 0 1 15 5.625V6.75m-10.5 0h15A1.5 1.5 0 0 1 21 8.25v9A1.5 1.5 0 0 1 19.5 18.75h-15A1.5 1.5 0 0 1 3 17.25v-9A1.5 1.5 0 0 1 4.5 6.75Z"
+                        />
+                    </svg>
+                </div>
 
 
-    <div class="mt-6">
+                <p
+                    class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700"
+                >
+                    {% if editing %}
+                        Atualização do caso
+                    {% else %}
+                        Gestão jurídica
+                    {% endif %}
+                </p>
 
-        <p class="text-sm font-medium text-amber-700">
+            </div>
 
-            {% if editing %}
-                Atualização do caso
-            {% else %}
-                Novo caso
-            {% endif %}
 
-        </p>
+            <h1
+                class="mt-3 text-3xl font-semibold tracking-tight text-brand-950"
+            >
+                {% if editing %}
+                    Editar causa jurídica
+                {% else %}
+                    Nova causa jurídica
+                {% endif %}
+            </h1>
 
-        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
 
-            {% if editing %}
-                Editar causa jurídica
-            {% else %}
-                Nova causa jurídica
-            {% endif %}
+            <p class="mt-2 text-sm leading-6 text-slate-500">
 
-        </h1>
+                {% if editing %}
+                    Atualize as informações e os dados processuais
+                    desta causa.
+                {% else %}
+                    Cadastre uma nova demanda jurídica vinculada
+                    ao cliente.
+                {% endif %}
 
-        <p class="mt-2 text-sm text-slate-500">
-            Vinculada ao cliente
-            <span class="font-semibold text-slate-700">
-                {{ client.nome_completo }}
+            </p>
+
+        </div>
+
+
+        <!-- CLIENTE VINCULADO -->
+
+        <a
+            href="{% url 'clients:detail' client.pk %}"
+            class="group inline-flex max-w-full shrink-0 items-center gap-3 rounded-xl border border-brand-100 bg-white px-4 py-3 shadow-sm transition hover:border-brand-200 hover:bg-brand-50/40"
+        >
+
+            <span
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-xs font-semibold uppercase text-brand-700 ring-1 ring-inset ring-brand-100"
+                aria-hidden="true"
+            >
+                {{ client.nome_completo|slice:":1" }}
             </span>
-        </p>
-
-    </div>
 
 
-    <form method="post" class="mt-8">
+            <span class="min-w-0">
+
+                <span
+                    class="block text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                >
+                    Cliente vinculado
+                </span>
+
+                <span
+                    class="mt-0.5 block max-w-[280px] truncate text-sm font-semibold text-brand-950 transition group-hover:text-brand-700"
+                >
+                    {{ client.nome_completo }}
+                </span>
+
+            </span>
+
+        </a>
+
+    </header>
+
+
+    <!-- =========================================================
+         FORMULÁRIO
+    ========================================================== -->
+
+    <form
+        method="post"
+        id="case-form"
+        class="mt-8"
+        novalidate
+    >
 
         {% csrf_token %}
 
 
-        <div class="space-y-6">
+        <!-- =====================================================
+             ERROS GERAIS
+        ====================================================== -->
 
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+        {% if form.non_field_errors %}
 
-                <div class="border-b border-slate-100 px-7 py-5">
+            <div
+                class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3"
+                role="alert"
+            >
+                <div class="flex items-start gap-3">
 
-                    <h2 class="font-semibold text-slate-950">
-                        Informações da causa
-                    </h2>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="mt-0.5 h-5 w-5 shrink-0 text-red-600"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 9v3.75m9-3.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 7.5h.008v.008H12V16.5Z"
+                        />
+                    </svg>
 
-                    <p class="mt-1 text-sm text-slate-500">
-                        Dados principais para identificação e acompanhamento.
-                    </p>
+
+                    <div>
+
+                        <p class="text-sm font-semibold text-red-800">
+                            Não foi possível salvar o caso.
+                        </p>
+
+                        <div class="mt-1 text-sm text-red-700">
+                            {{ form.non_field_errors }}
+                        </div>
+
+                    </div>
 
                 </div>
+            </div>
+
+        {% endif %}
 
 
-                <div class="grid gap-6 p-7 md:grid-cols-2">
+        <div class="space-y-6">
+
+            <!-- =================================================
+                 INFORMAÇÕES DA CAUSA
+            ================================================== -->
+
+            <section
+                class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+            >
+
+                <header
+                    class="border-b border-brand-100 px-5 py-5 sm:px-7"
+                >
+
+                    <div class="flex items-start gap-3">
+
+                        <div
+                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700"
+                            aria-hidden="true"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-4 w-4"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
+                                />
+                            </svg>
+                        </div>
+
+
+                        <div>
+
+                            <p
+                                class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+                            >
+                                Identificação
+                            </p>
+
+                            <h2
+                                class="mt-0.5 font-semibold text-brand-950"
+                            >
+                                Informações da causa
+                            </h2>
+
+                            <p
+                                class="mt-1 text-sm leading-5 text-slate-500"
+                            >
+                                Dados principais para identificação
+                                e acompanhamento da demanda.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </header>
+
+
+                <div
+                    class="grid gap-6 p-5 sm:p-7 md:grid-cols-2"
+                >
+
+                    <!-- TÍTULO -->
 
                     <div class="md:col-span-2">
 
-                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                        <label
+                            for="{{ form.titulo.id_for_label }}"
+                            class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
                             {{ form.titulo.label }}
+
+                            {% if form.titulo.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
                         </label>
+
 
                         {{ form.titulo }}
 
-                        {{ form.titulo.errors }}
+
+                        {% if form.titulo.errors %}
+
+                            <div
+                                class="mt-2 text-sm font-medium text-red-600"
+                            >
+                                {{ form.titulo.errors }}
+                            </div>
+
+                        {% else %}
+
+                            <p class="mt-2 text-xs text-slate-400">
+                                Utilize um título objetivo que permita
+                                identificar rapidamente a demanda.
+                            </p>
+
+                        {% endif %}
 
                     </div>
 
 
+                    <!-- ÁREA -->
+
                     <div>
 
-                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                        <label
+                            for="{{ form.area_juridica.id_for_label }}"
+                            class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
                             {{ form.area_juridica.label }}
+
+                            {% if form.area_juridica.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
                         </label>
+
 
                         {{ form.area_juridica }}
 
-                        {{ form.area_juridica.errors }}
+
+                        {% if form.area_juridica.errors %}
+
+                            <div
+                                class="mt-2 text-sm font-medium text-red-600"
+                            >
+                                {{ form.area_juridica.errors }}
+                            </div>
+
+                        {% endif %}
 
                     </div>
 
 
+                    <!-- STATUS -->
+
                     <div>
 
-                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                        <label
+                            for="{{ form.status.id_for_label }}"
+                            class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
                             {{ form.status.label }}
+
+                            {% if form.status.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
                         </label>
+
 
                         {{ form.status }}
 
-                        {{ form.status.errors }}
+
+                        {% if form.status.errors %}
+
+                            <div
+                                class="mt-2 text-sm font-medium text-red-600"
+                            >
+                                {{ form.status.errors }}
+                            </div>
+
+                        {% endif %}
 
                     </div>
 
 
+                    <!-- DESCRIÇÃO -->
+
                     <div class="md:col-span-2">
 
-                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                        <label
+                            for="{{ form.descricao.id_for_label }}"
+                            class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
                             {{ form.descricao.label }}
+
+                            {% if form.descricao.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
                         </label>
+
 
                         {{ form.descricao }}
 
-                        {{ form.descricao.errors }}
+
+                        {% if form.descricao.errors %}
+
+                            <div
+                                class="mt-2 text-sm font-medium text-red-600"
+                            >
+                                {{ form.descricao.errors }}
+                            </div>
+
+                        {% endif %}
 
                     </div>
 
@@ -135,52 +451,172 @@
             </section>
 
 
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+            <!-- =================================================
+                 DADOS PROCESSUAIS
+            ================================================== -->
 
-                <div class="border-b border-slate-100 px-7 py-5">
+            <section
+                class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+            >
 
-                    <h2 class="font-semibold text-slate-950">
-                        Dados processuais
-                    </h2>
+                <header
+                    class="border-b border-brand-100 px-5 py-5 sm:px-7"
+                >
 
-                    <p class="mt-1 text-sm text-slate-500">
-                        Preencha somente se já houver processo judicial.
-                    </p>
+                    <div class="flex items-start gap-3">
 
-                </div>
+                        <div
+                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700"
+                            aria-hidden="true"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-4 w-4"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 0h10.5A2.25 2.25 0 0 1 19.5 12.75v6A2.25 2.25 0 0 1 17.25 21H6.75A2.25 2.25 0 0 1 4.5 18.75v-6a2.25 2.25 0 0 1 2.25-2.25Z"
+                                />
+                            </svg>
+                        </div>
 
 
-                <div class="grid gap-6 p-7 md:grid-cols-2">
+                        <div>
+
+                            <p
+                                class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+                            >
+                                Processo judicial
+                            </p>
+
+                            <h2
+                                class="mt-0.5 font-semibold text-brand-950"
+                            >
+                                Dados processuais
+                            </h2>
+
+                            <p
+                                class="mt-1 text-sm leading-5 text-slate-500"
+                            >
+                                Preencha estes campos somente quando
+                                já houver processo judicial.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </header>
+
+
+                <div
+                    class="grid gap-6 p-5 sm:p-7 md:grid-cols-2"
+                >
+
+                    <!-- NÚMERO DO PROCESSO -->
 
                     <div class="md:col-span-2">
 
-                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                        <label
+                            for="{{ form.numero_processo.id_for_label }}"
+                            class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
                             {{ form.numero_processo.label }}
+
+                            {% if form.numero_processo.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
                         </label>
+
 
                         {{ form.numero_processo }}
 
+
+                        {% if form.numero_processo.errors %}
+
+                            <div
+                                class="mt-2 text-sm font-medium text-red-600"
+                            >
+                                {{ form.numero_processo.errors }}
+                            </div>
+
+                        {% else %}
+
+                            <p class="mt-2 text-xs text-slate-400">
+                                Deixe em branco enquanto a demanda
+                                ainda não tiver sido ajuizada.
+                            </p>
+
+                        {% endif %}
+
                     </div>
 
 
+                    <!-- VARA -->
+
                     <div>
 
-                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                        <label
+                            for="{{ form.vara.id_for_label }}"
+                            class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
                             {{ form.vara.label }}
+
+                            {% if form.vara.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
                         </label>
+
 
                         {{ form.vara }}
 
+
+                        {% if form.vara.errors %}
+
+                            <div
+                                class="mt-2 text-sm font-medium text-red-600"
+                            >
+                                {{ form.vara.errors }}
+                            </div>
+
+                        {% endif %}
+
                     </div>
 
 
+                    <!-- COMARCA -->
+
                     <div>
 
-                        <label class="mb-2 block text-sm font-medium text-slate-700">
+                        <label
+                            for="{{ form.comarca.id_for_label }}"
+                            class="mb-2 block text-sm font-semibold text-slate-700"
+                        >
                             {{ form.comarca.label }}
+
+                            {% if form.comarca.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
                         </label>
 
+
                         {{ form.comarca }}
+
+
+                        {% if form.comarca.errors %}
+
+                            <div
+                                class="mt-2 text-sm font-medium text-red-600"
+                            >
+                                {{ form.comarca.errors }}
+                            </div>
+
+                        {% endif %}
 
                     </div>
 
@@ -189,20 +625,91 @@
             </section>
 
 
-            <section class="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+            <!-- =================================================
+                 OBSERVAÇÕES
+            ================================================== -->
 
-                <div class="border-b border-slate-100 px-7 py-5">
+            <section
+                class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+            >
 
-                    <h2 class="font-semibold text-slate-950">
-                        Observações
-                    </h2>
+                <header
+                    class="border-b border-brand-100 px-5 py-5 sm:px-7"
+                >
 
-                </div>
+                    <div class="flex items-start gap-3">
+
+                        <div
+                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700"
+                            aria-hidden="true"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-4 w-4"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M7.5 8.25h9m-9 3h9m-9 3h4.5M6.75 3.75h10.5A2.25 2.25 0 0 1 19.5 6v12A2.25 2.25 0 0 1 17.25 20.25H6.75A2.25 2.25 0 0 1 4.5 18V6a2.25 2.25 0 0 1 2.25-2.25Z"
+                                />
+                            </svg>
+                        </div>
 
 
-                <div class="p-7">
+                        <div>
+
+                            <p
+                                class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+                            >
+                                Informações internas
+                            </p>
+
+                            <h2
+                                class="mt-0.5 font-semibold text-brand-950"
+                            >
+                                Observações
+                            </h2>
+
+                            <p
+                                class="mt-1 text-sm leading-5 text-slate-500"
+                            >
+                                Registre informações complementares
+                                relevantes ao acompanhamento do caso.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </header>
+
+
+                <div class="p-5 sm:p-7">
+
+                    <label
+                        for="{{ form.observacoes.id_for_label }}"
+                        class="sr-only"
+                    >
+                        {{ form.observacoes.label }}
+                    </label>
+
 
                     {{ form.observacoes }}
+
+
+                    {% if form.observacoes.errors %}
+
+                        <div
+                            class="mt-2 text-sm font-medium text-red-600"
+                        >
+                            {{ form.observacoes.errors }}
+                        </div>
+
+                    {% endif %}
 
                 </div>
 
@@ -211,25 +718,82 @@
         </div>
 
 
-        <div class="mt-8 flex justify-end gap-3">
+        <!-- =====================================================
+             AÇÕES
+        ====================================================== -->
 
-            <a
-                href="{% url 'clients:detail' client.pk %}"
-                class="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-            >
-                Cancelar
-            </a>
+        <div
+            class="mt-8 flex flex-col-reverse gap-3 border-t border-brand-100 pt-6 sm:flex-row sm:items-center sm:justify-between"
+        >
 
-            <button
-                type="submit"
-                class="rounded-xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+            <p class="text-xs leading-5 text-slate-400">
+                <span class="font-semibold text-red-500">*</span>
+                Campos obrigatórios
+            </p>
+
+
+            <div
+                class="flex flex-col-reverse gap-3 sm:flex-row sm:items-center"
             >
+
                 {% if editing %}
-                    Salvar alterações
+
+                    <a
+                        href="{% url 'cases:detail' case.pk %}"
+                        class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-100"
+                    >
+                        Cancelar
+                    </a>
+
                 {% else %}
-                    Criar causa
+
+                    <a
+                        href="{% url 'clients:detail' client.pk %}"
+                        class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-4 focus:ring-slate-100"
+                    >
+                        Cancelar
+                    </a>
+
                 {% endif %}
-            </button>
+
+
+                <button
+                    type="submit"
+                    class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-950 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                    >
+                        {% if editing %}
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            />
+                        {% else %}
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 4.5v15m7.5-7.5h-15"
+                            />
+                        {% endif %}
+                    </svg>
+
+
+                    {% if editing %}
+                        Salvar alterações
+                    {% else %}
+                        Criar causa
+                    {% endif %}
+                </button>
+
+            </div>
 
         </div>
 

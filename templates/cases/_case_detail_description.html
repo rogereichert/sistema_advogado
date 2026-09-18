@@ -1,0 +1,156 @@
+<!-- =============================================================
+     DESCRIÇÃO DA CAUSA
+============================================================== -->
+
+<section
+    class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+>
+
+    <!-- =========================================================
+         CABEÇALHO
+    ========================================================== -->
+
+    <header
+        class="flex items-start gap-3 border-b border-brand-100 px-5 py-5 sm:px-7"
+    >
+
+        <div
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700"
+            aria-hidden="true"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.8"
+                stroke="currentColor"
+                class="h-4 w-4"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
+                />
+
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9 13.5h6m-6 3h6"
+                />
+            </svg>
+        </div>
+
+
+        <div class="min-w-0">
+
+            <p
+                class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+            >
+                Informações do caso
+            </p>
+
+            <h2
+                class="mt-0.5 font-semibold text-brand-950"
+            >
+                Descrição da causa
+            </h2>
+
+            <p
+                class="mt-1 text-sm leading-5 text-slate-500"
+            >
+                Resumo dos fatos e informações principais
+                desta demanda.
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         CONTEÚDO
+    ========================================================== -->
+
+    <div class="p-5 sm:p-7">
+
+        {% if case.descricao %}
+
+            <div
+                class="whitespace-pre-line text-sm leading-7 text-slate-600"
+            >{{ case.descricao }}</div>
+
+        {% else %}
+
+            <!-- =================================================
+                 ESTADO VAZIO
+            ================================================== -->
+
+            <div
+                class="rounded-xl border border-dashed border-slate-200 bg-slate-50/70 px-5 py-8 text-center"
+            >
+
+                <div
+                    class="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm ring-1 ring-inset ring-slate-200"
+                    aria-hidden="true"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
+                        />
+                    </svg>
+                </div>
+
+
+                <p
+                    class="mt-3 text-sm font-semibold text-slate-700"
+                >
+                    Nenhuma descrição informada
+                </p>
+
+                <p
+                    class="mx-auto mt-1 max-w-md text-sm leading-6 text-slate-500"
+                >
+                    Adicione uma descrição para registrar os fatos
+                    e as principais informações desta causa.
+                </p>
+
+
+                <a
+                    href="{% url 'cases:update' case.pk %}"
+                    class="mt-4 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931"
+                        />
+                    </svg>
+
+                    Adicionar descrição
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</section>

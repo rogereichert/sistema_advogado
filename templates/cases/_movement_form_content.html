@@ -1,0 +1,315 @@
+<!-- =============================================================
+     CONTEXTO DO CASO
+============================================================== -->
+
+<div class="movement-modal-content">
+
+    <div
+        class="mb-6 rounded-xl border border-brand-100 bg-brand-50/40 px-4 py-3.5"
+    >
+        <div
+            class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+        >
+
+            <div class="min-w-0">
+
+                <div class="flex flex-wrap items-center gap-2">
+
+                    <span
+                        class="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-600"
+                    >
+                        {{ case.numero_identificacao }}
+                    </span>
+
+                    <span
+                        class="h-1 w-1 rounded-full bg-gold-500"
+                        aria-hidden="true"
+                    ></span>
+
+                    <span class="text-xs font-medium text-gold-800">
+                        {{ case.status.nome }}
+                    </span>
+
+                </div>
+
+                <p
+                    class="mt-1 truncate text-sm font-semibold text-brand-950"
+                >
+                    {{ case.titulo }}
+                </p>
+
+            </div>
+
+
+            <div class="shrink-0 text-xs text-slate-500">
+                {{ case.cliente.nome_completo }}
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- =========================================================
+         FORMULÁRIO
+    ========================================================== -->
+
+    <form
+        method="post"
+        action="{% url 'cases:movement_create' case.pk %}"
+        id="movement-form"
+        novalidate
+    >
+
+        {% csrf_token %}
+
+
+        <!-- ERROS GERAIS -->
+
+        {% if form.non_field_errors %}
+
+            <div
+                class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                role="alert"
+            >
+                {{ form.non_field_errors }}
+            </div>
+
+        {% endif %}
+
+
+        <div class="space-y-6">
+
+            <!-- =================================================
+                 TÍTULO
+            ================================================== -->
+
+            <div>
+
+                <div
+                    class="mb-2 flex items-center justify-between gap-3"
+                >
+
+                    <label
+                        for="{{ form.titulo.id_for_label }}"
+                        class="block text-sm font-semibold text-slate-700"
+                    >
+                        {{ form.titulo.label }}
+
+                        <span
+                            class="ml-0.5 text-red-500"
+                            aria-hidden="true"
+                        >
+                            *
+                        </span>
+                    </label>
+
+                    <span
+                        class="hidden text-[11px] font-medium text-slate-400 sm:block"
+                    >
+                        Resumo da movimentação
+                    </span>
+
+                </div>
+
+
+                {{ form.titulo }}
+
+
+                {% if form.titulo.errors %}
+
+                    <div
+                        class="mt-2 flex items-start gap-1.5 text-sm text-red-600"
+                        role="alert"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="mt-0.5 h-4 w-4 shrink-0"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 9v3.75m9-1.5a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 15.75h.008v.008H12v-.008Z"
+                            />
+                        </svg>
+
+                        <div>
+                            {{ form.titulo.errors }}
+                        </div>
+                    </div>
+
+                {% else %}
+
+                    <p class="mt-2 text-xs leading-5 text-slate-400">
+                        Ex.: Audiência realizada, petição protocolada,
+                        acordo proposto ou contato com o cliente.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 DESCRIÇÃO
+            ================================================== -->
+
+            <div>
+
+                <div
+                    class="mb-2 flex items-center justify-between gap-3"
+                >
+
+                    <label
+                        for="{{ form.descricao.id_for_label }}"
+                        class="block text-sm font-semibold text-slate-700"
+                    >
+                        {{ form.descricao.label }}
+
+                        <span
+                            class="ml-0.5 text-red-500"
+                            aria-hidden="true"
+                        >
+                            *
+                        </span>
+                    </label>
+
+                    <span
+                        class="hidden text-[11px] font-medium text-slate-400 sm:block"
+                    >
+                        Detalhamento
+                    </span>
+
+                </div>
+
+
+                {{ form.descricao }}
+
+
+                {% if form.descricao.errors %}
+
+                    <div
+                        class="mt-2 flex items-start gap-1.5 text-sm text-red-600"
+                        role="alert"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="mt-0.5 h-4 w-4 shrink-0"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 9v3.75m9-1.5a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 15.75h.008v.008H12v-.008Z"
+                            />
+                        </svg>
+
+                        <div>
+                            {{ form.descricao.errors }}
+                        </div>
+                    </div>
+
+                {% else %}
+
+                    <p class="mt-2 text-xs leading-5 text-slate-400">
+                        Registre os acontecimentos, providências,
+                        resultados e próximos passos relevantes.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             AVISO
+        ====================================================== -->
+
+        <div
+            class="mt-5 flex items-start gap-3 rounded-xl border border-gold-200 bg-gold-50/50 px-4 py-3.5"
+        >
+
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.8"
+                stroke="currentColor"
+                class="mt-0.5 h-4 w-4 shrink-0 text-gold-700"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M11.25 11.25 12 10.5m0 0 .75.75M12 10.5v4.5m9-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 7.5h.008v.008H12V7.5Z"
+                />
+            </svg>
+
+            <p class="text-xs leading-5 text-gold-900">
+                Esta movimentação fará parte do
+                <strong class="font-semibold">
+                    histórico do caso
+                </strong>
+                e ficará associada ao usuário responsável pelo registro.
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             AÇÕES
+        ====================================================== -->
+
+        <div
+            class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end"
+        >
+
+            <button
+                type="button"
+                data-movement-modal-close
+                class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            >
+                Cancelar
+            </button>
+
+
+            <button
+                type="submit"
+                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-950 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                </svg>
+
+                <span data-movement-submit-label>
+                    Registrar movimentação
+                </span>
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
