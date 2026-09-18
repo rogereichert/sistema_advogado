@@ -1,3 +1,19 @@
+<style>
+    #agenda-create-form input,
+    #agenda-create-form select,
+    #agenda-create-form textarea {
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+    }
+
+    #agenda-create-form input:focus,
+    #agenda-create-form select:focus,
+    #agenda-create-form textarea:focus {
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+    }
+</style>
+
 <div class="agenda-modal-content">
 
     <!-- =========================================================
@@ -44,7 +60,6 @@
 
             </div>
 
-
             <div class="shrink-0 text-xs text-slate-500">
                 {{ case.cliente.nome_completo }}
             </div>
@@ -83,9 +98,7 @@
 
         <div class="grid gap-x-5 gap-y-5 md:grid-cols-2">
 
-            <!-- =================================================
-                 TIPO
-            ================================================== -->
+            <!-- TIPO -->
 
             <div>
 
@@ -114,9 +127,7 @@
             </div>
 
 
-            <!-- =================================================
-                 TÍTULO
-            ================================================== -->
+            <!-- TÍTULO -->
 
             <div>
 
@@ -145,9 +156,7 @@
             </div>
 
 
-            <!-- =================================================
-                 DATA
-            ================================================== -->
+            <!-- DATA -->
 
             <div>
 
@@ -176,9 +185,7 @@
             </div>
 
 
-            <!-- =================================================
-                 HORA
-            ================================================== -->
+            <!-- HORA -->
 
             <div>
 
@@ -217,9 +224,7 @@
             </div>
 
 
-            <!-- =================================================
-                 LOCAL
-            ================================================== -->
+            <!-- LOCAL -->
 
             <div class="md:col-span-2">
 
@@ -258,9 +263,7 @@
             </div>
 
 
-            <!-- =================================================
-                 DESCRIÇÃO
-            ================================================== -->
+            <!-- DESCRIÇÃO -->
 
             <div class="md:col-span-2">
 
@@ -299,9 +302,7 @@
             </div>
 
 
-            <!-- =================================================
-                 OBSERVAÇÕES
-            ================================================== -->
+            <!-- OBSERVAÇÕES -->
 
             <div class="md:col-span-2">
 

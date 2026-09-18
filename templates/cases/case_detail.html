@@ -99,9 +99,19 @@
      MODAIS
 ============================================================== -->
 
+<!-- NOVA MOVIMENTAÇÃO -->
+
 {% include "cases/_case_detail_movement_modal.html" %}
 
+
+<!-- SOLICITAR DOCUMENTO -->
+
 {% include "documents/_required_document_modal.html" %}
+
+
+<!-- NOVO COMPROMISSO -->
+
+{% include "agenda/_agenda_modal.html" %}
 
 {% endblock %}
 
@@ -111,7 +121,9 @@
     {{ block.super }}
 
 
-    <!-- MODAL — NOVA MOVIMENTAÇÃO -->
+    <!-- =========================================================
+         MODAL — NOVA MOVIMENTAÇÃO
+    ========================================================== -->
 
     <script
         src="{% static 'js/cases/case-movement-modal.js' %}"
@@ -119,10 +131,22 @@
     ></script>
 
 
-    <!-- MODAL — SOLICITAR DOCUMENTO -->
+    <!-- =========================================================
+         MODAL — SOLICITAR DOCUMENTO
+    ========================================================== -->
 
     <script
         src="{% static 'js/documents/required-document-modal.js' %}"
+        defer
+    ></script>
+
+
+    <!-- =========================================================
+         MODAL — NOVO COMPROMISSO
+    ========================================================== -->
+
+    <script
+        src="{% static 'js/agenda/agenda-modal.js' %}"
         defer
     ></script>
 

@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -6,6 +7,10 @@ from apps.cases.models import CaseHistory, LegalCase
 
 from .forms import AgendaEventForm
 from .models import AgendaEvent
+
+
+def _is_ajax(request):
+    return request.headers.get("x-requested-with") == "XMLHttpRequest"
 
 
 @login_required
@@ -58,31 +63,41 @@ def agenda_create(request, case_pk):
     legal_case = get_object_or_404(
         LegalCase.objects.select_related(
             "cliente",
+            "status",
         ),
         pk=case_pk,
     )
 
     if request.method == "POST":
-        form = AgendaEventForm(request.POST)
+        form = AgendaEventForm(
+            request.POST
+        )
 
         if form.is_valid():
-            event = form.save(commit=False)
+            event = form.save(
+                commit=False
+            )
 
             event.caso = legal_case
             event.criado_por = request.user
 
             event.save()
 
-            date_text = event.data.strftime("%d/%m/%Y")
+            date_text = event.data.strftime(
+                "%d/%m/%Y"
+            )
 
             if event.hora:
-                time_text = event.hora.strftime("%H:%M")
+                time_text = event.hora.strftime(
+                    "%H:%M"
+                )
 
                 event_description = (
                     f"{event.get_tipo_display()} "
                     f"'{event.titulo}' agendado para "
                     f"{date_text} às {time_text}."
                 )
+
             else:
                 event_description = (
                     f"{event.get_tipo_display()} "
@@ -97,6 +112,17 @@ def agenda_create(request, case_pk):
                 descricao=event_description,
             )
 
+            if _is_ajax(request):
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "event_id": event.pk,
+                        "message": (
+                            "Compromisso agendado com sucesso."
+                        ),
+                    }
+                )
+
             return redirect(
                 "cases:detail",
                 pk=legal_case.pk,
@@ -105,13 +131,27 @@ def agenda_create(request, case_pk):
     else:
         form = AgendaEventForm()
 
+    context = {
+        "form": form,
+        "case": legal_case,
+    }
+
+    if _is_ajax(request):
+        return render(
+            request,
+            "agenda/_agenda_form_content.html",
+            context,
+            status=(
+                400
+                if request.method == "POST"
+                else 200
+            ),
+        )
+
     return render(
         request,
         "agenda/agenda_form.html",
-        {
-            "form": form,
-            "case": legal_case,
-        },
+        context,
     )
 
 
