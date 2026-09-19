@@ -18,6 +18,7 @@
         class="mb-6"
         aria-label="Navegação do cliente"
     >
+
         <a
             href="{% url 'clients:list' %}"
             class="inline-flex items-center gap-2 rounded-lg text-sm font-medium text-slate-500 transition hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
@@ -40,6 +41,7 @@
 
             <span>Voltar para clientes</span>
         </a>
+
     </nav>
 
 
@@ -90,6 +92,11 @@
 
 
 <!-- =============================================================
+     MODAIS
+============================================================== -->
+
+
+<!-- =============================================================
      MODAL — EDITAR CLIENTE
 ============================================================== -->
 
@@ -104,8 +111,16 @@
 
 
 <!-- =============================================================
+     MODAL — CASO JURÍDICO
+     Usado para criar um novo caso a partir do cliente.
+============================================================== -->
+
+{% include "cases/_case_modal.html" %}
+
+
+<!-- =============================================================
      CONFIGURAÇÃO DA PÁGINA
-     -------------------------------------------------------------
+
      URLs Django ficam no template.
      JavaScript recebe somente valores já resolvidos.
 ============================================================== -->
@@ -126,8 +141,32 @@
 
     {{ block.super }}
 
-    <script src="{% static 'js/clients/client-detail.js' %}"></script>
 
-    <script src="{% static 'js/clients/client-dossier.js' %}"></script>
+    <!-- =========================================================
+         CLIENTE
+    ========================================================== -->
+
+    <script
+        src="{% static 'js/clients/client-detail.js' %}"
+    ></script>
+
+
+    <!-- =========================================================
+         DOSSIÊ
+    ========================================================== -->
+
+    <script
+        src="{% static 'js/clients/client-dossier.js' %}"
+    ></script>
+
+
+    <!-- =========================================================
+         MODAL — CASO JURÍDICO
+    ========================================================== -->
+
+    <script
+        src="{% static 'js/cases/case-modal.js' %}"
+        defer
+    ></script>
 
 {% endblock %}

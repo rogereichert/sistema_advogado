@@ -1,0 +1,766 @@
+<style>
+    /* =========================================================
+       CAMPOS DO MODAL — VISUAL LIMPO
+    ========================================================== */
+
+    #case-form-modal input,
+    #case-form-modal select,
+    #case-form-modal textarea {
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+    }
+
+    #case-form-modal input:focus,
+    #case-form-modal select:focus,
+    #case-form-modal textarea:focus {
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+    }
+</style>
+
+
+<div class="case-form-modal-content">
+
+    <!-- =========================================================
+         CONTEXTO
+    ========================================================== -->
+
+    <div
+        class="mb-6 rounded-xl border border-brand-100 bg-brand-50/40 px-4 py-3.5"
+    >
+        <div
+            class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+        >
+
+            <div class="min-w-0">
+
+                {% if editing %}
+
+                    <div class="flex flex-wrap items-center gap-2">
+
+                        <span
+                            class="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-600"
+                        >
+                            {% if case.numero_identificacao %}
+                                {{ case.numero_identificacao }}
+                            {% else %}
+                                #{{ case.pk|stringformat:"05d" }}
+                            {% endif %}
+                        </span>
+
+                        <span
+                            class="h-1 w-1 rounded-full bg-gold-500"
+                            aria-hidden="true"
+                        ></span>
+
+                        <span class="text-xs font-medium text-gold-800">
+                            {{ case.status.nome }}
+                        </span>
+
+                    </div>
+
+                    <p
+                        class="mt-1 truncate text-sm font-semibold text-brand-950"
+                    >
+                        {{ case.titulo }}
+                    </p>
+
+                {% else %}
+
+                    <div class="flex flex-wrap items-center gap-2">
+
+                        <span
+                            class="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-600"
+                        >
+                            Novo caso jurídico
+                        </span>
+
+                        <span
+                            class="h-1 w-1 rounded-full bg-gold-500"
+                            aria-hidden="true"
+                        ></span>
+
+                        <span class="text-xs font-medium text-gold-800">
+                            Cadastro
+                        </span>
+
+                    </div>
+
+                    <p
+                        class="mt-1 text-sm font-semibold text-brand-950"
+                    >
+                        Nova causa vinculada ao cliente
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="shrink-0 text-xs text-slate-500">
+
+                {% if editing %}
+                    {{ case.cliente.nome_completo }}
+                {% else %}
+                    {{ client.nome_completo }}
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- =========================================================
+         FORMULÁRIO
+    ========================================================== -->
+
+    <form
+        method="post"
+
+        {% if editing %}
+            action="{% url 'cases:update' case.pk %}"
+        {% else %}
+            action="{% url 'cases:create' client.pk %}"
+        {% endif %}
+
+        id="case-form-modal"
+        novalidate
+    >
+
+        {% csrf_token %}
+
+
+        <!-- =====================================================
+             ERROS GERAIS
+        ====================================================== -->
+
+        {% if form.non_field_errors %}
+
+            <div
+                class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                role="alert"
+            >
+                {{ form.non_field_errors }}
+            </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             INFORMAÇÕES DA CAUSA
+        ====================================================== -->
+
+        <section>
+
+            <div class="mb-4 flex items-start gap-3">
+
+                <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-100"
+                    aria-hidden="true"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H8.25m0 12.75h7.5m-7.5 3h4.5M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.625a9 9 0 0 0-9-9Z"
+                        />
+                    </svg>
+                </div>
+
+
+                <div>
+
+                    <p
+                        class="text-[10px] font-semibold uppercase tracking-[0.12em] text-gold-700"
+                    >
+                        Identificação
+                    </p>
+
+                    <h3
+                        class="mt-0.5 text-sm font-semibold text-brand-950"
+                    >
+                        Informações da causa
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid gap-x-5 gap-y-5 md:grid-cols-2">
+
+                <!-- TÍTULO -->
+
+                <div class="md:col-span-2">
+
+                    <label
+                        for="{{ form.titulo.id_for_label }}"
+                        class="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                        {{ form.titulo.label }}
+
+                        {% if form.titulo.field.required %}
+                            <span class="text-red-500">*</span>
+                        {% endif %}
+                    </label>
+
+                    {{ form.titulo }}
+
+                    {% if form.titulo.errors %}
+
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.titulo.errors }}
+                        </div>
+
+                    {% else %}
+
+                        <p class="mt-2 text-xs leading-5 text-slate-400">
+                            Utilize um título objetivo para identificar
+                            rapidamente a demanda.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ÁREA JURÍDICA -->
+
+                <div>
+
+                    <div
+                        class="mb-2 flex items-center justify-between gap-3"
+                    >
+
+                        <label
+                            for="{{ form.area_juridica.id_for_label }}"
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            {{ form.area_juridica.label }}
+
+                            {% if form.area_juridica.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if not form.area_juridica.field.required %}
+                            <span
+                                class="text-[11px] font-medium text-slate-400"
+                            >
+                                Opcional
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    {{ form.area_juridica }}
+
+                    {% if form.area_juridica.errors %}
+
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.area_juridica.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div>
+
+                    <label
+                        for="{{ form.status.id_for_label }}"
+                        class="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                        {{ form.status.label }}
+
+                        {% if form.status.field.required %}
+                            <span class="text-red-500">*</span>
+                        {% endif %}
+                    </label>
+
+                    {{ form.status }}
+
+                    {% if form.status.errors %}
+
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.status.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- DESCRIÇÃO -->
+
+                <div class="md:col-span-2">
+
+                    <label
+                        for="{{ form.descricao.id_for_label }}"
+                        class="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                        {{ form.descricao.label }}
+
+                        {% if form.descricao.field.required %}
+                            <span class="text-red-500">*</span>
+                        {% endif %}
+                    </label>
+
+                    {{ form.descricao }}
+
+                    {% if form.descricao.errors %}
+
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.descricao.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             DIVISOR
+        ====================================================== -->
+
+        <div class="my-6 border-t border-slate-100"></div>
+
+
+        <!-- =====================================================
+             PROCESSO
+        ====================================================== -->
+
+        <section>
+
+            <div class="mb-4 flex items-start gap-3">
+
+                <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-100"
+                    aria-hidden="true"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 3v18m6-15H6m10.5 0 3 5.25a3.75 3.75 0 0 1-6 0L16.5 6ZM7.5 6l3 5.25a3.75 3.75 0 0 1-6 0L7.5 6ZM5.25 21h13.5"
+                        />
+                    </svg>
+                </div>
+
+
+                <div>
+
+                    <p
+                        class="text-[10px] font-semibold uppercase tracking-[0.12em] text-gold-700"
+                    >
+                        Processo judicial
+                    </p>
+
+                    <h3
+                        class="mt-0.5 text-sm font-semibold text-brand-950"
+                    >
+                        Dados processuais
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid gap-x-5 gap-y-5 md:grid-cols-2">
+
+                <!-- NÚMERO DO PROCESSO -->
+
+                <div class="md:col-span-2">
+
+                    <div
+                        class="mb-2 flex items-center justify-between gap-3"
+                    >
+
+                        <label
+                            for="{{ form.numero_processo.id_for_label }}"
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            {{ form.numero_processo.label }}
+
+                            {% if form.numero_processo.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if not form.numero_processo.field.required %}
+                            <span
+                                class="text-[11px] font-medium text-slate-400"
+                            >
+                                Opcional
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    {{ form.numero_processo }}
+
+                    {% if form.numero_processo.errors %}
+
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.numero_processo.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- VARA -->
+
+                <div>
+
+                    <div
+                        class="mb-2 flex items-center justify-between gap-3"
+                    >
+
+                        <label
+                            for="{{ form.vara.id_for_label }}"
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            {{ form.vara.label }}
+
+                            {% if form.vara.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if not form.vara.field.required %}
+                            <span
+                                class="text-[11px] font-medium text-slate-400"
+                            >
+                                Opcional
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    {{ form.vara }}
+
+                    {% if form.vara.errors %}
+
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.vara.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- COMARCA -->
+
+                <div>
+
+                    <div
+                        class="mb-2 flex items-center justify-between gap-3"
+                    >
+
+                        <label
+                            for="{{ form.comarca.id_for_label }}"
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            {{ form.comarca.label }}
+
+                            {% if form.comarca.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if not form.comarca.field.required %}
+                            <span
+                                class="text-[11px] font-medium text-slate-400"
+                            >
+                                Opcional
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    {{ form.comarca }}
+
+                    {% if form.comarca.errors %}
+
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.comarca.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             DIVISOR
+        ====================================================== -->
+
+        <div class="my-6 border-t border-slate-100"></div>
+
+
+        <!-- =====================================================
+             OBSERVAÇÕES
+        ====================================================== -->
+
+        <section>
+
+            <div class="mb-4 flex items-start gap-3">
+
+                <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-100"
+                    aria-hidden="true"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H8.25m0 12.75h7.5m-7.5 3h4.5"
+                        />
+                    </svg>
+                </div>
+
+
+                <div>
+
+                    <p
+                        class="text-[10px] font-semibold uppercase tracking-[0.12em] text-gold-700"
+                    >
+                        Interno
+                    </p>
+
+                    <h3
+                        class="mt-0.5 text-sm font-semibold text-brand-950"
+                    >
+                        Observações
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <div
+                    class="mb-2 flex items-center justify-between gap-3"
+                >
+
+                    <label
+                        for="{{ form.observacoes.id_for_label }}"
+                        class="block text-sm font-semibold text-slate-700"
+                    >
+                        {{ form.observacoes.label }}
+
+                        {% if form.observacoes.field.required %}
+                            <span class="text-red-500">*</span>
+                        {% endif %}
+                    </label>
+
+                    {% if not form.observacoes.field.required %}
+                        <span
+                            class="text-[11px] font-medium text-slate-400"
+                        >
+                            Opcional
+                        </span>
+                    {% endif %}
+
+                </div>
+
+                {{ form.observacoes }}
+
+                {% if form.observacoes.errors %}
+
+                    <div
+                        class="mt-2 text-sm text-red-600"
+                        role="alert"
+                    >
+                        {{ form.observacoes.errors }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             AVISO
+        ====================================================== -->
+
+        <div
+            class="mt-6 flex items-start gap-3 rounded-xl border border-gold-200 bg-gold-50/50 px-4 py-3.5"
+        >
+
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.8"
+                stroke="currentColor"
+                class="mt-0.5 h-4 w-4 shrink-0 text-gold-700"
+                aria-hidden="true"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 9v3.75m9-1.5a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 15.75h.008v.008H12v-.008Z"
+                />
+            </svg>
+
+            <p class="text-xs leading-5 text-gold-900">
+
+                {% if editing %}
+
+                    As alterações serão aplicadas imediatamente ao caso.
+                    Os campos modificados serão registrados
+                    automaticamente no histórico.
+
+                {% else %}
+
+                    O caso será vinculado automaticamente ao cliente
+                    <strong class="font-semibold">
+                        {{ client.nome_completo }}
+                    </strong>
+                    e a criação será registrada no histórico.
+
+                {% endif %}
+
+            </p>
+
+        </div>
+
+
+        <!-- =====================================================
+             AÇÕES
+        ====================================================== -->
+
+        <div
+            class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end"
+        >
+
+            <button
+                type="button"
+                data-case-modal-close
+                class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            >
+                Cancelar
+            </button>
+
+
+            <button
+                type="submit"
+                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-950 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            >
+
+                {% if editing %}
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931"
+                        />
+                    </svg>
+
+                {% else %}
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 4.5v15m7.5-7.5h-15"
+                        />
+                    </svg>
+
+                {% endif %}
+
+                <span data-case-submit-label>
+                    {% if editing %}
+                        Salvar alterações
+                    {% else %}
+                        Criar caso jurídico
+                    {% endif %}
+                </span>
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>

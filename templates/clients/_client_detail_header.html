@@ -266,6 +266,8 @@
 
                 <a
                     href="{% url 'cases:create' client.pk %}"
+                    data-case-modal-open
+                    data-case-url="{% url 'cases:create' client.pk %}"
                     class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200"
                 >
                     <svg

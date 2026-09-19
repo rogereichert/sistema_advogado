@@ -4,15 +4,25 @@
 /* =============================================================
    CLIENT LIST
    -------------------------------------------------------------
-   Responsável exclusivamente pela listagem de clientes:
+   Responsável exclusivamente pela experiência da busca
+   da listagem de clientes.
 
-   - pesquisa
-   - normalização do texto
-   - filtro desktop
-   - filtro mobile
-   - contador de resultados
-   - estado "nenhum resultado"
+   A pesquisa dos registros NÃO é mais realizada no navegador.
+
+   O backend é responsável por:
+
+   - pesquisar em todos os clientes
+   - calcular o total de resultados
+   - paginar os resultados
+   - entregar 10 clientes por página
+
+   Este arquivo cuida somente de:
+
+   - envio da pesquisa
    - limpeza da pesquisa
+   - tecla Escape
+   - botão de limpar
+   - prevenção de envio duplicado
 
    O modal de cliente NÃO pertence a este arquivo.
 ============================================================= */
@@ -23,28 +33,12 @@
        ELEMENTOS
     ========================================================== */
 
-    const searchInput = document.getElementById("client-search");
-    const visibleCount = document.getElementById("visible-client-count");
-    const countLabel = document.getElementById("client-count-label");
-
-    const tableContainer = document.getElementById(
-        "client-table-container"
+    const searchForm = document.getElementById(
+        "client-search-form"
     );
 
-    const mobileContainer = document.getElementById(
-        "client-mobile-container"
-    );
-
-    const searchEmpty = document.getElementById(
-        "client-search-empty"
-    );
-
-    const searchTerm = document.getElementById(
-        "client-search-term"
-    );
-
-    const clearSearchButton = document.getElementById(
-        "client-search-clear"
+    const searchInput = document.getElementById(
+        "client-search"
     );
 
     const inlineClearButton = document.getElementById(
@@ -53,515 +47,156 @@
 
 
     /* =========================================================
-       A PÁGINA PODE NÃO SER A LISTAGEM DE CLIENTES
+       GUARD
        ---------------------------------------------------------
-       Como este JS é carregado somente em client_list.html,
-       normalmente searchInput existirá.
-
-       Ainda assim, este guard evita erros caso o arquivo seja
-       reutilizado ou carregado acidentalmente em outra página.
+       Caso o arquivo seja carregado acidentalmente fora da
+       listagem de clientes, encerramos sem gerar erros.
     ========================================================== */
 
-    if (!searchInput) {
+    if (!searchForm || !searchInput) {
         return;
     }
 
 
     /* =========================================================
-       REGISTROS
+       ESTADO
     ========================================================== */
 
-    const desktopRows = Array.from(
-        document.querySelectorAll(".client-row")
-    );
-
-    const mobileItems = Array.from(
-        document.querySelectorAll(".client-mobile-item")
-    );
+    let submitting = false;
 
 
     /* =========================================================
-       NORMALIZAÇÃO
+       NORMALIZA VALOR DA PESQUISA
        ---------------------------------------------------------
-       Permite que:
-
-       "João" seja encontrado digitando "joao"
-       "José" seja encontrado digitando "jose"
-
-       Também normaliza espaços e caixa.
+       Remove espaços extras no início e no final antes de
+       enviar a pesquisa ao backend.
     ========================================================== */
 
-    function normalizeText(value) {
+    function normalizeSearchValue() {
 
-        return String(value || "")
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toLowerCase()
-            .replace(/\s+/g, " ")
-            .trim();
+        return String(
+            searchInput.value || ""
+        ).trim();
 
     }
 
 
     /* =========================================================
-       NORMALIZAÇÃO NUMÉRICA
+       EXECUTA PESQUISA
        ---------------------------------------------------------
-       Mantemos também uma versão contendo somente números.
+       A pesquisa é enviada via GET.
 
-       Isso melhora buscas como:
+       Exemplo:
 
-       CPF salvo:
-       123.456.789-00
+       /clientes/?q=Rodrigo
 
-       Usuário pesquisa:
-       12345678900
-
-       Ou o contrário.
+       A paginação sempre volta para a primeira página quando
+       uma nova pesquisa é realizada, pois o formulário não
+       envia o parâmetro "page".
     ========================================================== */
 
-    function normalizeDigits(value) {
+    function submitSearch() {
 
-        return String(value || "")
-            .replace(/\D/g, "");
-
-    }
-
-
-    /* =========================================================
-       TERMO DE PESQUISA
-    ========================================================== */
-
-    function getSearchQuery() {
-
-        const raw = searchInput.value || "";
-
-        return {
-            raw: raw.trim(),
-            text: normalizeText(raw),
-            digits: normalizeDigits(raw),
-        };
-
-    }
-
-
-    /* =========================================================
-       TEXTO PESQUISÁVEL DE UM REGISTRO
-    ========================================================== */
-
-    function getItemSearchText(element) {
-
-        return element.dataset.searchText || "";
-
-    }
-
-
-    /* =========================================================
-       VERIFICA SE UM REGISTRO CORRESPONDE À PESQUISA
-    ========================================================== */
-
-    function itemMatches(element, query) {
-
-        if (!query.text) {
-            return true;
-        }
-
-
-        const searchableValue = getItemSearchText(element);
-
-        const searchableText = normalizeText(
-            searchableValue
-        );
-
-
-        /* -----------------------------------------------------
-           Pesquisa textual
-        ------------------------------------------------------ */
-
-        if (searchableText.includes(query.text)) {
-            return true;
-        }
-
-
-        /* -----------------------------------------------------
-           Pesquisa numérica
-
-           Só executamos quando o usuário digitou ao menos
-           um número.
-        ------------------------------------------------------ */
-
-        if (query.digits) {
-
-            const searchableDigits = normalizeDigits(
-                searchableValue
-            );
-
-            if (
-                searchableDigits.includes(query.digits)
-            ) {
-                return true;
-            }
-
-        }
-
-
-        return false;
-
-    }
-
-
-    /* =========================================================
-       ALTERA VISIBILIDADE
-    ========================================================== */
-
-    function setItemVisibility(element, visible) {
-
-        element.classList.toggle(
-            "hidden",
-            !visible
-        );
-
-    }
-
-
-    /* =========================================================
-       FILTRA UMA COLEÇÃO
-    ========================================================== */
-
-    function filterItems(items, query) {
-
-        let matches = 0;
-
-
-        items.forEach(function (item) {
-
-            const visible = itemMatches(
-                item,
-                query
-            );
-
-            setItemVisibility(
-                item,
-                visible
-            );
-
-            if (visible) {
-                matches += 1;
-            }
-
-        });
-
-
-        return matches;
-
-    }
-
-
-    /* =========================================================
-       ATUALIZA CONTADOR
-    ========================================================== */
-
-    function updateCounter(count) {
-
-        if (visibleCount) {
-            visibleCount.textContent = String(count);
-        }
-
-
-        if (countLabel) {
-
-            countLabel.textContent = (
-                count === 1
-                    ? "cliente"
-                    : "clientes"
-            );
-
-        }
-
-    }
-
-
-    /* =========================================================
-       ATUALIZA BOTÃO "X" DO CAMPO
-    ========================================================== */
-
-    function updateInlineClearButton(query) {
-
-        if (!inlineClearButton) {
+        if (submitting) {
             return;
         }
 
 
-        const hasSearch = Boolean(query.raw);
-
-
-        inlineClearButton.classList.toggle(
-            "hidden",
-            !hasSearch
-        );
-
-        inlineClearButton.classList.toggle(
-            "flex",
-            hasSearch
-        );
-
-    }
-
-
-    /* =========================================================
-       ATUALIZA TEXTO DO ESTADO VAZIO
-    ========================================================== */
-
-    function updateSearchTerm(query) {
-
-        if (!searchTerm) {
-            return;
-        }
-
-
-        if (!query.raw) {
-            searchTerm.textContent = "";
-            return;
-        }
-
-
-        searchTerm.textContent = `“${query.raw}”`;
-
-    }
-
-
-    /* =========================================================
-       MOSTRA / ESCONDE LISTAGEM
-    ========================================================== */
-
-    function updateListVisibility(
-        hasSearch,
-        hasResults
-    ) {
-
-        /*
-         * Sem pesquisa:
-         *
-         * mostramos normalmente desktop e mobile.
-         */
-
-        if (!hasSearch) {
-
-            if (tableContainer) {
-                tableContainer.classList.remove("hidden");
-                tableContainer.classList.add("lg:block");
-            }
-
-
-            if (mobileContainer) {
-                mobileContainer.classList.remove("hidden");
-                mobileContainer.classList.add("lg:hidden");
-            }
-
-
-            if (searchEmpty) {
-                searchEmpty.classList.add("hidden");
-            }
-
-
-            return;
-
-        }
+        const value = normalizeSearchValue();
 
 
         /*
-         * Pesquisa com resultados.
+         * Evita gerar:
+         *
+         * /clientes/?q=
+         *
+         * Se o campo estiver vazio, voltamos para a listagem
+         * limpa.
          */
 
-        if (hasResults) {
+        if (!value) {
 
-            if (tableContainer) {
-                tableContainer.classList.remove("hidden");
-                tableContainer.classList.add("lg:block");
-            }
-
-
-            if (mobileContainer) {
-                mobileContainer.classList.remove("hidden");
-                mobileContainer.classList.add("lg:hidden");
-            }
-
-
-            if (searchEmpty) {
-                searchEmpty.classList.add("hidden");
-            }
-
+            window.location.href = searchForm.action;
 
             return;
-
         }
 
 
-        /*
-         * Pesquisa sem resultados.
-         *
-         * Escondemos as duas representações da listagem e
-         * mostramos apenas o estado vazio da pesquisa.
-         */
+        searchInput.value = value;
 
-        if (tableContainer) {
-            tableContainer.classList.add("hidden");
-        }
+        submitting = true;
 
-
-        if (mobileContainer) {
-            mobileContainer.classList.add("hidden");
-        }
-
-
-        if (searchEmpty) {
-            searchEmpty.classList.remove("hidden");
-        }
-
-    }
-
-
-    /* =========================================================
-       APLICA PESQUISA
-    ========================================================== */
-
-    function applySearch() {
-
-        const query = getSearchQuery();
-
-
-        /* -----------------------------------------------------
-           Desktop
-        ------------------------------------------------------ */
-
-        const desktopMatches = filterItems(
-            desktopRows,
-            query
-        );
-
-
-        /* -----------------------------------------------------
-           Mobile
-        ------------------------------------------------------ */
-
-        const mobileMatches = filterItems(
-            mobileItems,
-            query
-        );
-
-
-        /*
-         * Desktop e mobile representam os mesmos clientes.
-         *
-         * Não podemos somar os dois valores, senão:
-         *
-         * 10 clientes desktop
-         * +
-         * 10 clientes mobile
-         * =
-         * contador incorreto de 20.
-         *
-         * Preferimos desktop e usamos mobile como fallback.
-         */
-
-        const resultCount = desktopRows.length
-            ? desktopMatches
-            : mobileMatches;
-
-
-        const hasSearch = Boolean(
-            query.raw
-        );
-
-        const hasResults = (
-            resultCount > 0
-        );
-
-
-        updateCounter(
-            resultCount
-        );
-
-        updateInlineClearButton(
-            query
-        );
-
-        updateSearchTerm(
-            query
-        );
-
-        updateListVisibility(
-            hasSearch,
-            hasResults
-        );
+        searchForm.submit();
 
     }
 
 
     /* =========================================================
        LIMPA PESQUISA
+       ---------------------------------------------------------
+       Como a pesquisa agora pertence ao backend, limpar
+       significa voltar para a URL principal da listagem.
     ========================================================== */
 
     function clearSearch() {
 
         searchInput.value = "";
 
-        applySearch();
-
-        searchInput.focus();
+        window.location.href = searchForm.action;
 
     }
 
 
     /* =========================================================
-       EVENTOS
+       SUBMIT DO FORMULÁRIO
+       ---------------------------------------------------------
+       Enter no campo dispara naturalmente este evento.
     ========================================================== */
 
-    searchInput.addEventListener(
-        "input",
-        applySearch
+    searchForm.addEventListener(
+        "submit",
+        function (event) {
+
+            event.preventDefault();
+
+            submitSearch();
+
+        }
     );
 
 
-    /*
-     * Alguns navegadores exibem um botão nativo de limpar em
-     * inputs type="search".
-     *
-     * O evento "search" garante atualização também nesse caso.
-     */
+    /* =========================================================
+       BOTÃO X
+       ---------------------------------------------------------
+       No novo template o botão de limpar é um link.
 
-    searchInput.addEventListener(
-        "search",
-        applySearch
-    );
-
-
-    if (clearSearchButton) {
-
-        clearSearchButton.addEventListener(
-            "click",
-            clearSearch
-        );
-
-    }
-
+       Mantemos o comportamento também via JavaScript para
+       garantir que o campo seja limpo antes da navegação.
+    ========================================================== */
 
     if (inlineClearButton) {
 
         inlineClearButton.addEventListener(
             "click",
-            clearSearch
+            function (event) {
+
+                event.preventDefault();
+
+                clearSearch();
+
+            }
         );
 
     }
 
 
     /* =========================================================
-       ESC PARA LIMPAR A PESQUISA
+       TECLA ESCAPE
        ---------------------------------------------------------
-       Só interceptamos Escape quando o campo de pesquisa
-       estiver focado e houver algum valor digitado.
+       Se houver algum conteúdo no campo, Escape limpa a busca.
 
-       Isso evita conflito futuro com o Escape do modal.
+       Não interferimos com Escape quando o campo já estiver
+       vazio, evitando conflitos com outros componentes.
     ========================================================== */
 
     searchInput.addEventListener(
@@ -585,9 +220,44 @@
 
 
     /* =========================================================
-       ESTADO INICIAL
+       BOTÃO NATIVO DE INPUT SEARCH
+       ---------------------------------------------------------
+       Alguns navegadores exibem um "X" próprio em campos
+       type="search".
+
+       Quando ele é utilizado, o navegador dispara o evento
+       "search".
+
+       Se o campo ficar vazio, voltamos para a listagem
+       completa.
     ========================================================== */
 
-    applySearch();
+    searchInput.addEventListener(
+        "search",
+        function () {
+
+            if (!normalizeSearchValue()) {
+                clearSearch();
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       RESTAURA ESTADO APÓS VOLTAR PELO NAVEGADOR
+       ---------------------------------------------------------
+       Caso o navegador restaure esta página pelo cache de
+       navegação, liberamos novamente o formulário.
+    ========================================================== */
+
+    window.addEventListener(
+        "pageshow",
+        function () {
+
+            submitting = false;
+
+        }
+    );
 
 })();

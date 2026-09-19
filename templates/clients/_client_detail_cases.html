@@ -76,6 +76,8 @@
 
         <a
             href="{% url 'cases:create' client.pk %}"
+            data-case-modal-open
+            data-case-url="{% url 'cases:create' client.pk %}"
             class="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-xl border border-brand-200 bg-brand-50 px-4 text-sm font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-100 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
         >
             <svg
@@ -429,6 +431,8 @@
 
             <a
                 href="{% url 'cases:create' client.pk %}"
+                data-case-modal-open
+                data-case-url="{% url 'cases:create' client.pk %}"
                 class="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200"
             >
                 <svg

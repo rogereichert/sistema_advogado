@@ -127,7 +127,12 @@
                  BUSCA
             ================================================== -->
 
-            <div class="relative w-full md:max-w-lg">
+            <form
+                method="get"
+                action="{% url 'clients:list' %}"
+                id="client-search-form"
+                class="relative w-full md:max-w-lg"
+            >
 
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -156,6 +161,8 @@
 
                 <input
                     type="search"
+                    name="q"
+                    value="{{ search }}"
                     id="client-search"
                     autocomplete="off"
                     placeholder="Buscar por nome, CPF, telefone ou e-mail..."
@@ -163,33 +170,37 @@
                 >
 
 
-                <button
-                    type="button"
-                    id="client-search-clear-inline"
-                    class="absolute right-2 top-1/2 hidden h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition hover:bg-brand-50 hover:text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
-                    aria-label="Limpar pesquisa"
-                    title="Limpar pesquisa"
-                >
+                {% if search %}
 
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.8"
-                        stroke="currentColor"
-                        class="h-4 w-4"
-                        aria-hidden="true"
+                    <a
+                        href="{% url 'clients:list' %}"
+                        id="client-search-clear-inline"
+                        class="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition hover:bg-brand-50 hover:text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                        aria-label="Limpar pesquisa"
+                        title="Limpar pesquisa"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M6 18 18 6M6 6l12 12"
-                        />
-                    </svg>
 
-                </button>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6 18 18 6M6 6l12 12"
+                            />
+                        </svg>
 
-            </div>
+                    </a>
+
+                {% endif %}
+
+            </form>
 
 
             <!-- =================================================
@@ -221,11 +232,11 @@
                         id="visible-client-count"
                         class="font-semibold text-brand-950"
                     >
-                        {{ clients|length }}
+                        {{ total_clients }}
                     </strong>
 
                     <span id="client-count-label">
-                        {% if clients|length == 1 %}
+                        {% if total_clients == 1 %}
                             cliente
                         {% else %}
                             clientes
@@ -256,11 +267,212 @@
 
             {% include "clients/_client_mobile_list.html" %}
 
-            {% include "clients/_client_search_empty.html" %}
-
         {% else %}
 
-            {% include "clients/_client_empty.html" %}
+            {% if search %}
+
+                {% include "clients/_client_search_empty.html" %}
+
+            {% else %}
+
+                {% include "clients/_client_empty.html" %}
+
+            {% endif %}
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             PAGINAÇÃO
+        ====================================================== -->
+
+        {% if page_obj.paginator.num_pages > 1 %}
+
+            <nav
+                class="flex flex-col gap-4 border-t border-brand-100 bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+                aria-label="Paginação de clientes"
+            >
+
+                <!-- INFORMAÇÃO -->
+
+                <p class="text-sm text-slate-500">
+
+                    Página
+
+                    <span class="font-semibold text-brand-950">
+                        {{ page_obj.number }}
+                    </span>
+
+                    de
+
+                    <span class="font-semibold text-brand-950">
+                        {{ page_obj.paginator.num_pages }}
+                    </span>
+
+                    <span class="hidden sm:inline">
+                        ·
+                        {{ total_clients }}
+                        cliente{{ total_clients|pluralize:"s" }}
+                    </span>
+
+                </p>
+
+
+                <!-- CONTROLES -->
+
+                <div class="flex flex-wrap items-center gap-2">
+
+
+                    <!-- ANTERIOR -->
+
+                    {% if page_obj.has_previous %}
+
+                        <a
+                            href="?{% if search %}q={{ search|urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                            class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-sm font-medium text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                        >
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-4 w-4"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m15.75 19.5-7.5-7.5 7.5-7.5"
+                                />
+                            </svg>
+
+                            Anterior
+
+                        </a>
+
+                    {% else %}
+
+                        <span
+                            class="inline-flex min-h-9 cursor-not-allowed items-center justify-center gap-1.5 rounded-lg border border-slate-100 bg-slate-50 px-3 text-sm font-medium text-slate-300"
+                        >
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-4 w-4"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m15.75 19.5-7.5-7.5 7.5-7.5"
+                                />
+                            </svg>
+
+                            Anterior
+
+                        </span>
+
+                    {% endif %}
+
+
+                    <!-- PÁGINAS -->
+
+                    <div class="hidden items-center gap-1 sm:flex">
+
+                        {% for page_number in page_obj.paginator.page_range %}
+
+                            {% if page_number == page_obj.number %}
+
+                                <span
+                                    class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg bg-brand-900 px-2 text-sm font-semibold text-white shadow-sm"
+                                    aria-current="page"
+                                >
+                                    {{ page_number }}
+                                </span>
+
+                            {% elif page_number >= page_obj.number|add:"-2" and page_number <= page_obj.number|add:"2" %}
+
+                                <a
+                                    href="?{% if search %}q={{ search|urlencode }}&{% endif %}page={{ page_number }}"
+                                    class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg px-2 text-sm font-medium text-slate-500 transition hover:bg-brand-50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                                    aria-label="Ir para a página {{ page_number }}"
+                                >
+                                    {{ page_number }}
+                                </a>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- PRÓXIMA -->
+
+                    {% if page_obj.has_next %}
+
+                        <a
+                            href="?{% if search %}q={{ search|urlencode }}&{% endif %}page={{ page_obj.next_page_number }}"
+                            class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-sm font-medium text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                        >
+
+                            Próxima
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-4 w-4"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                                />
+                            </svg>
+
+                        </a>
+
+                    {% else %}
+
+                        <span
+                            class="inline-flex min-h-9 cursor-not-allowed items-center justify-center gap-1.5 rounded-lg border border-slate-100 bg-slate-50 px-3 text-sm font-medium text-slate-300"
+                        >
+
+                            Próxima
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-4 w-4"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                                />
+                            </svg>
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </nav>
 
         {% endif %}
 

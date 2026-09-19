@@ -1,4 +1,8 @@
+import re
+
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -15,6 +19,8 @@ CLOSED_CASE_STATUSES = (
     "Cancelado",
 )
 
+CLIENTS_PER_PAGE = 10
+
 
 def _is_ajax(request):
     """
@@ -24,6 +30,17 @@ def _is_ajax(request):
         request.headers.get("x-requested-with")
         == "XMLHttpRequest"
     )
+
+
+def _only_digits(value):
+    """
+    Retorna somente os dígitos de um valor.
+
+    Exemplos:
+    123.456.789-00 -> 12345678900
+    (51) 99999-9922 -> 51999999922
+    """
+    return re.sub(r"\D", "", value or "")
 
 
 def _render_client_form(
@@ -63,13 +80,58 @@ def _render_client_form(
 
 @login_required
 def client_list(request):
-    clients = Client.objects.all()
+    """
+    Lista os clientes com busca no banco e paginação.
+
+    A busca é realizada antes da paginação para garantir que
+    todos os clientes cadastrados possam ser encontrados,
+    independentemente da página em que estejam.
+
+    CPF e telefone também podem ser pesquisados utilizando
+    máscara, pois o termo informado é normalizado para dígitos.
+    """
+    search = request.GET.get("q", "").strip()
+
+    clients_queryset = Client.objects.all()
+
+    if search:
+        search_digits = _only_digits(search)
+
+        search_query = (
+            Q(nome_completo__icontains=search)
+            | Q(email__icontains=search)
+            | Q(cpf__icontains=search)
+            | Q(telefone__icontains=search)
+        )
+
+        if search_digits:
+            search_query |= (
+                Q(cpf__icontains=search_digits)
+                | Q(telefone__icontains=search_digits)
+            )
+
+        clients_queryset = clients_queryset.filter(
+            search_query
+        )
+
+    paginator = Paginator(
+        clients_queryset,
+        CLIENTS_PER_PAGE,
+    )
+
+    page_number = request.GET.get("page")
+
+    page_obj = paginator.get_page(page_number)
 
     return render(
         request,
         "clients/client_list.html",
         {
-            "clients": clients,
+            "clients": page_obj.object_list,
+            "page_obj": page_obj,
+            "paginator": paginator,
+            "search": search,
+            "total_clients": paginator.count,
         },
     )
 

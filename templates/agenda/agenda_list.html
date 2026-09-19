@@ -4,138 +4,394 @@
     Agenda | Advogado Company
 {% endblock %}
 
-{% block page_header %}
-    Agenda
-{% endblock %}
-
 {% block content %}
 
-<div>
-
-    <div>
-
-        <p class="text-sm font-medium text-amber-700">
-            Compromissos jurídicos
-        </p>
-
-        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-            Agenda
-        </h1>
-
-        <p class="mt-2 text-sm text-slate-500">
-            Acompanhe audiências, prazos, reuniões e compromissos do escritório.
-        </p>
-
-    </div>
+<div class="mx-auto max-w-[1600px]">
 
 
-    <section class="mt-8 rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+    <!-- =========================================================
+         CABEÇALHO DA PÁGINA
+    ========================================================== -->
 
-        <div class="border-b border-slate-100 px-7 py-5">
+    <header class="mb-7">
 
-            <h2 class="font-semibold text-slate-950">
-                Próximos compromissos
-            </h2>
+        <div class="min-w-0">
 
-            <p class="mt-1 text-sm text-slate-500">
-                Eventos a partir de hoje.
+            <div class="flex items-center gap-3.5">
+
+                <!-- ÍCONE -->
+
+                <div
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-700 shadow-sm"
+                    aria-hidden="true"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
+                        />
+                    </svg>
+                </div>
+
+
+                <!-- TÍTULO -->
+
+                <div>
+
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700"
+                    >
+                        Compromissos jurídicos
+                    </p>
+
+                    <h1
+                        class="mt-0.5 text-2xl font-semibold tracking-tight text-brand-950 sm:text-3xl"
+                    >
+                        Agenda
+                    </h1>
+
+                </div>
+
+            </div>
+
+
+            <!-- DESCRIÇÃO -->
+
+            <p
+                class="mt-4 max-w-2xl text-sm leading-6 text-slate-500"
+            >
+                Acompanhe audiências, prazos, reuniões e compromissos
+                do escritório.
             </p>
 
         </div>
 
+    </header>
 
-        <div class="divide-y divide-slate-100">
+
+    <!-- =========================================================
+         PRÓXIMOS COMPROMISSOS
+    ========================================================== -->
+
+    <section
+        class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+        aria-labelledby="upcoming-events-title"
+    >
+
+        <!-- CABEÇALHO -->
+
+        <header
+            class="border-b border-brand-100 px-5 py-5 sm:px-6"
+        >
+
+            <p
+                class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+            >
+                Agenda
+            </p>
+
+            <h2
+                id="upcoming-events-title"
+                class="mt-1 font-semibold tracking-tight text-brand-950"
+            >
+                Próximos compromissos
+            </h2>
+
+            <p class="mt-1 text-sm text-slate-500">
+                Eventos agendados a partir de hoje.
+            </p>
+
+        </header>
+
+
+        <!-- LISTAGEM -->
+
+        <div class="divide-y divide-brand-50">
 
             {% for event in upcoming_events %}
 
-                <div class="flex items-center justify-between gap-6 px-7 py-5">
+                <article
+                    class="flex flex-col gap-5 px-5 py-5 transition-colors hover:bg-brand-50/30 sm:px-6 lg:flex-row lg:items-center lg:justify-between"
+                >
 
-                    <div class="flex items-start gap-5">
+                    <!-- =================================================
+                         INFORMAÇÕES
+                    ================================================== -->
 
-                        <div class="min-w-[72px] rounded-xl bg-slate-950 px-3 py-3 text-center text-white">
+                    <div class="flex min-w-0 items-start gap-4 sm:gap-5">
 
-                            <p class="text-xl font-semibold">
+
+                        <!-- DATA -->
+
+                        <div
+                            class="flex h-[60px] w-[60px] shrink-0 flex-col items-center justify-center rounded-xl bg-brand-950 text-white shadow-sm"
+                            aria-label="{{ event.data|date:'d/m/Y' }}"
+                        >
+
+                            <span
+                                class="text-lg font-semibold leading-none"
+                            >
                                 {{ event.data|date:"d" }}
-                            </p>
+                            </span>
 
-                            <p class="text-xs uppercase text-slate-400">
+                            <span
+                                class="mt-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-brand-200"
+                            >
                                 {{ event.data|date:"M" }}
-                            </p>
+                            </span>
 
                         </div>
 
 
-                        <div>
+                        <!-- CONTEÚDO -->
 
-                            <div class="flex flex-wrap items-center gap-3">
+                        <div class="min-w-0">
 
-                                <p class="font-semibold text-slate-900">
+                            <div
+                                class="flex flex-wrap items-center gap-2.5"
+                            >
+
+                                <h3
+                                    class="font-semibold text-brand-950"
+                                >
                                     {{ event.titulo }}
-                                </p>
+                                </h3>
 
-                                <span class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
+
+                                <!-- TIPO -->
+
+                                <span
+                                    class="inline-flex items-center gap-1.5 rounded-full bg-gold-50 px-2.5 py-1 text-xs font-semibold text-gold-800 ring-1 ring-inset ring-gold-200"
+                                >
+
+                                    <span
+                                        class="h-1.5 w-1.5 rounded-full bg-gold-500"
+                                        aria-hidden="true"
+                                    ></span>
+
                                     {{ event.get_tipo_display }}
+
                                 </span>
 
                             </div>
 
 
-                            <p class="mt-2 text-sm text-slate-500">
-                                {{ event.caso.cliente.nome_completo }}
-                                ·
+                            <!-- CLIENTE / CASO -->
+
+                            <p
+                                class="mt-2 text-sm leading-5 text-slate-500"
+                            >
+                                <span class="font-medium text-slate-600">
+                                    {{ event.caso.cliente.nome_completo }}
+                                </span>
+
+                                <span
+                                    class="mx-1 text-slate-300"
+                                    aria-hidden="true"
+                                >
+                                    ·
+                                </span>
+
                                 {{ event.caso.titulo }}
                             </p>
 
 
-                            <p class="mt-1 text-sm text-slate-500">
+                            <!-- HORA / LOCAL -->
 
-                                {% if event.hora %}
-                                    {{ event.hora|time:"H:i" }}
-                                {% else %}
-                                    Horário não informado
-                                {% endif %}
+                            <div
+                                class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-500"
+                            >
+
+                                <span
+                                    class="inline-flex items-center gap-1.5"
+                                >
+
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.8"
+                                        stroke="currentColor"
+                                        class="h-3.5 w-3.5 text-slate-400"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M12 6v6l4 2m5-2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                        />
+                                    </svg>
+
+                                    {% if event.hora %}
+                                        {{ event.hora|time:"H:i" }}
+                                    {% else %}
+                                        Horário não informado
+                                    {% endif %}
+
+                                </span>
+
 
                                 {% if event.local %}
-                                    · {{ event.local }}
+
+                                    <span
+                                        class="text-slate-300"
+                                        aria-hidden="true"
+                                    >
+                                        ·
+                                    </span>
+
+                                    <span
+                                        class="inline-flex items-center gap-1.5"
+                                    >
+
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.8"
+                                            stroke="currentColor"
+                                            class="h-3.5 w-3.5 text-slate-400"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M12 21s6-4.35 6-11a6 6 0 1 0-12 0c0 6.65 6 11 6 11Z"
+                                            />
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M12 12.75a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z"
+                                            />
+                                        </svg>
+
+                                        {{ event.local }}
+
+                                    </span>
+
                                 {% endif %}
 
-                            </p>
+                            </div>
 
                         </div>
 
                     </div>
 
 
-                    <div class="flex items-center gap-3">
+                    <!-- =================================================
+                         AÇÕES
+                    ================================================== -->
+
+                    <div
+                        class="flex shrink-0 items-center gap-2 pl-[76px] sm:pl-20 lg:pl-0"
+                    >
+
+                        <!-- EDITAR -->
 
                         <a
                             href="{% url 'agenda:update' event.pk %}"
-                            class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
+                            class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
                         >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-3.5 w-3.5"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931"
+                                />
+                            </svg>
+
                             Editar
                         </a>
 
+
+                        <!-- ABRIR CASO -->
+
                         <a
                             href="{% url 'cases:detail' event.caso.pk %}"
-                            class="text-sm font-semibold text-amber-700 hover:text-amber-800"
+                            class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
                         >
-                            Abrir caso →
+                            Abrir caso
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-3.5 w-3.5"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m9 18 6-6-6-6"
+                                />
+                            </svg>
+
                         </a>
 
                     </div>
 
-                </div>
+                </article>
+
 
             {% empty %}
 
-                <div class="px-7 py-12 text-center">
+                <!-- =====================================================
+                     ESTADO VAZIO
+                ====================================================== -->
 
-                    <p class="font-medium text-slate-700">
+                <div
+                    class="flex min-h-52 flex-col items-center justify-center px-6 py-12 text-center"
+                >
+
+                    <div
+                        class="flex h-11 w-11 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-600"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-5 w-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
+                            />
+                        </svg>
+                    </div>
+
+                    <p
+                        class="mt-4 font-semibold text-brand-950"
+                    >
                         Nenhum compromisso agendado
                     </p>
 
-                    <p class="mt-1 text-sm text-slate-500">
-                        Novos eventos aparecerão aqui.
+                    <p
+                        class="mt-1 max-w-sm text-sm leading-6 text-slate-500"
+                    >
+                        Os próximos compromissos jurídicos aparecerão
+                        aqui quando forem cadastrados.
                     </p>
 
                 </div>
@@ -147,47 +403,121 @@
     </section>
 
 
+    <!-- =========================================================
+         COMPROMISSOS ANTERIORES
+    ========================================================== -->
+
     {% if past_events %}
 
-        <section class="mt-6 rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+        <section
+            class="mt-5 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+            aria-labelledby="past-events-title"
+        >
 
-            <div class="border-b border-slate-100 px-7 py-5">
+            <!-- CABEÇALHO -->
 
-                <h2 class="font-semibold text-slate-950">
+            <header
+                class="border-b border-brand-100 px-5 py-5 sm:px-6"
+            >
+
+                <p
+                    class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+                >
+                    Histórico
+                </p>
+
+                <h2
+                    id="past-events-title"
+                    class="mt-1 font-semibold tracking-tight text-brand-950"
+                >
                     Compromissos anteriores
                 </h2>
 
-            </div>
+                <p class="mt-1 text-sm text-slate-500">
+                    Eventos e compromissos já realizados.
+                </p>
+
+            </header>
 
 
-            <div class="divide-y divide-slate-100">
+            <!-- LISTAGEM -->
+
+            <div class="divide-y divide-brand-50">
 
                 {% for event in past_events %}
 
-                    <div class="flex items-center justify-between gap-6 px-7 py-4">
+                    <article
+                        class="flex flex-col gap-4 px-5 py-4 transition-colors hover:bg-brand-50/30 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+                    >
 
-                        <div>
+                        <div class="min-w-0">
 
-                            <p class="text-sm font-semibold text-slate-700">
-                                {{ event.titulo }}
-                            </p>
+                            <div
+                                class="flex flex-wrap items-center gap-2"
+                            >
 
-                            <p class="mt-1 text-xs text-slate-400">
+                                <h3
+                                    class="text-sm font-semibold text-brand-950"
+                                >
+                                    {{ event.titulo }}
+                                </h3>
+
+                                <span
+                                    class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500 ring-1 ring-inset ring-slate-200"
+                                >
+                                    {{ event.get_tipo_display }}
+                                </span>
+
+                            </div>
+
+
+                            <p
+                                class="mt-1.5 text-xs leading-5 text-slate-400"
+                            >
                                 {{ event.data|date:"d/m/Y" }}
-                                ·
+
+                                {% if event.hora %}
+                                    às {{ event.hora|time:"H:i" }}
+                                {% endif %}
+
+                                <span
+                                    class="mx-1 text-slate-300"
+                                    aria-hidden="true"
+                                >
+                                    ·
+                                </span>
+
                                 {{ event.caso.cliente.nome_completo }}
                             </p>
 
                         </div>
 
+
                         <a
                             href="{% url 'cases:detail' event.caso.pk %}"
-                            class="text-xs font-semibold text-slate-500 hover:text-slate-900"
+                            class="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 self-start rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100 sm:self-auto"
                         >
                             Abrir caso
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-3.5 w-3.5"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m9 18 6-6-6-6"
+                                />
+                            </svg>
+
                         </a>
 
-                    </div>
+                    </article>
 
                 {% endfor %}
 
@@ -196,6 +526,7 @@
         </section>
 
     {% endif %}
+
 
 </div>
 

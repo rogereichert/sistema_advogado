@@ -152,6 +152,40 @@
                 Casos Jurídicos
             </a>
 
+            <!-- DOCUMENTOS -->
+            <a
+                href="{% url 'documents:list' %}"
+                class="
+                    flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition
+                    {% if request.resolver_match.namespace == 'documents' %}
+                        bg-white/10 text-white
+                    {% else %}
+                        text-slate-400 hover:bg-white/5 hover:text-white
+                    {% endif %}
+                "
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.7"
+                    stroke="currentColor"
+                    class="
+                        h-5 w-5
+                        {% if request.resolver_match.namespace == 'documents' %}
+                            text-amber-300
+                        {% endif %}
+                    "
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
+                    />
+                </svg>
+
+                Documentos
+            </a>
 
             <!-- AGENDA -->
             <a
@@ -188,41 +222,6 @@
                 Agenda
             </a>
 
-
-            <!-- DOCUMENTOS -->
-            <a
-                href="{% url 'documents:list' %}"
-                class="
-                    flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition
-                    {% if request.resolver_match.namespace == 'documents' %}
-                        bg-white/10 text-white
-                    {% else %}
-                        text-slate-400 hover:bg-white/5 hover:text-white
-                    {% endif %}
-                "
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.7"
-                    stroke="currentColor"
-                    class="
-                        h-5 w-5
-                        {% if request.resolver_match.namespace == 'documents' %}
-                            text-amber-300
-                        {% endif %}
-                    "
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
-                    />
-                </svg>
-
-                Documentos
-            </a>
 
         </div>
 

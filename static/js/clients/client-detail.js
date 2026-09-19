@@ -352,7 +352,7 @@
 
         try {
             const response = await fetch(
-                form.action || editUrl,
+                editUrl,
                 {
                     method: "POST",
 

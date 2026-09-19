@@ -177,7 +177,9 @@
             class="flex shrink-0 flex-col gap-3 sm:flex-row sm:flex-wrap xl:flex-nowrap xl:justify-end"
         >
 
-            <!-- NOVA MOVIMENTAÇÃO -->
+            <!-- =================================================
+                 NOVA MOVIMENTAÇÃO
+            ================================================== -->
 
             <a
                 href="{% url 'cases:movement_create' case.pk %}"
@@ -205,10 +207,14 @@
             </a>
 
 
-            <!-- NOVO COMPROMISSO -->
+            <!-- =================================================
+                 NOVO COMPROMISSO
+            ================================================== -->
 
             <a
                 href="{% url 'agenda:create' case.pk %}"
+                data-agenda-modal-open
+                data-agenda-url="{% url 'agenda:create' case.pk %}"
                 class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
             >
                 <svg
@@ -231,7 +237,10 @@
             </a>
 
 
-            <!-- ANEXAR DOCUMENTO -->
+            <!-- =================================================
+                 ANEXAR DOCUMENTO
+                 Mantido como página tradicional por enquanto.
+            ================================================== -->
 
             <a
                 href="{% url 'documents:upload' case.pk %}"
@@ -257,10 +266,14 @@
             </a>
 
 
-            <!-- EDITAR CASO -->
+            <!-- =================================================
+                 EDITAR CASO
+            ================================================== -->
 
             <a
                 href="{% url 'cases:update' case.pk %}"
+                data-case-modal-open
+                data-case-url="{% url 'cases:update' case.pk %}"
                 class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
             >
                 <svg

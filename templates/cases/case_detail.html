@@ -99,19 +99,33 @@
      MODAIS
 ============================================================== -->
 
-<!-- NOVA MOVIMENTAÇÃO -->
+
+<!-- =============================================================
+     MODAL — NOVA MOVIMENTAÇÃO
+============================================================== -->
 
 {% include "cases/_case_detail_movement_modal.html" %}
 
 
-<!-- SOLICITAR DOCUMENTO -->
+<!-- =============================================================
+     MODAL — SOLICITAR DOCUMENTO
+============================================================== -->
 
 {% include "documents/_required_document_modal.html" %}
 
 
-<!-- NOVO COMPROMISSO -->
+<!-- =============================================================
+     MODAL — NOVO COMPROMISSO
+============================================================== -->
 
 {% include "agenda/_agenda_modal.html" %}
+
+
+<!-- =============================================================
+     MODAL — EDITAR CAUSA
+============================================================== -->
+
+{% include "cases/_case_modal.html" %}
 
 {% endblock %}
 
@@ -147,6 +161,16 @@
 
     <script
         src="{% static 'js/agenda/agenda-modal.js' %}"
+        defer
+    ></script>
+
+
+    <!-- =========================================================
+         MODAL — EDITAR CAUSA
+    ========================================================== -->
+
+    <script
+        src="{% static 'js/cases/case-modal.js' %}"
         defer
     ></script>
 

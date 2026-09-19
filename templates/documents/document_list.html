@@ -4,125 +4,152 @@
     Documentos | Advogado Company
 {% endblock %}
 
-{% block page_header %}
-    Documentos
-{% endblock %}
 
 {% block content %}
 
-<div>
+<div class="mx-auto max-w-[1600px]">
 
-    <!-- CABEÇALHO -->
-    <div class="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
 
-        <div>
+    <!-- =========================================================
+         CABEÇALHO DA PÁGINA
+    ========================================================== -->
 
-            <p class="text-sm font-medium text-amber-700">
-                Gestão documental
-            </p>
+    <header class="mb-7">
 
-            <h1 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-                Central de Documentos
-            </h1>
+        <div class="min-w-0">
 
-            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-                Localize rapidamente documentos anexados aos clientes e casos jurídicos do escritório.
+            <div class="flex items-center gap-3.5">
+
+                <!-- ÍCONE -->
+
+                <div
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-700 shadow-sm"
+                    aria-hidden="true"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
+                        />
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M13.5 2.25V6a2.25 2.25 0 0 0 2.25 2.25h3.75"
+                        />
+                    </svg>
+                </div>
+
+
+                <!-- TÍTULO -->
+
+                <div>
+
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700"
+                    >
+                        Gestão documental
+                    </p>
+
+                    <h1
+                        class="mt-0.5 text-2xl font-semibold tracking-tight text-brand-950 sm:text-3xl"
+                    >
+                        Central de Documentos
+                    </h1>
+
+                </div>
+
+            </div>
+
+
+            <p
+                class="mt-4 max-w-2xl text-sm leading-6 text-slate-500"
+            >
+                Localize rapidamente documentos anexados aos clientes
+                e casos jurídicos do escritório.
             </p>
 
         </div>
 
-
-        <div class="rounded-xl border border-slate-200 bg-white px-5 py-3 shadow-sm">
-
-            <p class="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                Documentos encontrados
-            </p>
-
-            <p class="mt-1 text-2xl font-semibold text-slate-950">
-                {{ total_documents }}
-            </p>
-
-        </div>
-
-    </div>
+    </header>
 
 
-    <!-- FILTROS -->
-    <section class="mt-8 rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+    <!-- =========================================================
+         BARRA DE CONTROLE / FILTROS
+    ========================================================== -->
 
-        <div class="border-b border-slate-100 px-7 py-5">
+    <section
+        class="mb-5 rounded-2xl border border-brand-100 bg-white p-4 shadow-sm"
+        aria-label="Ferramentas da listagem de documentos"
+    >
 
-            <h2 class="font-semibold text-slate-950">
-                Localizar documentos
-            </h2>
+        <form method="get">
 
-            <p class="mt-1 text-sm text-slate-500">
-                Pesquise pelo documento, cliente ou caso e refine os resultados com os filtros.
-            </p>
-
-        </div>
+            <div
+                class="flex flex-col gap-3 xl:flex-row xl:items-center"
+            >
 
 
-        <form
-            method="get"
-            class="p-7"
-        >
+                <!-- =================================================
+                     BUSCA
+                ================================================== -->
 
-            <div class="grid gap-5 xl:grid-cols-12">
+                <div class="relative min-w-0 flex-1">
 
-                <!-- BUSCA -->
-                <div class="xl:col-span-6">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-500"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
+                        />
+                    </svg>
+
 
                     <label
                         for="q"
-                        class="mb-2 block text-sm font-semibold text-slate-700"
+                        class="sr-only"
                     >
-                        Buscar
+                        Buscar documentos
                     </label>
 
 
-                    <div class="relative">
-
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.8"
-                                stroke="currentColor"
-                                class="h-5 w-5"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
-                                />
-                            </svg>
-
-                        </div>
-
-
-                        <input
-                            type="text"
-                            id="q"
-                            name="q"
-                            value="{{ search }}"
-                            placeholder="Arquivo, cliente, CPF, caso ou nº do processo..."
-                            class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
-                        >
-
-                    </div>
+                    <input
+                        type="search"
+                        id="q"
+                        name="q"
+                        value="{{ search }}"
+                        autocomplete="off"
+                        placeholder="Buscar por arquivo, cliente, CPF, caso ou nº do processo..."
+                        class="w-full rounded-xl border border-brand-100 bg-app-soft py-2.5 pl-10 pr-4 text-sm text-brand-950 outline-none transition placeholder:text-slate-400 hover:border-brand-200 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100"
+                    >
 
                 </div>
 
 
-                <!-- CLIENTE -->
-                <div class="xl:col-span-3">
+                <!-- =================================================
+                     CLIENTE
+                ================================================== -->
+
+                <div class="xl:w-[250px]">
 
                     <label
                         for="client"
-                        class="mb-2 block text-sm font-semibold text-slate-700"
+                        class="sr-only"
                     >
                         Cliente
                     </label>
@@ -131,12 +158,13 @@
                     <select
                         id="client"
                         name="client"
-                        class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                        class="w-full rounded-xl border border-brand-100 bg-app-soft px-4 py-2.5 text-sm text-brand-950 outline-none transition hover:border-brand-200 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100"
                     >
 
                         <option value="">
                             Todos os clientes
                         </option>
+
 
                         {% for client in clients %}
 
@@ -156,12 +184,15 @@
                 </div>
 
 
-                <!-- TIPO -->
-                <div class="xl:col-span-3">
+                <!-- =================================================
+                     TIPO DE ARQUIVO
+                ================================================== -->
+
+                <div class="xl:w-[190px]">
 
                     <label
                         for="type"
-                        class="mb-2 block text-sm font-semibold text-slate-700"
+                        class="sr-only"
                     >
                         Tipo de arquivo
                     </label>
@@ -170,12 +201,13 @@
                     <select
                         id="type"
                         name="type"
-                        class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                        class="w-full rounded-xl border border-brand-100 bg-app-soft px-4 py-2.5 text-sm text-brand-950 outline-none transition hover:border-brand-200 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100"
                     >
 
                         <option value="">
                             Todos os tipos
                         </option>
+
 
                         {% for extension in extensions %}
 
@@ -194,14 +226,14 @@
 
                 </div>
 
-            </div>
 
-
-            <div class="mt-5 flex flex-wrap items-center gap-3">
+                <!-- =================================================
+                     PESQUISAR
+                ================================================== -->
 
                 <button
                     type="submit"
-                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+                    class="inline-flex min-h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200"
                 >
 
                     <svg
@@ -211,6 +243,7 @@
                         stroke-width="1.8"
                         stroke="currentColor"
                         class="h-4 w-4"
+                        aria-hidden="true"
                     >
                         <path
                             stroke-linecap="round"
@@ -219,84 +252,197 @@
                         />
                     </svg>
 
-                    Pesquisar
+                    <span>
+                        Pesquisar
+                    </span>
 
                 </button>
 
 
-                {% if search or selected_client or selected_type %}
+                <!-- =================================================
+                     CONTADOR
+                ================================================== -->
+
+                <div
+                    class="flex min-h-11 shrink-0 items-center justify-center gap-2.5 rounded-xl bg-brand-50 px-3.5 text-sm text-brand-700"
+                    aria-live="polite"
+                >
+
+                    <span
+                        class="relative flex h-2.5 w-2.5"
+                        aria-hidden="true"
+                    >
+                        <span
+                            class="absolute inline-flex h-full w-full rounded-full bg-brand-300 opacity-50"
+                        ></span>
+
+                        <span
+                            class="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand-600"
+                        ></span>
+                    </span>
+
+
+                    <span>
+
+                        <strong
+                            class="font-semibold text-brand-950"
+                        >
+                            {{ total_documents }}
+                        </strong>
+
+                        {% if total_documents == 1 %}
+                            documento
+                        {% else %}
+                            documentos
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 FILTROS ATIVOS
+            ====================================================== -->
+
+            {% if search or selected_client or selected_type %}
+
+                <div
+                    class="mt-3 flex justify-end border-t border-brand-50 pt-3"
+                >
 
                     <a
                         href="{% url 'documents:list' %}"
-                        class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-slate-950"
+                        class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-200 bg-white px-3 text-xs font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900 focus:outline-none focus:ring-4 focus:ring-brand-100"
                     >
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-3.5 w-3.5"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6 18 18 6M6 6l12 12"
+                            />
+                        </svg>
+
                         Limpar filtros
+
                     </a>
 
-                {% endif %}
+                </div>
 
-            </div>
+            {% endif %}
 
         </form>
 
     </section>
 
 
-    <!-- LISTAGEM -->
-    <section class="mt-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+    <!-- =========================================================
+         LISTAGEM DE DOCUMENTOS
+    ========================================================== -->
 
-        <!-- CABEÇALHO -->
-        <div class="flex items-center justify-between border-b border-slate-100 px-7 py-5">
+    <section
+        class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+        aria-labelledby="document-list-title"
+    >
 
-            <div>
 
-                <h2 class="font-semibold text-slate-950">
-                    Arquivos
-                </h2>
+        <!-- =====================================================
+             CABEÇALHO DA LISTAGEM
+        ====================================================== -->
 
-                <p class="mt-1 text-sm text-slate-500">
+        <header
+            class="border-b border-brand-100 px-5 py-5 sm:px-6"
+        >
 
-                    {% if total_documents == 1 %}
-                        1 documento encontrado.
-                    {% else %}
-                        {{ total_documents }} documentos encontrados.
-                    {% endif %}
+            <p
+                class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+            >
+                Arquivos
+            </p>
 
-                </p>
 
-            </div>
+            <h2
+                id="document-list-title"
+                class="mt-1 font-semibold tracking-tight text-brand-950"
+            >
+                Documentos encontrados
+            </h2>
 
-        </div>
 
+            <p class="mt-1 text-sm text-slate-500">
+
+                {% if total_documents == 1 %}
+
+                    1 documento correspondente aos filtros atuais.
+
+                {% elif total_documents %}
+
+                    {{ total_documents }}
+                    documentos correspondentes aos filtros atuais.
+
+                {% else %}
+
+                    Nenhum documento corresponde aos filtros atuais.
+
+                {% endif %}
+
+            </p>
+
+        </header>
+
+
+        <!-- =====================================================
+             TABELA
+        ====================================================== -->
 
         {% if documents %}
 
-            <!-- TABELA -->
             <div class="overflow-x-auto">
 
                 <table class="min-w-full">
 
-                    <thead class="bg-slate-50/80">
+                    <thead class="bg-brand-50/60">
 
-                        <tr class="border-b border-slate-100">
+                        <tr class="border-b border-brand-100">
 
-                            <th class="px-7 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            <th
+                                class="px-6 py-4 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-500"
+                            >
                                 Documento
                             </th>
 
-                            <th class="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            <th
+                                class="px-5 py-4 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-500"
+                            >
                                 Cliente
                             </th>
 
-                            <th class="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            <th
+                                class="px-5 py-4 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-500"
+                            >
                                 Caso
                             </th>
 
-                            <th class="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            <th
+                                class="px-5 py-4 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-500"
+                            >
                                 Enviado em
                             </th>
 
-                            <th class="px-7 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            <th
+                                class="px-6 py-4 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-500"
+                            >
                                 Ações
                             </th>
 
@@ -305,19 +451,29 @@
                     </thead>
 
 
-                    <tbody class="divide-y divide-slate-100">
+                    <tbody class="divide-y divide-brand-50">
 
                         {% for document in documents %}
 
-                            <tr class="transition hover:bg-slate-50/70">
+                            <tr
+                                class="transition hover:bg-brand-50/35"
+                            >
 
-                                <!-- DOCUMENTO -->
-                                <td class="px-7 py-5">
 
-                                    <div class="flex min-w-[260px] items-center gap-4">
+                                <!-- =================================
+                                     DOCUMENTO
+                                ================================== -->
 
-                                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
+                                <td class="px-6 py-4">
 
+                                    <div
+                                        class="flex min-w-[270px] items-center gap-3"
+                                    >
+
+                                        <div
+                                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-600"
+                                            aria-hidden="true"
+                                        >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -332,26 +488,33 @@
                                                     d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
                                                 />
                                             </svg>
-
                                         </div>
 
 
                                         <div class="min-w-0">
 
-                                            <p class="max-w-xs truncate text-sm font-semibold text-slate-900">
+                                            <p
+                                                class="max-w-xs truncate text-sm font-semibold text-brand-950"
+                                                title="{{ document.nome_original }}"
+                                            >
                                                 {{ document.nome_original }}
                                             </p>
 
 
                                             {% if document.descricao %}
 
-                                                <p class="mt-1 max-w-xs truncate text-xs text-slate-400">
+                                                <p
+                                                    class="mt-1 max-w-xs truncate text-xs text-brand-400"
+                                                    title="{{ document.descricao }}"
+                                                >
                                                     {{ document.descricao }}
                                                 </p>
 
                                             {% else %}
 
-                                                <p class="mt-1 text-xs text-slate-400">
+                                                <p
+                                                    class="mt-1 text-xs text-slate-400"
+                                                >
                                                     Sem descrição
                                                 </p>
 
@@ -364,12 +527,15 @@
                                 </td>
 
 
-                                <!-- CLIENTE -->
-                                <td class="px-5 py-5">
+                                <!-- =================================
+                                     CLIENTE
+                                ================================== -->
+
+                                <td class="px-5 py-4">
 
                                     <a
                                         href="{% url 'clients:detail' document.caso.cliente.pk %}"
-                                        class="text-sm font-medium text-slate-700 transition hover:text-amber-700"
+                                        class="text-sm font-medium text-brand-950 transition hover:text-gold-700"
                                     >
                                         {{ document.caso.cliente.nome_completo }}
                                     </a>
@@ -377,20 +543,25 @@
                                 </td>
 
 
-                                <!-- CASO -->
-                                <td class="px-5 py-5">
+                                <!-- =================================
+                                     CASO
+                                ================================== -->
 
-                                    <div class="min-w-[180px]">
+                                <td class="px-5 py-4">
+
+                                    <div class="min-w-[190px]">
 
                                         <a
                                             href="{% url 'cases:detail' document.caso.pk %}"
-                                            class="text-sm font-medium text-slate-700 transition hover:text-amber-700"
+                                            class="text-sm font-medium text-brand-950 transition hover:text-gold-700"
                                         >
                                             {{ document.caso.titulo }}
                                         </a>
 
 
-                                        <p class="mt-1 text-xs text-slate-400">
+                                        <p
+                                            class="mt-1 font-mono text-[11px] text-brand-400"
+                                        >
                                             Caso #{{ document.caso.pk|stringformat:"05d" }}
                                         </p>
 
@@ -399,28 +570,71 @@
                                 </td>
 
 
-                                <!-- DATA -->
-                                <td class="whitespace-nowrap px-5 py-5">
+                                <!-- =================================
+                                     ENVIADO EM
+                                ================================== -->
 
-                                    <p class="text-sm font-medium text-slate-700">
-                                        {{ document.criado_em|date:"d/m/Y" }}
-                                    </p>
+                                <td
+                                    class="whitespace-nowrap px-5 py-4"
+                                >
 
-                                    <p class="mt-1 text-xs text-slate-400">
-                                        {{ document.criado_em|time:"H:i" }}
-                                    </p>
+                                    <div
+                                        class="flex items-start gap-2"
+                                    >
+
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.8"
+                                            stroke="currentColor"
+                                            class="mt-0.5 h-4 w-4 shrink-0 text-brand-400"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M6.75 3v2.25M17.25 3v2.25M3.75 9.75h16.5m-15-4.5h13.5A1.5 1.5 0 0 1 20.25 6.75v12a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-12a1.5 1.5 0 0 1 1.5-1.5Z"
+                                            />
+                                        </svg>
+
+
+                                        <div>
+
+                                            <p
+                                                class="text-sm font-medium text-brand-950"
+                                            >
+                                                {{ document.criado_em|date:"d/m/Y" }}
+                                            </p>
+
+                                            <p
+                                                class="mt-0.5 text-xs text-brand-400"
+                                            >
+                                                {{ document.criado_em|time:"H:i" }}
+                                            </p>
+
+                                        </div>
+
+                                    </div>
 
                                 </td>
 
 
-                                <!-- AÇÕES -->
-                                <td class="px-7 py-5">
+                                <!-- =================================
+                                     AÇÕES
+                                ================================== -->
 
-                                    <div class="flex items-center justify-end gap-2">
+                                <td class="px-6 py-4">
+
+                                    <div
+                                        class="flex items-center justify-end gap-2"
+                                    >
+
+                                        <!-- BAIXAR -->
 
                                         <a
                                             href="{% url 'documents:download' document.pk %}"
-                                            class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950"
+                                            class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-medium text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
                                         >
 
                                             <svg
@@ -430,6 +644,7 @@
                                                 stroke-width="1.8"
                                                 stroke="currentColor"
                                                 class="h-4 w-4"
+                                                aria-hidden="true"
                                             >
                                                 <path
                                                     stroke-linecap="round"
@@ -443,11 +658,31 @@
                                         </a>
 
 
+                                        <!-- ABRIR CASO -->
+
                                         <a
                                             href="{% url 'cases:detail' document.caso.pk %}"
-                                            class="inline-flex items-center rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800"
+                                            class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg bg-brand-900 px-3.5 text-xs font-medium text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200"
                                         >
+
                                             Abrir caso
+
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.8"
+                                                stroke="currentColor"
+                                                class="h-3.5 w-3.5"
+                                                aria-hidden="true"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="m9 18 6-6-6-6"
+                                                />
+                                            </svg>
+
                                         </a>
 
                                     </div>
@@ -467,11 +702,18 @@
 
         {% else %}
 
-            <!-- ESTADO VAZIO -->
-            <div class="px-7 py-16 text-center">
 
-                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+            <!-- =================================================
+                 ESTADO VAZIO
+            ================================================== -->
 
+            <div
+                class="px-6 py-16 text-center"
+            >
+
+                <div
+                    class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-brand-100 bg-brand-50 text-brand-400"
+                >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -479,6 +721,7 @@
                         stroke-width="1.6"
                         stroke="currentColor"
                         class="h-7 w-7"
+                        aria-hidden="true"
                     >
                         <path
                             stroke-linecap="round"
@@ -486,34 +729,59 @@
                             d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
                         />
                     </svg>
-
                 </div>
 
 
-                <h3 class="mt-5 text-sm font-semibold text-slate-800">
+                <h3
+                    class="mt-5 text-sm font-semibold text-brand-950"
+                >
                     Nenhum documento encontrado
                 </h3>
 
 
                 {% if search or selected_client or selected_type %}
 
-                    <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-                        Nenhum arquivo corresponde aos filtros selecionados.
-                        Tente alterar a pesquisa ou limpar os filtros.
+                    <p
+                        class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500"
+                    >
+                        Nenhum arquivo corresponde aos filtros
+                        selecionados. Tente alterar a pesquisa ou
+                        limpar os filtros.
                     </p>
 
 
                     <a
                         href="{% url 'documents:list' %}"
-                        class="mt-5 inline-flex items-center justify-center rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                        class="mt-5 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-brand-900 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200"
                     >
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6 18 18 6M6 6l12 12"
+                            />
+                        </svg>
+
                         Limpar filtros
+
                     </a>
 
                 {% else %}
 
-                    <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-                        Os documentos anexados aos casos jurídicos aparecerão automaticamente nesta central.
+                    <p
+                        class="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500"
+                    >
+                        Os documentos anexados aos casos jurídicos
+                        aparecerão automaticamente nesta central.
                     </p>
 
                 {% endif %}

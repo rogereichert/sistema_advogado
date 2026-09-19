@@ -1,14 +1,139 @@
-<div class="agenda-modal-content">
+{% extends "base.html" %}
+
+{% block title %}
+    {% if editing %}
+        Editar compromisso
+    {% else %}
+        Novo compromisso
+    {% endif %}
+    | Advogado Company
+{% endblock %}
+
+
+{% block content %}
+
+<div class="mx-auto max-w-5xl">
+
+    <!-- =========================================================
+         VOLTAR
+    ========================================================== -->
+
+    <a
+        href="{% url 'cases:detail' case.pk %}"
+        class="inline-flex items-center gap-2 rounded-lg text-sm font-medium text-slate-500 transition hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+    >
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.8"
+            stroke="currentColor"
+            class="h-4 w-4"
+            aria-hidden="true"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+            />
+        </svg>
+
+        Voltar para o caso
+    </a>
+
+
+    <!-- =========================================================
+         CABEÇALHO
+    ========================================================== -->
+
+    <div
+        class="mt-6 rounded-2xl border border-brand-100 bg-white px-6 py-6 shadow-sm sm:px-7"
+    >
+
+        <div
+            class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
+        >
+
+            <div class="flex min-w-0 items-start gap-4">
+
+                <div
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-950 text-white shadow-sm"
+                    aria-hidden="true"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
+                        />
+
+                        {% if not editing %}
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 11.25v6m3-3H9"
+                            />
+                        {% endif %}
+                    </svg>
+                </div>
+
+
+                <div class="min-w-0">
+
+                    <p
+                        class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+                    >
+                        Agenda
+                    </p>
+
+                    <h1
+                        class="mt-1 text-2xl font-semibold tracking-tight text-brand-950"
+                    >
+                        {% if editing %}
+                            Editar compromisso
+                        {% else %}
+                            Novo compromisso
+                        {% endif %}
+                    </h1>
+
+                    <p
+                        class="mt-1.5 text-sm leading-6 text-slate-500"
+                    >
+                        {% if editing %}
+                            Atualize as informações do compromisso
+                            vinculado a este caso.
+                        {% else %}
+                            Registre audiências, prazos, reuniões e
+                            outros eventos vinculados ao caso.
+                        {% endif %}
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 
     <!-- =========================================================
          CONTEXTO DO CASO
     ========================================================== -->
 
     <div
-        class="mb-6 rounded-xl border border-brand-100 bg-brand-50/40 px-4 py-3.5"
+        class="mt-6 rounded-2xl border border-brand-100 bg-brand-50/40 px-5 py-4 sm:px-6"
     >
+
         <div
-            class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+            class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
         >
 
             <div class="min-w-0">
@@ -38,18 +163,23 @@
 
                 </div>
 
-                <p class="mt-1 truncate text-sm font-semibold text-brand-950">
+                <p
+                    class="mt-1.5 break-words text-sm font-semibold text-brand-950"
+                >
                     {{ case.titulo }}
                 </p>
 
             </div>
 
 
-            <div class="shrink-0 text-xs text-slate-500">
+            <div
+                class="shrink-0 text-sm text-slate-500"
+            >
                 {{ case.cliente.nome_completo }}
             </div>
 
         </div>
+
     </div>
 
 
@@ -59,20 +189,17 @@
 
     <form
         method="post"
-        action="{% url 'agenda:create' case.pk %}"
-        id="agenda-create-form"
+        class="mt-6"
         novalidate
     >
 
         {% csrf_token %}
 
 
-        <!-- ERROS GERAIS -->
-
         {% if form.non_field_errors %}
 
             <div
-                class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
                 role="alert"
             >
                 {{ form.non_field_errors }}
@@ -81,265 +208,309 @@
         {% endif %}
 
 
-        <div class="grid gap-x-5 gap-y-5 md:grid-cols-2">
+        <section
+            class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+        >
 
             <!-- =================================================
-                 TIPO
+                 CABEÇALHO DA SEÇÃO
             ================================================== -->
 
-            <div>
+            <header
+                class="border-b border-brand-100 px-6 py-5 sm:px-7"
+            >
 
-                <label
-                    for="{{ form.tipo.id_for_label }}"
-                    class="mb-2 block text-sm font-semibold text-slate-700"
+                <p
+                    class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
                 >
-                    {{ form.tipo.label }}
+                    Compromisso
+                </p>
 
-                    {% if form.tipo.field.required %}
-                        <span class="text-red-500">*</span>
-                    {% endif %}
-                </label>
-
-                {{ form.tipo }}
-
-                {% if form.tipo.errors %}
-                    <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
-                    >
-                        {{ form.tipo.errors }}
-                    </div>
-                {% endif %}
-
-            </div>
-
-
-            <!-- =================================================
-                 TÍTULO
-            ================================================== -->
-
-            <div>
-
-                <label
-                    for="{{ form.titulo.id_for_label }}"
-                    class="mb-2 block text-sm font-semibold text-slate-700"
+                <h2
+                    class="mt-1 font-semibold text-brand-950"
                 >
-                    {{ form.titulo.label }}
+                    Dados do compromisso
+                </h2>
 
-                    {% if form.titulo.field.required %}
-                        <span class="text-red-500">*</span>
-                    {% endif %}
-                </label>
-
-                {{ form.titulo }}
-
-                {% if form.titulo.errors %}
-                    <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
-                    >
-                        {{ form.titulo.errors }}
-                    </div>
-                {% endif %}
-
-            </div>
-
-
-            <!-- =================================================
-                 DATA
-            ================================================== -->
-
-            <div>
-
-                <label
-                    for="{{ form.data.id_for_label }}"
-                    class="mb-2 block text-sm font-semibold text-slate-700"
+                <p
+                    class="mt-1 text-sm leading-6 text-slate-500"
                 >
-                    {{ form.data.label }}
+                    Preencha as informações do evento que será
+                    registrado na agenda.
+                </p>
 
-                    {% if form.data.field.required %}
-                        <span class="text-red-500">*</span>
-                    {% endif %}
-                </label>
-
-                {{ form.data }}
-
-                {% if form.data.errors %}
-                    <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
-                    >
-                        {{ form.data.errors }}
-                    </div>
-                {% endif %}
-
-            </div>
+            </header>
 
 
             <!-- =================================================
-                 HORA
+                 CAMPOS
             ================================================== -->
 
-            <div>
+            <div
+                class="grid gap-x-6 gap-y-6 p-6 sm:p-7 md:grid-cols-2"
+            >
 
-                <div class="mb-2 flex items-center justify-between gap-3">
+                <!-- TIPO -->
+
+                <div>
 
                     <label
-                        for="{{ form.hora.id_for_label }}"
-                        class="block text-sm font-semibold text-slate-700"
+                        for="{{ form.tipo.id_for_label }}"
+                        class="mb-2 block text-sm font-semibold text-slate-700"
                     >
-                        {{ form.hora.label }}
+                        {{ form.tipo.label }}
 
-                        {% if form.hora.field.required %}
+                        {% if form.tipo.field.required %}
                             <span class="text-red-500">*</span>
                         {% endif %}
                     </label>
 
-                    {% if not form.hora.field.required %}
-                        <span class="text-[11px] font-medium text-slate-400">
-                            Opcional
-                        </span>
+                    {{ form.tipo }}
+
+                    {% if form.tipo.errors %}
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.tipo.errors }}
+                        </div>
                     {% endif %}
 
                 </div>
 
-                {{ form.hora }}
 
-                {% if form.hora.errors %}
-                    <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
-                    >
-                        {{ form.hora.errors }}
-                    </div>
-                {% endif %}
+                <!-- TÍTULO -->
 
-            </div>
-
-
-            <!-- =================================================
-                 LOCAL
-            ================================================== -->
-
-            <div class="md:col-span-2">
-
-                <div class="mb-2 flex items-center justify-between gap-3">
+                <div>
 
                     <label
-                        for="{{ form.local.id_for_label }}"
-                        class="block text-sm font-semibold text-slate-700"
+                        for="{{ form.titulo.id_for_label }}"
+                        class="mb-2 block text-sm font-semibold text-slate-700"
                     >
-                        {{ form.local.label }}
+                        {{ form.titulo.label }}
 
-                        {% if form.local.field.required %}
+                        {% if form.titulo.field.required %}
                             <span class="text-red-500">*</span>
                         {% endif %}
                     </label>
 
-                    {% if not form.local.field.required %}
-                        <span class="text-[11px] font-medium text-slate-400">
-                            Opcional
-                        </span>
+                    {{ form.titulo }}
+
+                    {% if form.titulo.errors %}
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.titulo.errors }}
+                        </div>
                     {% endif %}
 
                 </div>
 
-                {{ form.local }}
 
-                {% if form.local.errors %}
-                    <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
-                    >
-                        {{ form.local.errors }}
-                    </div>
-                {% endif %}
+                <!-- DATA -->
 
-            </div>
-
-
-            <!-- =================================================
-                 DESCRIÇÃO
-            ================================================== -->
-
-            <div class="md:col-span-2">
-
-                <div class="mb-2 flex items-center justify-between gap-3">
+                <div>
 
                     <label
-                        for="{{ form.descricao.id_for_label }}"
-                        class="block text-sm font-semibold text-slate-700"
+                        for="{{ form.data.id_for_label }}"
+                        class="mb-2 block text-sm font-semibold text-slate-700"
                     >
-                        {{ form.descricao.label }}
+                        {{ form.data.label }}
 
-                        {% if form.descricao.field.required %}
+                        {% if form.data.field.required %}
                             <span class="text-red-500">*</span>
                         {% endif %}
                     </label>
 
-                    {% if not form.descricao.field.required %}
-                        <span class="text-[11px] font-medium text-slate-400">
-                            Opcional
-                        </span>
+                    {{ form.data }}
+
+                    {% if form.data.errors %}
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.data.errors }}
+                        </div>
                     {% endif %}
 
                 </div>
 
-                {{ form.descricao }}
 
-                {% if form.descricao.errors %}
+                <!-- HORA -->
+
+                <div>
+
                     <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
+                        class="mb-2 flex items-center justify-between gap-3"
                     >
-                        {{ form.descricao.errors }}
-                    </div>
-                {% endif %}
 
-            </div>
+                        <label
+                            for="{{ form.hora.id_for_label }}"
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            {{ form.hora.label }}
 
+                            {% if form.hora.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
+                        </label>
 
-            <!-- =================================================
-                 OBSERVAÇÕES
-            ================================================== -->
-
-            <div class="md:col-span-2">
-
-                <div class="mb-2 flex items-center justify-between gap-3">
-
-                    <label
-                        for="{{ form.observacoes.id_for_label }}"
-                        class="block text-sm font-semibold text-slate-700"
-                    >
-                        {{ form.observacoes.label }}
-
-                        {% if form.observacoes.field.required %}
-                            <span class="text-red-500">*</span>
+                        {% if not form.hora.field.required %}
+                            <span
+                                class="text-[11px] font-medium text-slate-400"
+                            >
+                                Opcional
+                            </span>
                         {% endif %}
-                    </label>
 
-                    {% if not form.observacoes.field.required %}
-                        <span class="text-[11px] font-medium text-slate-400">
-                            Opcional
-                        </span>
+                    </div>
+
+                    {{ form.hora }}
+
+                    {% if form.hora.errors %}
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.hora.errors }}
+                        </div>
                     {% endif %}
 
                 </div>
 
-                {{ form.observacoes }}
 
-                {% if form.observacoes.errors %}
+                <!-- LOCAL -->
+
+                <div class="md:col-span-2">
+
                     <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
+                        class="mb-2 flex items-center justify-between gap-3"
                     >
-                        {{ form.observacoes.errors }}
+
+                        <label
+                            for="{{ form.local.id_for_label }}"
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            {{ form.local.label }}
+
+                            {% if form.local.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if not form.local.field.required %}
+                            <span
+                                class="text-[11px] font-medium text-slate-400"
+                            >
+                                Opcional
+                            </span>
+                        {% endif %}
+
                     </div>
-                {% endif %}
+
+                    {{ form.local }}
+
+                    {% if form.local.errors %}
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.local.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- DESCRIÇÃO -->
+
+                <div class="md:col-span-2">
+
+                    <div
+                        class="mb-2 flex items-center justify-between gap-3"
+                    >
+
+                        <label
+                            for="{{ form.descricao.id_for_label }}"
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            {{ form.descricao.label }}
+
+                            {% if form.descricao.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if not form.descricao.field.required %}
+                            <span
+                                class="text-[11px] font-medium text-slate-400"
+                            >
+                                Opcional
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    {{ form.descricao }}
+
+                    {% if form.descricao.errors %}
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.descricao.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- OBSERVAÇÕES -->
+
+                <div class="md:col-span-2">
+
+                    <div
+                        class="mb-2 flex items-center justify-between gap-3"
+                    >
+
+                        <label
+                            for="{{ form.observacoes.id_for_label }}"
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            {{ form.observacoes.label }}
+
+                            {% if form.observacoes.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if not form.observacoes.field.required %}
+                            <span
+                                class="text-[11px] font-medium text-slate-400"
+                            >
+                                Opcional
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    {{ form.observacoes }}
+
+                    {% if form.observacoes.errors %}
+                        <div
+                            class="mt-2 text-sm text-red-600"
+                            role="alert"
+                        >
+                            {{ form.observacoes.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
 
             </div>
 
-        </div>
+        </section>
 
 
         <!-- =====================================================
@@ -366,9 +537,16 @@
                 />
             </svg>
 
-            <p class="text-xs leading-5 text-gold-900">
-                O compromisso será vinculado a este caso e também
-                registrado no histórico da causa.
+            <p
+                class="text-xs leading-5 text-gold-900"
+            >
+                {% if editing %}
+                    As alterações serão registradas no histórico
+                    deste caso.
+                {% else %}
+                    O compromisso será vinculado a este caso e também
+                    registrado no histórico da causa.
+                {% endif %}
             </p>
 
         </div>
@@ -382,13 +560,12 @@
             class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end"
         >
 
-            <button
-                type="button"
-                data-agenda-modal-close
-                class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+            <a
+                href="{% url 'cases:detail' case.pk %}"
+                class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
             >
                 Cancelar
-            </button>
+            </a>
 
 
             <button
@@ -396,25 +573,47 @@
                 class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-950 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
             >
 
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.8"
-                    stroke="currentColor"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                    />
-                </svg>
+                {% if editing %}
 
-                <span data-agenda-submit-label>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931"
+                        />
+                    </svg>
+
+                    Salvar alterações
+
+                {% else %}
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 4.5v15m7.5-7.5h-15"
+                        />
+                    </svg>
+
                     Agendar compromisso
-                </span>
+
+                {% endif %}
 
             </button>
 
@@ -423,3 +622,5 @@
     </form>
 
 </div>
+
+{% endblock %}

@@ -1,7 +1,7 @@
 import re
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import OuterRef, Q, Subquery
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -13,6 +13,280 @@ from .models import CaseHistory, CaseMovement, CaseStatus, LegalCase
 
 def _is_ajax(request):
     return request.headers.get("x-requested-with") == "XMLHttpRequest"
+
+
+def _display_history_value(value):
+    """
+    Converte valores para uma apresentação amigável no histórico.
+    """
+    if value is None:
+        return ""
+
+    return str(value).strip()
+
+
+def _build_case_update_history(old_values, new_values):
+    """
+    Compara os dados anteriores e novos do caso e devolve
+    uma lista de descrições para o histórico.
+
+    Campos curtos:
+        mostram o valor anterior e o novo.
+
+    Campos longos:
+        registram apenas que o conteúdo foi atualizado.
+    """
+
+    changes = []
+
+    # =========================================================
+    # TÍTULO
+    # =========================================================
+
+    old_title = _display_history_value(
+        old_values.get("titulo")
+    )
+    new_title = _display_history_value(
+        new_values.get("titulo")
+    )
+
+    if old_title != new_title:
+        changes.append(
+            f"Título alterado de "
+            f"'{old_title}' para '{new_title}'."
+        )
+
+    # =========================================================
+    # ÁREA JURÍDICA
+    # =========================================================
+
+    old_area = _display_history_value(
+        old_values.get("area_juridica")
+    )
+    new_area = _display_history_value(
+        new_values.get("area_juridica")
+    )
+
+    if old_area != new_area:
+
+        if not old_area and new_area:
+            changes.append(
+                f"Área jurídica informada: '{new_area}'."
+            )
+
+        elif old_area and not new_area:
+            changes.append(
+                f"Área jurídica removida. "
+                f"Valor anterior: '{old_area}'."
+            )
+
+        else:
+            changes.append(
+                f"Área jurídica alterada de "
+                f"'{old_area}' para '{new_area}'."
+            )
+
+    # =========================================================
+    # STATUS
+    # =========================================================
+
+    old_status = old_values.get("status")
+    new_status = new_values.get("status")
+
+    old_status_id = (
+        old_status.pk
+        if old_status
+        else None
+    )
+
+    new_status_id = (
+        new_status.pk
+        if new_status
+        else None
+    )
+
+    if old_status_id != new_status_id:
+
+        old_status_name = (
+            old_status.nome
+            if old_status
+            else ""
+        )
+
+        new_status_name = (
+            new_status.nome
+            if new_status
+            else ""
+        )
+
+        if not old_status_name and new_status_name:
+            changes.append(
+                f"Status informado: '{new_status_name}'."
+            )
+
+        elif old_status_name and not new_status_name:
+            changes.append(
+                f"Status removido. "
+                f"Valor anterior: '{old_status_name}'."
+            )
+
+        else:
+            changes.append(
+                f"Status alterado de "
+                f"'{old_status_name}' para "
+                f"'{new_status_name}'."
+            )
+
+    # =========================================================
+    # DESCRIÇÃO DA CAUSA
+    # =========================================================
+
+    old_description = _display_history_value(
+        old_values.get("descricao")
+    )
+    new_description = _display_history_value(
+        new_values.get("descricao")
+    )
+
+    if old_description != new_description:
+
+        if not old_description and new_description:
+            changes.append(
+                "Descrição da causa adicionada."
+            )
+
+        elif old_description and not new_description:
+            changes.append(
+                "Descrição da causa removida."
+            )
+
+        else:
+            changes.append(
+                "Descrição da causa atualizada."
+            )
+
+    # =========================================================
+    # NÚMERO DO PROCESSO
+    # =========================================================
+
+    old_process_number = _display_history_value(
+        old_values.get("numero_processo")
+    )
+    new_process_number = _display_history_value(
+        new_values.get("numero_processo")
+    )
+
+    if old_process_number != new_process_number:
+
+        if not old_process_number and new_process_number:
+            changes.append(
+                f"Número do processo informado: "
+                f"'{new_process_number}'."
+            )
+
+        elif old_process_number and not new_process_number:
+            changes.append(
+                f"Número do processo removido. "
+                f"Valor anterior: '{old_process_number}'."
+            )
+
+        else:
+            changes.append(
+                f"Número do processo alterado de "
+                f"'{old_process_number}' para "
+                f"'{new_process_number}'."
+            )
+
+    # =========================================================
+    # VARA
+    # =========================================================
+
+    old_court = _display_history_value(
+        old_values.get("vara")
+    )
+    new_court = _display_history_value(
+        new_values.get("vara")
+    )
+
+    if old_court != new_court:
+
+        if not old_court and new_court:
+            changes.append(
+                f"Vara informada: '{new_court}'."
+            )
+
+        elif old_court and not new_court:
+            changes.append(
+                f"Vara removida. "
+                f"Valor anterior: '{old_court}'."
+            )
+
+        else:
+            changes.append(
+                f"Vara alterada de "
+                f"'{old_court}' para '{new_court}'."
+            )
+
+    # =========================================================
+    # COMARCA
+    # =========================================================
+
+    old_district = _display_history_value(
+        old_values.get("comarca")
+    )
+    new_district = _display_history_value(
+        new_values.get("comarca")
+    )
+
+    if old_district != new_district:
+
+        if not old_district and new_district:
+            changes.append(
+                f"Comarca informada: '{new_district}'."
+            )
+
+        elif old_district and not new_district:
+            changes.append(
+                f"Comarca removida. "
+                f"Valor anterior: '{old_district}'."
+            )
+
+        else:
+            changes.append(
+                f"Comarca alterada de "
+                f"'{old_district}' para "
+                f"'{new_district}'."
+            )
+
+    # =========================================================
+    # OBSERVAÇÕES INTERNAS
+    # =========================================================
+
+    old_notes = _display_history_value(
+        old_values.get("observacoes")
+    )
+    new_notes = _display_history_value(
+        new_values.get("observacoes")
+    )
+
+    if old_notes != new_notes:
+
+        if not old_notes and new_notes:
+            changes.append(
+                "Observações internas adicionadas."
+            )
+
+        elif old_notes and not new_notes:
+            changes.append(
+                "Observações internas removidas."
+            )
+
+        else:
+            changes.append(
+                "Observações internas atualizadas."
+            )
+
+    return changes
 
 
 @login_required
@@ -40,6 +314,27 @@ def case_create(request, client_pk):
                 ),
             )
 
+            # =================================================
+            # AJAX
+            # =================================================
+
+            if _is_ajax(request):
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "case_id": legal_case.pk,
+                        "redirect_url": (
+                            redirect(
+                                "cases:detail",
+                                pk=legal_case.pk,
+                            ).url
+                        ),
+                        "message": (
+                            "Caso jurídico criado com sucesso."
+                        ),
+                    }
+                )
+
             return redirect(
                 "cases:detail",
                 pk=legal_case.pk,
@@ -48,13 +343,29 @@ def case_create(request, client_pk):
     else:
         form = LegalCaseForm()
 
+    context = {
+        "form": form,
+        "client": client,
+        "case": None,
+        "editing": False,
+    }
+
+    if _is_ajax(request):
+        return render(
+            request,
+            "cases/_case_form_content.html",
+            context,
+            status=(
+                400
+                if request.method == "POST"
+                else 200
+            ),
+        )
+
     return render(
         request,
         "cases/case_form.html",
-        {
-            "form": form,
-            "client": client,
-        },
+        context,
     )
 
 
@@ -122,7 +433,20 @@ def case_update(request, pk):
         pk=pk,
     )
 
-    old_status = legal_case.status
+    # =========================================================
+    # SNAPSHOT DOS DADOS ANTES DA EDIÇÃO
+    # =========================================================
+
+    old_values = {
+        "titulo": legal_case.titulo,
+        "area_juridica": legal_case.area_juridica,
+        "status": legal_case.status,
+        "descricao": legal_case.descricao,
+        "numero_processo": legal_case.numero_processo,
+        "vara": legal_case.vara,
+        "comarca": legal_case.comarca,
+        "observacoes": legal_case.observacoes,
+    }
 
     if request.method == "POST":
         form = LegalCaseForm(
@@ -131,21 +455,72 @@ def case_update(request, pk):
         )
 
         if form.is_valid():
-            updated_case = form.save(commit=False)
-            new_status = form.cleaned_data["status"]
 
-            updated_case.save()
+            # =================================================
+            # NOVOS VALORES JÁ VALIDADOS E NORMALIZADOS
+            # =================================================
 
-            if old_status != new_status:
+            new_values = {
+                "titulo": form.cleaned_data["titulo"],
+                "area_juridica": form.cleaned_data.get(
+                    "area_juridica"
+                ),
+                "status": form.cleaned_data["status"],
+                "descricao": form.cleaned_data.get(
+                    "descricao"
+                ),
+                "numero_processo": form.cleaned_data.get(
+                    "numero_processo"
+                ),
+                "vara": form.cleaned_data.get(
+                    "vara"
+                ),
+                "comarca": form.cleaned_data.get(
+                    "comarca"
+                ),
+                "observacoes": form.cleaned_data.get(
+                    "observacoes"
+                ),
+            }
+
+            changes = _build_case_update_history(
+                old_values,
+                new_values,
+            )
+
+            updated_case = form.save()
+
+            # =================================================
+            # HISTÓRICO
+            # Uma edição gera somente um evento.
+            # Se nada mudou, nenhum evento é criado.
+            # =================================================
+
+            if changes:
                 CaseHistory.objects.create(
                     caso=updated_case,
                     usuario=request.user,
-                    titulo="Status alterado",
-                    descricao=(
-                        f"Status alterado de "
-                        f"'{old_status.nome}' para "
-                        f"'{new_status.nome}'."
-                    ),
+                    titulo="Caso atualizado",
+                    descricao="\n".join(changes),
+                )
+
+            # =================================================
+            # AJAX
+            # =================================================
+
+            if _is_ajax(request):
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "case_id": updated_case.pk,
+                        "changed": bool(changes),
+                        "changes_count": len(changes),
+                        "message": (
+                            "Caso atualizado com sucesso."
+                            if changes
+                            else "Nenhuma alteração foi realizada."
+                        ),
+                    }
                 )
 
             return redirect(
@@ -158,15 +533,29 @@ def case_update(request, pk):
             instance=legal_case,
         )
 
+    context = {
+        "form": form,
+        "client": legal_case.cliente,
+        "case": legal_case,
+        "editing": True,
+    }
+
+    if _is_ajax(request):
+        return render(
+            request,
+            "cases/_case_form_content.html",
+            context,
+            status=(
+                400
+                if request.method == "POST"
+                else 200
+            ),
+        )
+
     return render(
         request,
         "cases/case_form.html",
-        {
-            "form": form,
-            "client": legal_case.cliente,
-            "case": legal_case,
-            "editing": True,
-        },
+        context,
     )
 
 
@@ -241,14 +630,44 @@ def movement_create(request, pk):
 
 @login_required
 def case_list(request):
+    # =========================================================
+    # ÚLTIMA ATIVIDADE REGISTRADA NO HISTÓRICO
+    # =========================================================
+    #
+    # A data da última modificação não vem simplesmente de uma
+    # edição do cadastro do caso.
+    #
+    # Ela representa a atividade mais recente registrada no
+    # CaseHistory: criação, edição, movimentação etc.
+    #
+    # A Subquery evita fazer uma consulta separada para cada
+    # caso exibido na listagem.
+    # =========================================================
+
+    latest_history = (
+        CaseHistory.objects
+        .filter(caso_id=OuterRef("pk"))
+        .order_by("-criado_em")
+        .values("criado_em")[:1]
+    )
+
     cases = (
         LegalCase.objects
         .select_related(
             "cliente",
             "status",
         )
+        .annotate(
+            ultima_modificacao=Subquery(
+                latest_history
+            )
+        )
         .all()
     )
+
+    # =========================================================
+    # PARÂMETROS DE FILTRO
+    # =========================================================
 
     search = request.GET.get(
         "q",
@@ -260,10 +679,9 @@ def case_list(request):
         "",
     ).strip()
 
-    area = request.GET.get(
-        "area",
-        "",
-    ).strip()
+    # =========================================================
+    # BUSCA
+    # =========================================================
 
     if search:
         search_digits = re.sub(
@@ -291,19 +709,26 @@ def case_list(request):
             search_filter
         )
 
+    # =========================================================
+    # STATUS
+    # =========================================================
+
     if status:
         cases = cases.filter(
             status_id=status
         )
 
-    if area:
-        cases = cases.filter(
-            area_juridica__icontains=area
-        )
+    # =========================================================
+    # STATUS DISPONÍVEIS
+    # =========================================================
 
     statuses = CaseStatus.objects.filter(
         ativo=True
     )
+
+    # =========================================================
+    # TEMPLATE
+    # =========================================================
 
     return render(
         request,
@@ -313,6 +738,5 @@ def case_list(request):
             "statuses": statuses,
             "search": search,
             "selected_status": status,
-            "area": area,
         },
     )

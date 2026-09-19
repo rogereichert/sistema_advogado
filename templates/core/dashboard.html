@@ -14,29 +14,65 @@
 <div class="mx-auto max-w-[1600px]">
 
     <!-- =========================================================
-         CABEÇALHO
+        CABEÇALHO DA PÁGINA
     ========================================================== -->
 
     <header
-        class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"
+        class="mb-7 flex flex-col justify-between gap-5 lg:flex-row lg:items-end"
     >
 
         <div class="min-w-0">
 
-            <p
-                class="text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-700"
-            >
-                Painel do escritório
-            </p>
+            <div class="flex items-center gap-3.5">
 
-            <h1
-                class="mt-2 text-2xl font-semibold tracking-tight text-brand-950 sm:text-3xl"
-            >
-                Visão Geral
-            </h1>
+                <!-- ÍCONE -->
+
+                <div
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-700 shadow-sm"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0L6.75 21m9-12-3 3-2-2-3 3"
+                        />
+                    </svg>
+                </div>
+
+
+                <!-- IDENTIFICAÇÃO -->
+
+                <div>
+
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700"
+                    >
+                        Painel do escritório
+                    </p>
+
+                    <h1
+                        class="mt-0.5 text-2xl font-semibold tracking-tight text-brand-950 sm:text-3xl"
+                    >
+                        Visão Geral
+                    </h1>
+
+                </div>
+
+            </div>
+
+
+            <!-- DESCRIÇÃO -->
 
             <p
-                class="mt-2 max-w-2xl text-sm leading-6 text-slate-500"
+                class="mt-4 max-w-2xl text-sm leading-6 text-slate-500"
             >
                 Acompanhe clientes, casos, documentos e compromissos
                 do escritório em um só lugar.
@@ -45,36 +81,19 @@
         </div>
 
 
+        <!-- =====================================================
+            AÇÕES PRINCIPAIS
+        ====================================================== -->
+
         <div class="flex flex-col gap-3 sm:flex-row">
 
-            <button
-                type="button"
-                id="open-create-client-modal"
-                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-brand-200 bg-white px-5 text-sm font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.8"
-                    stroke="currentColor"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M18 7.5v3.75m0 0V15m0-3.75h3.75m-3.75 0h-3.75M12 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM3 20.25a6 6 0 0 1 12 0"
-                    />
-                </svg>
-
-                Novo cliente
-            </button>
-
+            <!-- =================================================
+                VER CASOS — AÇÃO SECUNDÁRIA
+            ================================================== -->
 
             <a
                 href="{% url 'cases:list' %}"
-                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-950 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-brand-200 bg-white px-5 text-sm font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -92,8 +111,41 @@
                     />
                 </svg>
 
-                Ver casos
+                <span>
+                    Ver casos
+                </span>
             </a>
+
+
+            <!-- =================================================
+                NOVO CLIENTE — AÇÃO PRIMÁRIA
+            ================================================== -->
+
+            <button
+                type="button"
+                id="open-create-client-modal"
+                class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                </svg>
+
+                <span>
+                    Novo cliente
+                </span>
+            </button>
 
         </div>
 

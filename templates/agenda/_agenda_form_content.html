@@ -1,4 +1,8 @@
 <style>
+    /* =========================================================
+       CAMPOS DO MODAL — SEM SOMBRA EXTERNA
+    ========================================================== */
+
     #agenda-create-form input,
     #agenda-create-form select,
     #agenda-create-form textarea {
@@ -13,6 +17,7 @@
         -webkit-box-shadow: none !important;
     }
 </style>
+
 
 <div class="agenda-modal-content">
 
@@ -60,6 +65,7 @@
 
             </div>
 
+
             <div class="shrink-0 text-xs text-slate-500">
                 {{ case.cliente.nome_completo }}
             </div>
@@ -82,7 +88,9 @@
         {% csrf_token %}
 
 
-        <!-- ERROS GERAIS -->
+        <!-- =====================================================
+             ERROS GERAIS
+        ====================================================== -->
 
         {% if form.non_field_errors %}
 
@@ -98,7 +106,9 @@
 
         <div class="grid gap-x-5 gap-y-5 md:grid-cols-2">
 
-            <!-- TIPO -->
+            <!-- =================================================
+                 TIPO
+            ================================================== -->
 
             <div>
 
@@ -116,18 +126,22 @@
                 {{ form.tipo }}
 
                 {% if form.tipo.errors %}
+
                     <div
                         class="mt-2 text-sm text-red-600"
                         role="alert"
                     >
                         {{ form.tipo.errors }}
                     </div>
+
                 {% endif %}
 
             </div>
 
 
-            <!-- TÍTULO -->
+            <!-- =================================================
+                 TÍTULO
+            ================================================== -->
 
             <div>
 
@@ -145,18 +159,22 @@
                 {{ form.titulo }}
 
                 {% if form.titulo.errors %}
+
                     <div
                         class="mt-2 text-sm text-red-600"
                         role="alert"
                     >
                         {{ form.titulo.errors }}
                     </div>
+
                 {% endif %}
 
             </div>
 
 
-            <!-- DATA -->
+            <!-- =================================================
+                 DATA
+            ================================================== -->
 
             <div>
 
@@ -174,22 +192,28 @@
                 {{ form.data }}
 
                 {% if form.data.errors %}
+
                     <div
                         class="mt-2 text-sm text-red-600"
                         role="alert"
                     >
                         {{ form.data.errors }}
                     </div>
+
                 {% endif %}
 
             </div>
 
 
-            <!-- HORA -->
+            <!-- =================================================
+                 HORA
+            ================================================== -->
 
             <div>
 
-                <div class="mb-2 flex items-center justify-between gap-3">
+                <div
+                    class="mb-2 flex items-center justify-between gap-3"
+                >
 
                     <label
                         for="{{ form.hora.id_for_label }}"
@@ -203,9 +227,13 @@
                     </label>
 
                     {% if not form.hora.field.required %}
-                        <span class="text-[11px] font-medium text-slate-400">
+
+                        <span
+                            class="text-[11px] font-medium text-slate-400"
+                        >
                             Opcional
                         </span>
+
                     {% endif %}
 
                 </div>
@@ -213,22 +241,28 @@
                 {{ form.hora }}
 
                 {% if form.hora.errors %}
+
                     <div
                         class="mt-2 text-sm text-red-600"
                         role="alert"
                     >
                         {{ form.hora.errors }}
                     </div>
+
                 {% endif %}
 
             </div>
 
 
-            <!-- LOCAL -->
+            <!-- =================================================
+                 LOCAL
+            ================================================== -->
 
             <div class="md:col-span-2">
 
-                <div class="mb-2 flex items-center justify-between gap-3">
+                <div
+                    class="mb-2 flex items-center justify-between gap-3"
+                >
 
                     <label
                         for="{{ form.local.id_for_label }}"
@@ -242,9 +276,13 @@
                     </label>
 
                     {% if not form.local.field.required %}
-                        <span class="text-[11px] font-medium text-slate-400">
+
+                        <span
+                            class="text-[11px] font-medium text-slate-400"
+                        >
                             Opcional
                         </span>
+
                     {% endif %}
 
                 </div>
@@ -252,22 +290,28 @@
                 {{ form.local }}
 
                 {% if form.local.errors %}
+
                     <div
                         class="mt-2 text-sm text-red-600"
                         role="alert"
                     >
                         {{ form.local.errors }}
                     </div>
+
                 {% endif %}
 
             </div>
 
 
-            <!-- DESCRIÇÃO -->
+            <!-- =================================================
+                 DESCRIÇÃO
+            ================================================== -->
 
             <div class="md:col-span-2">
 
-                <div class="mb-2 flex items-center justify-between gap-3">
+                <div
+                    class="mb-2 flex items-center justify-between gap-3"
+                >
 
                     <label
                         for="{{ form.descricao.id_for_label }}"
@@ -281,9 +325,13 @@
                     </label>
 
                     {% if not form.descricao.field.required %}
-                        <span class="text-[11px] font-medium text-slate-400">
+
+                        <span
+                            class="text-[11px] font-medium text-slate-400"
+                        >
                             Opcional
                         </span>
+
                     {% endif %}
 
                 </div>
@@ -291,22 +339,28 @@
                 {{ form.descricao }}
 
                 {% if form.descricao.errors %}
+
                     <div
                         class="mt-2 text-sm text-red-600"
                         role="alert"
                     >
                         {{ form.descricao.errors }}
                     </div>
+
                 {% endif %}
 
             </div>
 
 
-            <!-- OBSERVAÇÕES -->
+            <!-- =================================================
+                 OBSERVAÇÕES
+            ================================================== -->
 
             <div class="md:col-span-2">
 
-                <div class="mb-2 flex items-center justify-between gap-3">
+                <div
+                    class="mb-2 flex items-center justify-between gap-3"
+                >
 
                     <label
                         for="{{ form.observacoes.id_for_label }}"
@@ -320,9 +374,13 @@
                     </label>
 
                     {% if not form.observacoes.field.required %}
-                        <span class="text-[11px] font-medium text-slate-400">
+
+                        <span
+                            class="text-[11px] font-medium text-slate-400"
+                        >
                             Opcional
                         </span>
+
                     {% endif %}
 
                 </div>
@@ -330,12 +388,14 @@
                 {{ form.observacoes }}
 
                 {% if form.observacoes.errors %}
+
                     <div
                         class="mt-2 text-sm text-red-600"
                         role="alert"
                     >
                         {{ form.observacoes.errors }}
                     </div>
+
                 {% endif %}
 
             </div>
@@ -386,7 +446,7 @@
             <button
                 type="button"
                 data-agenda-modal-close
-                class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-600 transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
             >
                 Cancelar
             </button>

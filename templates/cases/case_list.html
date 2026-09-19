@@ -9,20 +9,23 @@
 
 <div class="mx-auto max-w-[1600px]">
 
+
     <!-- =========================================================
-         CABEÇALHO
+         CABEÇALHO DA PÁGINA
     ========================================================== -->
 
     <header
-        class="flex flex-col justify-between gap-5 lg:flex-row lg:items-end"
+        class="mb-7 flex flex-col justify-between gap-5 lg:flex-row lg:items-end"
     >
 
         <div class="min-w-0">
 
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-3.5">
+
+                <!-- ÍCONE -->
 
                 <div
-                    class="flex h-8 w-8 items-center justify-center rounded-lg border border-brand-100 bg-brand-50 text-brand-700"
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-700 shadow-sm"
                     aria-hidden="true"
                 >
                     <svg
@@ -31,7 +34,7 @@
                         viewBox="0 0 24 24"
                         stroke-width="1.8"
                         stroke="currentColor"
-                        class="h-4 w-4"
+                        class="h-5 w-5"
                     >
                         <path
                             stroke-linecap="round"
@@ -47,24 +50,32 @@
                     </svg>
                 </div>
 
-                <p
-                    class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700"
-                >
-                    Gestão jurídica
-                </p>
+
+                <!-- IDENTIFICAÇÃO -->
+
+                <div>
+
+                    <p
+                        class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700"
+                    >
+                        Gestão jurídica
+                    </p>
+
+                    <h1
+                        class="mt-0.5 text-2xl font-semibold tracking-tight text-brand-950 sm:text-3xl"
+                    >
+                        Casos Jurídicos
+                    </h1>
+
+                </div>
 
             </div>
 
 
-            <h1
-                class="mt-3 text-3xl font-semibold tracking-tight text-brand-950"
-            >
-                Casos Jurídicos
-            </h1>
-
+            <!-- DESCRIÇÃO -->
 
             <p
-                class="mt-2 max-w-2xl text-sm leading-6 text-slate-500"
+                class="mt-4 max-w-2xl text-sm leading-6 text-slate-500"
             >
                 Consulte e acompanhe as demandas jurídicas cadastradas
                 no escritório.
@@ -72,70 +83,17 @@
 
         </div>
 
-
-        <!-- =====================================================
-             CONTADOR
-        ====================================================== -->
-
-        <div
-            class="inline-flex shrink-0 items-center gap-3 rounded-xl border border-brand-100 bg-white px-4 py-3 shadow-sm"
-        >
-
-            <div
-                class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-700"
-                aria-hidden="true"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.8"
-                    stroke="currentColor"
-                    class="h-4 w-4"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M9 6.75V5.625A2.625 2.625 0 0 1 11.625 3h.75A2.625 2.625 0 0 1 15 5.625V6.75m-10.5 0h15A1.5 1.5 0 0 1 21 8.25v9A1.5 1.5 0 0 1 19.5 18.75h-15A1.5 1.5 0 0 1 3 17.25v-9A1.5 1.5 0 0 1 4.5 6.75Z"
-                    />
-                </svg>
-            </div>
-
-
-            <div>
-
-                <p
-                    class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400"
-                >
-                    Resultado atual
-                </p>
-
-                <p
-                    class="mt-0.5 text-sm font-semibold text-brand-950"
-                >
-                    <span id="case-result-count">
-                        {{ cases|length }}
-                    </span>
-
-                    caso{{ cases|length|pluralize:"s" }}
-                </p>
-
-            </div>
-
-        </div>
-
     </header>
 
 
     <!-- =========================================================
-         FILTROS
+         BARRA DE CONTROLE / FILTROS
+
+         A partial será ajustada no próximo passo para seguir
+         o mesmo padrão visual utilizado na tela de Clientes.
     ========================================================== -->
 
-    <div class="mt-8">
-
-        {% include "cases/_case_filters.html" %}
-
-    </div>
+    {% include "cases/_case_filters.html" %}
 
 
     <!-- =========================================================
@@ -143,11 +101,13 @@
     ========================================================== -->
 
     <section
-        class="mt-6 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+        class="mt-5 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
         aria-labelledby="case-results-title"
     >
 
-        <!-- CABEÇALHO DOS RESULTADOS -->
+        <!-- =====================================================
+             CABEÇALHO DOS RESULTADOS
+        ====================================================== -->
 
         <header
             class="flex flex-col justify-between gap-3 border-b border-brand-100 px-5 py-5 sm:flex-row sm:items-center sm:px-6"
@@ -188,7 +148,11 @@
             </div>
 
 
-            {% if search or selected_status or area %}
+            <!-- =================================================
+                 LIMPAR FILTROS
+            ================================================== -->
+
+            {% if search or selected_status %}
 
                 <a
                     href="{% url 'cases:list' %}"
@@ -210,7 +174,10 @@
                         />
                     </svg>
 
-                    Limpar filtros
+                    <span>
+                        Limpar filtros
+                    </span>
+
                 </a>
 
             {% endif %}
@@ -241,7 +208,9 @@
 
 
 {% block extra_js %}
+
     {{ block.super }}
 
     <script src="{% static 'js/cases/case-list.js' %}"></script>
+
 {% endblock %}
