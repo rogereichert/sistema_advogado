@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "apps.cases",
     "apps.documents",
     "apps.agenda",
+    "apps.notifications",
     "apps.reports",
 ]
 
@@ -72,10 +73,11 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "apps.notifications.context_processors.notifications_context",
             ],
         },
     },

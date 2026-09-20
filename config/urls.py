@@ -47,6 +47,12 @@ urlpatterns = [
         include("apps.agenda.urls"),
     ),
 
+    # Notificações
+    path(
+        "notificacoes/",
+        include("apps.notifications.urls"),
+    ),
+
     path(
         "relatorios/", 
         include("apps.reports.urls")

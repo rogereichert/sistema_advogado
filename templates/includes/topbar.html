@@ -1,3 +1,5 @@
+{% load static %}
+
 <header class="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur">
 
     <div class="flex h-20 items-center justify-between px-8 lg:px-10">
@@ -17,28 +19,329 @@
 
         <div class="flex items-center gap-3">
 
-            <button
-                type="button"
-                class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+            {# ===================================================== #}
+            {# NOTIFICAÇÕES                                          #}
+            {# ===================================================== #}
+
+            <div
+                id="notifications-menu"
+                class="relative"
             >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.7"
-                    stroke="currentColor"
-                    class="h-5 w-5"
+
+                {# CSRF usado pelas requisições AJAX do sino #}
+                {% csrf_token %}
+
+                {# ================================================= #}
+                {# BOTÃO DO SINO                                     #}
+                {# ================================================= #}
+
+                <button
+                    id="notifications-trigger"
+                    type="button"
+                    class="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-brand-200 hover:bg-brand-50/50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                    aria-label="Abrir notificações"
+                    aria-haspopup="true"
+                    aria-expanded="false"
                 >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M14.857 17.082a23.85 23.85 0 0 0 5.454-1.31A8.97 8.97 0 0 1 18 9.75v-.7V9a6 6 0 1 0-12 0v.05-.05.75a8.97 8.97 0 0 1-2.31 6.022 23.85 23.85 0 0 0 5.454 1.31m5.714 0a24.25 24.25 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                    />
-                </svg>
-            </button>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.7"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M14.857 17.082a23.85 23.85 0 0 0 5.454-1.31A8.97 8.97 0 0 1 18 9.75v-.7V9a6 6 0 1 0-12 0v.05-.05.75a8.97 8.97 0 0 1-2.31 6.022 23.85 23.85 0 0 0 5.454 1.31m5.714 0a24.25 24.25 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+                        />
+                    </svg>
+
+                    <span
+                        id="notifications-unread-badge"
+                        class="absolute -right-1.5 -top-1.5 flex min-h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-brand-900 px-1 text-[10px] font-bold leading-none text-white shadow-sm {% if not notifications_unread_count %}hidden{% endif %}"
+                        aria-label="{{ notifications_unread_count }} notificações não lidas"
+                    >
+                        {% if notifications_unread_count > 99 %}
+                            99+
+                        {% else %}
+                            {{ notifications_unread_count }}
+                        {% endif %}
+                    </span>
+                </button>
+
+
+                {# ================================================= #}
+                {# DROPDOWN                                          #}
+                {# ================================================= #}
+
+                <div
+                    id="notifications-dropdown"
+                    class="absolute right-0 top-full z-50 mt-3 hidden w-[390px] overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-xl shadow-slate-900/10"
+                    role="menu"
+                    aria-labelledby="notifications-trigger"
+                >
+
+                    {# ============================================= #}
+                    {# CABEÇALHO                                     #}
+                    {# ============================================= #}
+
+                    <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+
+                        <div>
+                            <h3 class="text-sm font-semibold text-slate-900">
+                                Notificações
+                            </h3>
+
+                            <p
+                                id="notifications-unread-summary"
+                                class="mt-0.5 text-xs text-slate-500"
+                            >
+                                {% if notifications_unread_count %}
+                                    {{ notifications_unread_count }}
+                                    {% if notifications_unread_count == 1 %}
+                                        não lida
+                                    {% else %}
+                                        não lidas
+                                    {% endif %}
+                                {% else %}
+                                    Nenhuma notificação nova
+                                {% endif %}
+                            </p>
+                        </div>
+
+
+                        {# MARCAR TODAS COMO LIDAS #}
+
+                        <button
+                            id="notifications-mark-all"
+                            type="button"
+                            data-mark-all-url="{% url 'notifications:mark_all_as_read' %}"
+                            class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-700 transition hover:bg-brand-100 hover:text-brand-900 focus:outline-none focus:ring-4 focus:ring-brand-100 {% if not notifications_unread_count %}cursor-not-allowed opacity-40{% endif %}"
+                            title="Marcar todas como lidas"
+                            aria-label="Marcar todas as notificações como lidas"
+                            {% if not notifications_unread_count %}disabled{% endif %}
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.7"
+                                stroke="currentColor"
+                                class="h-4 w-4"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                />
+                            </svg>
+                        </button>
+
+                    </div>
+
+
+                    {# ============================================= #}
+                    {# LISTA                                         #}
+                    {# ============================================= #}
+
+                    <div class="max-h-[420px] overflow-y-auto">
+
+                        {% for notification in notifications_recent %}
+
+                            <a
+                                href="{{ notification.url_destino|default:'#' }}"
+                                data-notification-item
+                                data-notification-id="{{ notification.pk }}"
+                                data-read-url="{% url 'notifications:mark_as_read' notification.pk %}"
+                                data-destination="{{ notification.url_destino|default:'#' }}"
+                                data-unread="{% if notification.lida %}false{% else %}true{% endif %}"
+                                class="group flex gap-3 border-b border-slate-100 px-5 py-4 transition last:border-b-0 hover:bg-slate-50 {% if not notification.lida %}bg-brand-50/40{% endif %}"
+                                role="menuitem"
+                            >
+
+                                {# ================================= #}
+                                {# ÍCONE / NÍVEL                      #}
+                                {# ================================= #}
+
+                                <div class="mt-0.5 shrink-0">
+
+                                    {% if notification.nivel == "urgent" %}
+
+                                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-600">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.8"
+                                                stroke="currentColor"
+                                                class="h-4 w-4"
+                                                aria-hidden="true"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M12 9v3.75m9-3.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 7.5h.008v.008H12V16.5Z"
+                                                />
+                                            </svg>
+                                        </span>
+
+                                    {% elif notification.nivel == "attention" %}
+
+                                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.8"
+                                                stroke="currentColor"
+                                                class="h-4 w-4"
+                                                aria-hidden="true"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M12 9v3.75m9-3.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 7.5h.008v.008H12V16.5Z"
+                                                />
+                                            </svg>
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.8"
+                                                stroke="currentColor"
+                                                class="h-4 w-4"
+                                                aria-hidden="true"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+                                                />
+                                            </svg>
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                {# ================================= #}
+                                {# CONTEÚDO                           #}
+                                {# ================================= #}
+
+                                <div class="min-w-0 flex-1">
+
+                                    <div class="flex items-start gap-2">
+
+                                        <p
+                                            data-notification-title
+                                            class="min-w-0 flex-1 truncate text-sm {% if not notification.lida %}font-semibold text-slate-900{% else %}font-medium text-slate-700{% endif %}"
+                                        >
+                                            {{ notification.titulo }}
+                                        </p>
+
+                                        {% if not notification.lida %}
+                                            <span
+                                                data-unread-dot
+                                                class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-700"
+                                                title="Não lida"
+                                            ></span>
+                                        {% endif %}
+
+                                    </div>
+
+                                    {% if notification.mensagem %}
+                                        <p class="mt-1 line-clamp-2 text-xs leading-5 text-slate-500">
+                                            {{ notification.mensagem }}
+                                        </p>
+                                    {% endif %}
+
+                                    <div class="mt-2 flex items-center gap-2 text-[11px] text-slate-400">
+
+                                        <span>
+                                            {{ notification.get_tipo_display }}
+                                        </span>
+
+                                        <span aria-hidden="true">
+                                            •
+                                        </span>
+
+                                        <time datetime="{{ notification.criada_em|date:'c' }}">
+                                            {{ notification.criada_em|date:"d/m/Y H:i" }}
+                                        </time>
+
+                                    </div>
+
+                                </div>
+
+                            </a>
+
+                        {% empty %}
+
+                            <div class="px-6 py-10 text-center">
+
+                                <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-500">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.6"
+                                        stroke="currentColor"
+                                        class="h-5 w-5"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                        />
+                                    </svg>
+                                </span>
+
+                                <p class="mt-3 text-sm font-semibold text-slate-800">
+                                    Tudo em dia
+                                </p>
+
+                                <p class="mt-1 text-xs leading-5 text-slate-500">
+                                    Você não possui notificações no momento.
+                                </p>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    {# ============================================= #}
+                    {# RODAPÉ                                        #}
+                    {# ============================================= #}
+
+                    {% if notifications_recent %}
+                        <div class="border-t border-slate-100 bg-slate-50/70 px-5 py-3 text-center">
+                            <span class="text-xs font-medium text-slate-400">
+                                Exibindo as notificações mais recentes
+                            </span>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
 
 </header>
+
+<script src="{% static 'js/notifications/notifications-menu.js' %}"></script>
