@@ -1,6 +1,7 @@
 import re
 
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import OuterRef, Q, Subquery
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -10,6 +11,7 @@ from apps.clients.models import Client
 from .forms import CaseMovementForm, LegalCaseForm
 from .models import CaseHistory, CaseMovement, CaseStatus, LegalCase
 
+CASES_PER_PAGE = 10
 
 def _is_ajax(request):
     return request.headers.get("x-requested-with") == "XMLHttpRequest"
@@ -651,7 +653,7 @@ def case_list(request):
         .values("criado_em")[:1]
     )
 
-    cases = (
+    cases_queryset = (
         LegalCase.objects
         .select_related(
             "cliente",
@@ -705,7 +707,7 @@ def case_list(request):
                 cliente__cpf__icontains=search_digits
             )
 
-        cases = cases.filter(
+        cases_queryset = cases_queryset.filter(
             search_filter
         )
 
@@ -714,7 +716,7 @@ def case_list(request):
     # =========================================================
 
     if status:
-        cases = cases.filter(
+        cases_queryset = cases_queryset.filter(
             status_id=status
         )
 
@@ -727,6 +729,23 @@ def case_list(request):
     )
 
     # =========================================================
+    # PAGINAÇÃO
+    # =========================================================
+
+    paginator = Paginator(
+        cases_queryset,
+        CASES_PER_PAGE,
+    )
+
+    page_number = request.GET.get(
+        "page"
+    )
+
+    page_obj = paginator.get_page(
+        page_number
+    )
+
+    # =========================================================
     # TEMPLATE
     # =========================================================
 
@@ -734,9 +753,12 @@ def case_list(request):
         request,
         "cases/case_list.html",
         {
-            "cases": cases,
+            "cases": page_obj.object_list,
+            "page_obj": page_obj,
+            "paginator": paginator,
             "statuses": statuses,
             "search": search,
             "selected_status": status,
+            "total_cases": paginator.count,
         },
     )

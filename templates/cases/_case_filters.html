@@ -183,10 +183,10 @@
                     id="case-result-count"
                     class="font-semibold text-brand-950"
                 >
-                    {{ cases|length }}
+                    {{ total_cases }}
                 </strong>
 
-                {% if cases|length == 1 %}
+                {% if total_cases == 1 %}
                     caso
                 {% else %}
                     casos

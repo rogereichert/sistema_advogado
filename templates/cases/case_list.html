@@ -88,9 +88,6 @@
 
     <!-- =========================================================
          BARRA DE CONTROLE / FILTROS
-
-         A partial será ajustada no próximo passo para seguir
-         o mesmo padrão visual utilizado na tela de Clientes.
     ========================================================== -->
 
     {% include "cases/_case_filters.html" %}
@@ -102,97 +99,210 @@
 
     <section
         class="mt-5 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
-        aria-labelledby="case-results-title"
+        aria-label="Lista de casos jurídicos"
     >
-
-        <!-- =====================================================
-             CABEÇALHO DOS RESULTADOS
-        ====================================================== -->
-
-        <header
-            class="flex flex-col justify-between gap-3 border-b border-brand-100 px-5 py-5 sm:flex-row sm:items-center sm:px-6"
-        >
-
-            <div>
-
-                <p
-                    class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
-                >
-                    Acompanhamento
-                </p>
-
-                <h2
-                    id="case-results-title"
-                    class="mt-1 font-semibold tracking-tight text-brand-950"
-                >
-                    Casos encontrados
-                </h2>
-
-                <p class="mt-1 text-sm text-slate-500">
-
-                    {% if cases %}
-
-                        {{ cases|length }}
-                        caso{{ cases|length|pluralize:"s" }}
-                        correspondente{{ cases|length|pluralize:"s" }}
-                        aos filtros atuais.
-
-                    {% else %}
-
-                        Nenhum caso corresponde aos filtros atuais.
-
-                    {% endif %}
-
-                </p>
-
-            </div>
-
-
-            <!-- =================================================
-                 LIMPAR FILTROS
-            ================================================== -->
-
-            {% if search or selected_status %}
-
-                <a
-                    href="{% url 'cases:list' %}"
-                    class="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-brand-200 bg-white px-3 text-xs font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900 focus:outline-none focus:ring-4 focus:ring-brand-100"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.8"
-                        stroke="currentColor"
-                        class="h-3.5 w-3.5"
-                        aria-hidden="true"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M6 18 18 6M6 6l12 12"
-                        />
-                    </svg>
-
-                    <span>
-                        Limpar filtros
-                    </span>
-
-                </a>
-
-            {% endif %}
-
-        </header>
-
-
-        <!-- =====================================================
-             CONTEÚDO
-        ====================================================== -->
 
         {% if cases %}
 
             {% include "cases/_case_table.html" %}
             {% include "cases/_case_mobile_list.html" %}
+
+
+            <!-- =================================================
+                 PAGINAÇÃO
+            ================================================== -->
+
+            {% if page_obj.paginator.num_pages > 1 %}
+
+                <nav
+                    class="flex flex-col gap-4 border-t border-brand-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+                    aria-label="Paginação dos casos jurídicos"
+                >
+
+                    <!-- =========================================
+                         INFORMAÇÕES
+                    ========================================== -->
+
+                    <p class="text-xs text-slate-500">
+
+                        Página
+
+                        <span class="font-medium text-brand-900">
+                            {{ page_obj.number }}
+                        </span>
+
+                        de
+
+                        <span class="font-medium text-brand-900">
+                            {{ page_obj.paginator.num_pages }}
+                        </span>
+
+                        <span class="mx-1 text-slate-300">
+                            ·
+                        </span>
+
+                        {{ total_cases }}
+                        caso{{ total_cases|pluralize:"s" }}
+
+                    </p>
+
+
+                    <!-- =========================================
+                         NAVEGAÇÃO
+                    ========================================== -->
+
+                    <div
+                        class="flex flex-wrap items-center justify-end gap-2"
+                    >
+
+                        <!-- ANTERIOR -->
+
+                        {% if page_obj.has_previous %}
+
+                            <a
+                                href="?{% if search %}q={{ search|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                                class="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-medium text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-3.5 w-3.5"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m15 18-6-6 6-6"
+                                    />
+                                </svg>
+
+                                Anterior
+                            </a>
+
+                        {% else %}
+
+                            <span
+                                class="inline-flex h-9 cursor-not-allowed items-center justify-center gap-1.5 rounded-lg border border-slate-100 bg-slate-50 px-3 text-xs font-medium text-slate-300"
+                                aria-disabled="true"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-3.5 w-3.5"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m15 18-6-6 6-6"
+                                    />
+                                </svg>
+
+                                Anterior
+                            </span>
+
+                        {% endif %}
+
+
+                        <!-- =====================================
+                             NÚMEROS DAS PÁGINAS
+                        ====================================== -->
+
+                        {% for page_number in page_obj.paginator.page_range %}
+
+                            {% if page_number >= page_obj.number|add:"-2" and page_number <= page_obj.number|add:"2" %}
+
+                                {% if page_number == page_obj.number %}
+
+                                    <span
+                                        class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg bg-brand-900 px-3 text-xs font-semibold text-white shadow-sm"
+                                        aria-current="page"
+                                    >
+                                        {{ page_number }}
+                                    </span>
+
+                                {% else %}
+
+                                    <a
+                                        href="?{% if search %}q={{ search|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page={{ page_number }}"
+                                        class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-xs font-medium text-brand-700 transition hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                                        aria-label="Ir para a página {{ page_number }}"
+                                    >
+                                        {{ page_number }}
+                                    </a>
+
+                                {% endif %}
+
+                            {% endif %}
+
+                        {% endfor %}
+
+
+                        <!-- PRÓXIMA -->
+
+                        {% if page_obj.has_next %}
+
+                            <a
+                                href="?{% if search %}q={{ search|urlencode }}&{% endif %}{% if selected_status %}status={{ selected_status|urlencode }}&{% endif %}page={{ page_obj.next_page_number }}"
+                                class="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-medium text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                            >
+                                Próxima
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-3.5 w-3.5"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m9 18 6-6-6-6"
+                                    />
+                                </svg>
+                            </a>
+
+                        {% else %}
+
+                            <span
+                                class="inline-flex h-9 cursor-not-allowed items-center justify-center gap-1.5 rounded-lg border border-slate-100 bg-slate-50 px-3 text-xs font-medium text-slate-300"
+                                aria-disabled="true"
+                            >
+                                Próxima
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-3.5 w-3.5"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m9 18 6-6-6-6"
+                                    />
+                                </svg>
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </nav>
+
+            {% endif %}
 
         {% else %}
 
