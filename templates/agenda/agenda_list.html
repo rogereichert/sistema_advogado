@@ -8,71 +8,142 @@
 
 <div class="mx-auto max-w-[1600px]">
 
-
     <!-- =========================================================
          CABEÇALHO DA PÁGINA
     ========================================================== -->
 
     <header class="mb-7">
 
-        <div class="min-w-0">
+        <div
+            class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between"
+        >
 
-            <div class="flex items-center gap-3.5">
+            <div class="min-w-0">
 
-                <!-- ÍCONE -->
+                <div class="flex items-center gap-3.5">
 
-                <div
-                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-700 shadow-sm"
-                    aria-hidden="true"
+                    <div
+                        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-700 shadow-sm"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-5 w-5"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
+                            />
+                        </svg>
+                    </div>
+
+                    <div>
+
+                        <p
+                            class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700"
+                        >
+                            Compromissos jurídicos
+                        </p>
+
+                        <h1
+                            class="mt-0.5 text-2xl font-semibold tracking-tight text-brand-950 sm:text-3xl"
+                        >
+                            Agenda
+                        </h1>
+
+                    </div>
+
+                </div>
+
+                <p
+                    class="mt-4 max-w-2xl text-sm leading-6 text-slate-500"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.8"
-                        stroke="currentColor"
-                        class="h-5 w-5"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
-                        />
-                    </svg>
-                </div>
-
-
-                <!-- TÍTULO -->
-
-                <div>
-
-                    <p
-                        class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700"
-                    >
-                        Compromissos jurídicos
-                    </p>
-
-                    <h1
-                        class="mt-0.5 text-2xl font-semibold tracking-tight text-brand-950 sm:text-3xl"
-                    >
-                        Agenda
-                    </h1>
-
-                </div>
+                    Acompanhe audiências, prazos, reuniões e compromissos
+                    do escritório.
+                </p>
 
             </div>
 
 
-            <!-- DESCRIÇÃO -->
+            <!-- GOOGLE AGENDA -->
 
-            <p
-                class="mt-4 max-w-2xl text-sm leading-6 text-slate-500"
-            >
-                Acompanhe audiências, prazos, reuniões e compromissos
-                do escritório.
-            </p>
+            <div class="flex shrink-0 items-center">
+
+                {% if google_calendar_connected %}
+
+                    <button
+                        type="button"
+                        id="google-calendar-sync-button"
+                        data-sync-url="{% url 'agenda:google_sync' %}"
+                        class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-brand-200 bg-white px-4 text-sm font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        <svg
+                            id="google-calendar-sync-icon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M16.023 9.348h4.992V4.356m-.97 4.022A8.25 8.25 0 1 0 21 12.75M3.955 15.622A8.25 8.25 0 0 0 12 21a8.25 8.25 0 0 0 5.197-1.84"
+                            />
+                        </svg>
+
+                        <span id="google-calendar-sync-label">
+                            Sincronizar Google Agenda
+                        </span>
+                    </button>
+
+                {% else %}
+
+                    <a
+                        href="{% url 'agenda:google_connect' %}"
+                        class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-950 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-900 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
+                            />
+                        </svg>
+
+                        Conectar Google Agenda
+                    </a>
+
+                {% endif %}
+
+            </div>
 
         </div>
+
+
+        <!-- RESULTADO DA SINCRONIZAÇÃO -->
+
+        <div
+            id="google-calendar-sync-message"
+            class="mt-4 hidden rounded-xl border px-4 py-3 text-sm"
+            role="status"
+            aria-live="polite"
+        ></div>
 
     </header>
 
@@ -85,8 +156,6 @@
         class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
         aria-labelledby="upcoming-events-title"
     >
-
-        <!-- CABEÇALHO -->
 
         <header
             class="border-b border-brand-100 px-5 py-5 sm:px-6"
@@ -112,8 +181,6 @@
         </header>
 
 
-        <!-- LISTAGEM -->
-
         <div class="divide-y divide-brand-50">
 
             {% for event in upcoming_events %}
@@ -122,12 +189,7 @@
                     class="flex flex-col gap-5 px-5 py-5 transition-colors hover:bg-brand-50/30 sm:px-6 lg:flex-row lg:items-center lg:justify-between"
                 >
 
-                    <!-- =================================================
-                         INFORMAÇÕES
-                    ================================================== -->
-
                     <div class="flex min-w-0 items-start gap-4 sm:gap-5">
-
 
                         <!-- DATA -->
 
@@ -151,7 +213,7 @@
                         </div>
 
 
-                        <!-- CONTEÚDO -->
+                        <!-- INFORMAÇÕES -->
 
                         <div class="min-w-0">
 
@@ -165,26 +227,63 @@
                                     {{ event.titulo }}
                                 </h3>
 
-
-                                <!-- TIPO -->
-
                                 <span
                                     class="inline-flex items-center gap-1.5 rounded-full bg-gold-50 px-2.5 py-1 text-xs font-semibold text-gold-800 ring-1 ring-inset ring-gold-200"
                                 >
-
                                     <span
                                         class="h-1.5 w-1.5 rounded-full bg-gold-500"
                                         aria-hidden="true"
                                     ></span>
 
                                     {{ event.get_tipo_display }}
-
                                 </span>
+
+
+                                <!-- STATUS GOOGLE -->
+
+                                {% if event.removido_do_google %}
+
+                                    <span
+                                        class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200"
+                                        title="Este compromisso foi removido do Google Agenda, mas continua salvo no LexControl."
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="2"
+                                            stroke="currentColor"
+                                            class="h-3.5 w-3.5"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M12 9v3.75m9.303 3.376c.866 1.5-.217 3.374-1.948 3.374H4.645c-1.73 0-2.813-1.874-1.948-3.374L10.05 3.378c.865-1.5 3.03-1.5 3.896 0l7.357 12.748ZM12 15.75h.008v.008H12v-.008Z"
+                                            />
+                                        </svg>
+
+                                        Removido do Google
+                                    </span>
+
+                                {% elif event.erro_sincronizacao_google %}
+
+                                    <span
+                                        class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 ring-1 ring-inset ring-red-200"
+                                        title="Ocorreu um erro na última tentativa de sincronização com o Google Agenda."
+                                    >
+                                        <span
+                                            class="h-1.5 w-1.5 rounded-full bg-red-500"
+                                            aria-hidden="true"
+                                        ></span>
+
+                                        Erro no Google
+                                    </span>
+
+                                {% endif %}
 
                             </div>
 
-
-                            <!-- CLIENTE / CASO -->
 
                             <p
                                 class="mt-2 text-sm leading-5 text-slate-500"
@@ -203,8 +302,6 @@
                                 {{ event.caso.titulo }}
                             </p>
 
-
-                            <!-- HORA / LOCAL -->
 
                             <div
                                 class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-500"
@@ -281,20 +378,80 @@
 
                             </div>
 
+
+                            <!-- AVISO GOOGLE REMOVIDO -->
+
+                            {% if event.removido_do_google %}
+
+                                <p
+                                    class="mt-2.5 flex items-center gap-1.5 text-xs font-medium text-amber-700"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.8"
+                                        stroke="currentColor"
+                                        class="h-3.5 w-3.5 shrink-0"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 3L21 3m0 0h-6.75M21 3v6.75"
+                                        />
+                                    </svg>
+
+                                    Continua salvo no LexControl.
+                                    Reenvie para recriá-lo no Google Agenda.
+                                </p>
+
+                            {% endif %}
+
                         </div>
 
                     </div>
 
 
-                    <!-- =================================================
-                         AÇÕES
-                    ================================================== -->
+                    <!-- AÇÕES -->
 
                     <div
-                        class="flex shrink-0 items-center gap-2 pl-[76px] sm:pl-20 lg:pl-0"
+                        class="flex shrink-0 flex-wrap items-center gap-2 pl-[76px] sm:pl-20 lg:pl-0"
                     >
 
-                        <!-- EDITAR -->
+                        {% if event.removido_do_google %}
+
+                            <button
+                                type="button"
+                                class="google-calendar-resend-button inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 text-xs font-semibold text-amber-800 shadow-sm transition hover:border-amber-300 hover:bg-amber-100 focus:outline-none focus:ring-4 focus:ring-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                                data-resend-url="{% url 'agenda:google_resend' event.pk %}"
+                                data-event-title="{{ event.titulo|escape }}"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="google-calendar-resend-icon h-3.5 w-3.5"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M16.023 9.348h4.992V4.356m-.97 4.022A8.25 8.25 0 1 0 21 12.75M3.955 15.622A8.25 8.25 0 0 0 12 21a8.25 8.25 0 0 0 5.197-1.84"
+                                    />
+                                </svg>
+
+                                <span
+                                    class="google-calendar-resend-label"
+                                >
+                                    Reenviar ao Google
+                                </span>
+                            </button>
+
+                        {% endif %}
+
 
                         <a
                             href="{% url 'agenda:update' event.pk %}"
@@ -319,8 +476,6 @@
                             Editar
                         </a>
 
-
-                        <!-- ABRIR CASO -->
 
                         <a
                             href="{% url 'cases:detail' event.caso.pk %}"
@@ -352,10 +507,6 @@
 
 
             {% empty %}
-
-                <!-- =====================================================
-                     ESTADO VAZIO
-                ====================================================== -->
 
                 <div
                     class="flex min-h-52 flex-col items-center justify-center px-6 py-12 text-center"
@@ -414,8 +565,6 @@
             aria-labelledby="past-events-title"
         >
 
-            <!-- CABEÇALHO -->
-
             <header
                 class="border-b border-brand-100 px-5 py-5 sm:px-6"
             >
@@ -439,8 +588,6 @@
 
             </header>
 
-
-            <!-- LISTAGEM -->
 
             <div class="divide-y divide-brand-50">
 
@@ -468,6 +615,22 @@
                                     {{ event.get_tipo_display }}
                                 </span>
 
+
+                                {% if event.removido_do_google %}
+
+                                    <span
+                                        class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700 ring-1 ring-inset ring-amber-200"
+                                    >
+                                        <span
+                                            class="h-1.5 w-1.5 rounded-full bg-amber-500"
+                                            aria-hidden="true"
+                                        ></span>
+
+                                        Removido do Google
+                                    </span>
+
+                                {% endif %}
+
                             </div>
 
 
@@ -493,29 +656,69 @@
                         </div>
 
 
-                        <a
-                            href="{% url 'cases:detail' event.caso.pk %}"
-                            class="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 self-start rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100 sm:self-auto"
+                        <div
+                            class="flex shrink-0 flex-wrap items-center gap-2"
                         >
-                            Abrir caso
 
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.8"
-                                stroke="currentColor"
-                                class="h-3.5 w-3.5"
-                                aria-hidden="true"
+                            {% if event.removido_do_google %}
+
+                                <button
+                                    type="button"
+                                    class="google-calendar-resend-button inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 text-xs font-semibold text-amber-800 shadow-sm transition hover:border-amber-300 hover:bg-amber-100 focus:outline-none focus:ring-4 focus:ring-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+                                    data-resend-url="{% url 'agenda:google_resend' event.pk %}"
+                                    data-event-title="{{ event.titulo|escape }}"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.8"
+                                        stroke="currentColor"
+                                        class="google-calendar-resend-icon h-3.5 w-3.5"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M16.023 9.348h4.992V4.356m-.97 4.022A8.25 8.25 0 1 0 21 12.75M3.955 15.622A8.25 8.25 0 0 0 12 21a8.25 8.25 0 0 0 5.197-1.84"
+                                        />
+                                    </svg>
+
+                                    <span
+                                        class="google-calendar-resend-label"
+                                    >
+                                        Reenviar ao Google
+                                    </span>
+                                </button>
+
+                            {% endif %}
+
+
+                            <a
+                                href="{% url 'cases:detail' event.caso.pk %}"
+                                class="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
                             >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="m9 18 6-6-6-6"
-                                />
-                            </svg>
+                                Abrir caso
 
-                        </a>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-3.5 w-3.5"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m9 18 6-6-6-6"
+                                    />
+                                </svg>
+
+                            </a>
+
+                        </div>
 
                     </article>
 
@@ -527,7 +730,324 @@
 
     {% endif %}
 
-
 </div>
+
+
+<!-- =========================================================
+     GOOGLE CALENDAR
+========================================================== -->
+
+{% if google_calendar_connected %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const syncButton = document.getElementById(
+                "google-calendar-sync-button"
+            );
+
+            const syncLabel = document.getElementById(
+                "google-calendar-sync-label"
+            );
+
+            const syncIcon = document.getElementById(
+                "google-calendar-sync-icon"
+            );
+
+            const message = document.getElementById(
+                "google-calendar-sync-message"
+            );
+
+            const resendButtons = document.querySelectorAll(
+                ".google-calendar-resend-button"
+            );
+
+
+            // =====================================================
+            // CSRF
+            // =====================================================
+
+            const getCsrfToken = () => {
+                const cookie = document.cookie
+                    .split("; ")
+                    .find(
+                        row => row.startsWith("csrftoken=")
+                    );
+
+                if (!cookie) {
+                    return "";
+                }
+
+                return decodeURIComponent(
+                    cookie.split("=")[1]
+                );
+            };
+
+
+            // =====================================================
+            // MENSAGEM
+            // =====================================================
+
+            const showMessage = (
+                text,
+                type = "success"
+            ) => {
+                if (!message) {
+                    return;
+                }
+
+                message.textContent = text;
+
+                message.className = (
+                    "mt-4 rounded-xl border px-4 py-3 text-sm"
+                );
+
+                if (type === "error") {
+                    message.classList.add(
+                        "border-red-200",
+                        "bg-red-50",
+                        "text-red-700"
+                    );
+
+                } else if (type === "warning") {
+                    message.classList.add(
+                        "border-amber-200",
+                        "bg-amber-50",
+                        "text-amber-800"
+                    );
+
+                } else {
+                    message.classList.add(
+                        "border-emerald-200",
+                        "bg-emerald-50",
+                        "text-emerald-700"
+                    );
+                }
+
+                message.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                });
+            };
+
+
+            // =====================================================
+            // SINCRONIZAR GOOGLE -> LEXCONTROL
+            // =====================================================
+
+            if (syncButton) {
+
+                syncButton.addEventListener(
+                    "click",
+                    async () => {
+
+                        if (syncButton.disabled) {
+                            return;
+                        }
+
+                        syncButton.disabled = true;
+
+                        if (syncLabel) {
+                            syncLabel.textContent = (
+                                "Sincronizando..."
+                            );
+                        }
+
+                        if (syncIcon) {
+                            syncIcon.classList.add(
+                                "animate-spin"
+                            );
+                        }
+
+                        try {
+                            const response = await fetch(
+                                syncButton.dataset.syncUrl,
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "X-CSRFToken": (
+                                            getCsrfToken()
+                                        ),
+                                        "X-Requested-With": (
+                                            "XMLHttpRequest"
+                                        ),
+                                    },
+                                    credentials: "same-origin",
+                                }
+                            );
+
+                            const data = await response.json();
+
+                            if (
+                                !response.ok
+                                || !data.success
+                            ) {
+                                throw new Error(
+                                    data.message
+                                    || "Não foi possível sincronizar o Google Agenda."
+                                );
+                            }
+
+                            const hasWarnings = (
+                                Number(data.errors || 0) > 0
+                                || Number(data.removed || 0) > 0
+                            );
+
+                            showMessage(
+                                data.message,
+                                hasWarnings
+                                    ? "warning"
+                                    : "success"
+                            );
+
+                            const shouldReload = (
+                                Number(data.updated || 0) > 0
+                                || Number(data.removed || 0) > 0
+                            );
+
+                            if (shouldReload) {
+                                window.setTimeout(
+                                    () => {
+                                        window.location.reload();
+                                    },
+                                    1000
+                                );
+                            }
+
+                        } catch (error) {
+                            showMessage(
+                                error.message
+                                || "Não foi possível sincronizar o Google Agenda.",
+                                "error"
+                            );
+
+                        } finally {
+                            syncButton.disabled = false;
+
+                            if (syncLabel) {
+                                syncLabel.textContent = (
+                                    "Sincronizar Google Agenda"
+                                );
+                            }
+
+                            if (syncIcon) {
+                                syncIcon.classList.remove(
+                                    "animate-spin"
+                                );
+                            }
+                        }
+                    }
+                );
+            }
+
+
+            // =====================================================
+            // REENVIAR EVENTO REMOVIDO
+            // =====================================================
+
+            resendButtons.forEach(
+                button => {
+
+                    button.addEventListener(
+                        "click",
+                        async () => {
+
+                            if (button.disabled) {
+                                return;
+                            }
+
+                            const label = button.querySelector(
+                                ".google-calendar-resend-label"
+                            );
+
+                            const icon = button.querySelector(
+                                ".google-calendar-resend-icon"
+                            );
+
+                            button.disabled = true;
+
+                            if (label) {
+                                label.textContent = (
+                                    "Reenviando..."
+                                );
+                            }
+
+                            if (icon) {
+                                icon.classList.add(
+                                    "animate-spin"
+                                );
+                            }
+
+                            try {
+                                const response = await fetch(
+                                    button.dataset.resendUrl,
+                                    {
+                                        method: "POST",
+                                        headers: {
+                                            "X-CSRFToken": (
+                                                getCsrfToken()
+                                            ),
+                                            "X-Requested-With": (
+                                                "XMLHttpRequest"
+                                            ),
+                                        },
+                                        credentials: "same-origin",
+                                    }
+                                );
+
+                                const data = await response.json();
+
+                                if (
+                                    !response.ok
+                                    || !data.success
+                                ) {
+                                    throw new Error(
+                                        data.message
+                                        || "Não foi possível reenviar o compromisso."
+                                    );
+                                }
+
+                                showMessage(
+                                    data.message,
+                                    "success"
+                                );
+
+                                window.setTimeout(
+                                    () => {
+                                        window.location.reload();
+                                    },
+                                    900
+                                );
+
+                            } catch (error) {
+                                showMessage(
+                                    error.message
+                                    || "Não foi possível reenviar o compromisso.",
+                                    "error"
+                                );
+
+                                button.disabled = false;
+
+                                if (label) {
+                                    label.textContent = (
+                                        "Reenviar ao Google"
+                                    );
+                                }
+
+                                if (icon) {
+                                    icon.classList.remove(
+                                        "animate-spin"
+                                    );
+                                }
+                            }
+                        }
+                    );
+                }
+            );
+
+        });
+    </script>
+
+{% endif %}
 
 {% endblock %}
