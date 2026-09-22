@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -248,12 +249,12 @@ def agenda_list(request):
         ),
         "week": (
             active_events_queryset
-            .filter(data__range=(week_start, week_end))
+            .filter(data__range=(today, week_end))
             .order_by("data", "hora")
         ),
         "month": (
             active_events_queryset
-            .filter(data__range=(month_start, month_end))
+            .filter(data__range=(today, month_end))
             .order_by("data", "hora")
         ),
     }
@@ -526,24 +527,33 @@ def agenda_update(request, pk):
         )
 
         if form.is_valid():
+            has_changes = form.has_changed()
             updated_event = form.save()
 
-            CaseHistory.objects.create(
-                caso=updated_event.caso,
-                usuario=request.user,
-                titulo="Compromisso atualizado",
-                descricao=(
-                    f"O compromisso "
-                    f"'{updated_event.titulo}' foi atualizado."
-                ),
-            )
-
-            google_sync = (
-                _sync_updated_event_with_google(
-                    updated_event,
-                    request.user,
+            if has_changes:
+                CaseHistory.objects.create(
+                    caso=updated_event.caso,
+                    usuario=request.user,
+                    titulo="Compromisso atualizado",
+                    descricao=(
+                        f"O compromisso "
+                        f"'{updated_event.titulo}' foi atualizado."
+                    ),
                 )
-            )
+
+                google_sync = (
+                    _sync_updated_event_with_google(
+                        updated_event,
+                        request.user,
+                    )
+                )
+
+            else:
+                google_sync = {
+                    "attempted": False,
+                    "success": False,
+                    "removed": False,
+                }
 
             if google_sync["success"]:
                 result_message = (
@@ -565,6 +575,11 @@ def agenda_update(request, pk):
                     "Compromisso atualizado no LexControl, "
                     "mas não foi possível sincronizar "
                     "com o Google Agenda."
+                )
+
+            elif not has_changes:
+                result_message = (
+                    "Nenhuma alteração foi realizada."
                 )
 
             else:
@@ -708,35 +723,40 @@ def agenda_complete(request, pk):
     # CONCLUSÃO
     # -----------------------------------------------------
 
-    event.status = event.Status.COMPLETED
-    event.resultado = resultado
-    event.concluido_em = timezone.now()
-    event.concluido_por = request.user
+    with transaction.atomic():
+        event.status = event.Status.COMPLETED
+        event.resultado = resultado
+        event.concluido_em = timezone.now()
+        event.concluido_por = request.user
 
-    event.save(
-        update_fields=[
-            "status",
-            "resultado",
-            "concluido_em",
-            "concluido_por",
-            "atualizado_em",
-        ]
-    )
+        event.save(
+            update_fields=[
+                "status",
+                "resultado",
+                "concluido_em",
+                "concluido_por",
+                "atualizado_em",
+            ]
+        )
 
-    # -----------------------------------------------------
-    # HISTÓRICO DO CASO
-    # -----------------------------------------------------
+        # -------------------------------------------------
+        # HISTÓRICO DO CASO
+        # -------------------------------------------------
 
-    CaseHistory.objects.create(
-        caso=event.caso,
-        usuario=request.user,
-        titulo="Compromisso concluído",
-        descricao=(
-            _build_completion_history_description(
-                event
-            )
-        ),
-    )
+        CaseHistory.objects.create(
+            caso=event.caso,
+            usuario=request.user,
+            titulo=(
+                "Prazo cumprido"
+                if event.tipo == "prazo"
+                else "Compromisso concluído"
+            ),
+            descricao=(
+                _build_completion_history_description(
+                    event
+                )
+            ),
+        )
 
     # -----------------------------------------------------
     # IMPORTANTE:
@@ -756,7 +776,9 @@ def agenda_complete(request, pk):
                 event.concluido_em.isoformat()
             ),
             "message": (
-                "Compromisso concluído com sucesso."
+                "Prazo registrado como cumprido."
+                if event.tipo == "prazo"
+                else "Compromisso concluído com sucesso."
             ),
         }
     )
@@ -820,27 +842,36 @@ def agenda_not_completed(request, pk):
             status=400,
         )
 
-    event.status = event.Status.NOT_COMPLETED
-    event.resultado = resultado
-    event.concluido_em = timezone.now()
-    event.concluido_por = request.user
+    with transaction.atomic():
+        event.status = event.Status.NOT_COMPLETED
+        event.resultado = resultado
+        event.concluido_em = timezone.now()
+        event.concluido_por = request.user
 
-    event.save(
-        update_fields=[
-            "status",
-            "resultado",
-            "concluido_em",
-            "concluido_por",
-            "atualizado_em",
-        ]
-    )
+        event.save(
+            update_fields=[
+                "status",
+                "resultado",
+                "concluido_em",
+                "concluido_por",
+                "atualizado_em",
+            ]
+        )
 
-    CaseHistory.objects.create(
-        caso=event.caso,
-        usuario=request.user,
-        titulo="Compromisso não realizado",
-        descricao=_build_not_completed_history_description(event),
-    )
+        CaseHistory.objects.create(
+            caso=event.caso,
+            usuario=request.user,
+            titulo=(
+                "Prazo não cumprido"
+                if event.tipo == "prazo"
+                else "Compromisso não realizado"
+            ),
+            descricao=(
+                _build_not_completed_history_description(
+                    event
+                )
+            ),
+        )
 
     # Nenhuma chamada ao Google é feita aqui.
     # O evento permanece no Google Agenda.
@@ -853,7 +884,9 @@ def agenda_not_completed(request, pk):
             "status_display": event.get_status_display(),
             "concluido_em": event.concluido_em.isoformat(),
             "message": (
-                "Compromisso registrado como não realizado."
+                "Prazo registrado como não cumprido."
+                if event.tipo == "prazo"
+                else "Compromisso registrado como não realizado."
             ),
         }
     )

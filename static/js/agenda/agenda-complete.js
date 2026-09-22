@@ -1,656 +1,435 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const modal = document.getElementById("agenda-complete-modal");
+    const modal = document.getElementById(
+        "agenda-complete-modal"
+    );
 
     if (!modal) {
         return;
     }
 
-    const buttons = document.querySelectorAll(
-        ".agenda-outcome-button"
-    );
+    const $ = (id) => document.getElementById(id);
 
-    const form = document.getElementById(
-        "agenda-complete-form"
-    );
-
-    const result = document.getElementById(
-        "agenda-complete-result"
-    );
-
-    const errorBox = document.getElementById(
-        "agenda-complete-error"
-    );
-
-    const submit = document.getElementById(
-        "agenda-complete-submit"
-    );
-
-    const submitLabel = document.getElementById(
-        "agenda-complete-submit-label"
-    );
-
-    const getElement = (id) => {
-        return document.getElementById(id);
-    };
+    const form = $("agenda-complete-form");
+    const result = $("agenda-complete-result");
+    const errorBox = $("agenda-complete-error");
+    const submit = $("agenda-complete-submit");
+    const submitLabel = $("agenda-complete-submit-label");
 
     let actionUrl = "";
     let outcome = "complete";
     let submitting = false;
+    let currentIsDeadline = false;
 
+    function getCsrfToken() {
+        const cookie = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("csrftoken="));
 
-    // =========================================================
-    // ERROS
-    // =========================================================
+        return cookie
+            ? decodeURIComponent(cookie.split("=")[1])
+            : "";
+    }
 
-    const hideError = () => {
-        if (!errorBox) {
-            return;
-        }
-
-        errorBox.textContent = "";
-        errorBox.classList.add("hidden");
-    };
-
-
-    const showError = (message) => {
+    function showError(message) {
         if (!errorBox) {
             return;
         }
 
         errorBox.textContent = message;
         errorBox.classList.remove("hidden");
-    };
+    }
 
-
-    // =========================================================
-    // CONFIGURAÇÃO DA MODAL
-    // =========================================================
-
-    const setMode = (mode) => {
-        outcome = mode;
-
-        const isNotCompleted = (
-            mode === "not_completed"
-        );
-
-        const eyebrow = getElement(
-            "agenda-outcome-eyebrow"
-        );
-
-        const modalTitle = getElement(
-            "agenda-complete-modal-title"
-        );
-
-        const description = getElement(
-            "agenda-outcome-description"
-        );
-
-        const resultLabel = getElement(
-            "agenda-outcome-result-label"
-        );
-
-        const resultHelp = getElement(
-            "agenda-outcome-result-help"
-        );
-
-        const infoText = getElement(
-            "agenda-outcome-info-text"
-        );
-
-        const completeIcon = getElement(
-            "agenda-outcome-complete-icon"
-        );
-
-        const notCompletedIcon = getElement(
-            "agenda-outcome-not-completed-icon"
-        );
-
-        const iconBox = getElement(
-            "agenda-outcome-icon-box"
-        );
-
-
-        // =====================================================
-        // NÃO REALIZADO
-        // =====================================================
-
-        if (isNotCompleted) {
-            if (eyebrow) {
-                eyebrow.textContent = (
-                    "Desfecho do compromisso"
-                );
-
-                eyebrow.className = (
-                    "text-[10px] font-semibold uppercase " +
-                    "tracking-[0.14em] text-red-700"
-                );
-            }
-
-            if (modalTitle) {
-                modalTitle.textContent = (
-                    "Marcar como não realizado"
-                );
-            }
-
-            if (description) {
-                description.textContent = (
-                    "Registre por que este compromisso " +
-                    "não foi realizado."
-                );
-            }
-
-            if (resultLabel) {
-                resultLabel.textContent = (
-                    "Motivo / observação *"
-                );
-            }
-
-            if (resultHelp) {
-                resultHelp.textContent = (
-                    "O motivo é obrigatório para registrar " +
-                    "o compromisso como não realizado."
-                );
-            }
-
-            if (result) {
-                result.required = true;
-
-                result.placeholder = (
-                    "Ex.: Audiência redesignada pelo juízo; " +
-                    "parte não compareceu."
-                );
-            }
-
-            if (infoText) {
-                infoText.textContent = (
-                    "O desfecho será registrado no histórico " +
-                    "do caso. O compromisso continuará " +
-                    "normalmente no Google Agenda."
-                );
-            }
-
-            if (completeIcon) {
-                completeIcon.classList.add(
-                    "hidden"
-                );
-            }
-
-            if (notCompletedIcon) {
-                notCompletedIcon.classList.remove(
-                    "hidden"
-                );
-            }
-
-            if (iconBox) {
-                iconBox.className = (
-                    "flex h-10 w-10 shrink-0 items-center " +
-                    "justify-center rounded-xl bg-red-50 " +
-                    "text-red-700 ring-1 ring-inset " +
-                    "ring-red-200"
-                );
-            }
-
-            if (submit) {
-                submit.className = (
-                    "inline-flex min-h-10 items-center " +
-                    "justify-center rounded-xl bg-red-700 " +
-                    "px-4 text-sm font-semibold text-white " +
-                    "shadow-sm transition hover:bg-red-800 " +
-                    "focus:outline-none focus:ring-4 " +
-                    "focus:ring-red-100 " +
-                    "disabled:cursor-not-allowed " +
-                    "disabled:opacity-60"
-                );
-            }
-
-            if (submitLabel) {
-                submitLabel.textContent = (
-                    "Confirmar não realizado"
-                );
-            }
-
+    function clearError() {
+        if (!errorBox) {
             return;
         }
 
+        errorBox.textContent = "";
+        errorBox.classList.add("hidden");
+    }
 
-        // =====================================================
-        // CONCLUIR
-        // =====================================================
+    function setMode(mode) {
+        outcome = mode;
 
-        if (eyebrow) {
-            eyebrow.textContent = (
-                "Realização do compromisso"
-            );
+        const notCompleted = (
+            mode === "not_completed"
+        );
 
-            eyebrow.className = (
-                "text-[10px] font-semibold uppercase " +
-                "tracking-[0.14em] text-emerald-700"
-            );
+        if (currentIsDeadline) {
+            $("agenda-outcome-eyebrow").textContent =
+                "Desfecho do prazo";
+
+            $("agenda-complete-modal-title").textContent =
+                notCompleted
+                    ? "Registrar prazo não cumprido"
+                    : "Registrar prazo cumprido";
+
+            $("agenda-outcome-description").textContent =
+                notCompleted
+                    ? "Registre por que este prazo não foi cumprido."
+                    : "Registre o cumprimento deste prazo no LexControl.";
+
+            $("agenda-outcome-result-label").textContent =
+                notCompleted
+                    ? "Motivo / observação *"
+                    : "Resultado / observação";
+
+            $("agenda-outcome-result-help").textContent =
+                notCompleted
+                    ? (
+                        "O motivo é obrigatório para registrar "
+                        + "o prazo como não cumprido."
+                    )
+                    : (
+                        "Informe o resultado, providência adotada "
+                        + "ou qualquer observação relevante sobre "
+                        + "o cumprimento do prazo."
+                    );
+
+            $("agenda-outcome-info-text").textContent =
+                notCompleted
+                    ? (
+                        "O desfecho será registrado no histórico "
+                        + "do caso. O evento continuará normalmente "
+                        + "no Google Agenda."
+                    )
+                    : (
+                        "O cumprimento será registrado no histórico "
+                        + "do caso. O evento continuará normalmente "
+                        + "no Google Agenda."
+                    );
+
+            result.placeholder = notCompleted
+                ? "Ex.: Prazo não cumprido. Informe o motivo."
+                : "Ex.: Petição protocolada dentro do prazo.";
+
+            submitLabel.textContent = notCompleted
+                ? "Confirmar não cumprimento"
+                : "Confirmar cumprimento";
+
+        } else {
+            $("agenda-outcome-eyebrow").textContent =
+                notCompleted
+                    ? "Desfecho do compromisso"
+                    : "Realização do compromisso";
+
+            $("agenda-complete-modal-title").textContent =
+                notCompleted
+                    ? "Marcar como não realizado"
+                    : "Concluir compromisso";
+
+            $("agenda-outcome-description").textContent =
+                notCompleted
+                    ? (
+                        "Registre por que este compromisso "
+                        + "não foi realizado."
+                    )
+                    : (
+                        "Registre a realização deste compromisso "
+                        + "no LexControl."
+                    );
+
+            $("agenda-outcome-result-label").textContent =
+                notCompleted
+                    ? "Motivo / observação *"
+                    : "Resultado / observação";
+
+            $("agenda-outcome-result-help").textContent =
+                notCompleted
+                    ? (
+                        "O motivo é obrigatório para registrar "
+                        + "o compromisso como não realizado."
+                    )
+                    : (
+                        "Informe o resultado, providência adotada "
+                        + "ou qualquer observação relevante sobre "
+                        + "o compromisso."
+                    );
+
+            $("agenda-outcome-info-text").textContent =
+                notCompleted
+                    ? (
+                        "O desfecho será registrado no histórico "
+                        + "do caso. O compromisso continuará "
+                        + "normalmente no Google Agenda."
+                    )
+                    : (
+                        "A conclusão será registrada no histórico "
+                        + "do caso. O compromisso continuará "
+                        + "normalmente no Google Agenda."
+                    );
+
+            result.placeholder = notCompleted
+                ? (
+                    "Ex.: Audiência redesignada pelo juízo; "
+                    + "parte não compareceu."
+                )
+                : (
+                    "Ex.: Audiência realizada. "
+                    + "Conciliação não obtida."
+                );
+
+            submitLabel.textContent = notCompleted
+                ? "Confirmar não realizado"
+                : "Confirmar conclusão";
         }
 
-        if (modalTitle) {
-            modalTitle.textContent = (
-                "Concluir compromisso"
-            );
-        }
+        result.required = notCompleted;
 
-        if (description) {
-            description.textContent = (
-                "Registre a realização deste compromisso " +
-                "no LexControl."
-            );
-        }
+        const completeIcon = $(
+            "agenda-outcome-complete-icon"
+        );
 
-        if (resultLabel) {
-            resultLabel.textContent = (
-                "Resultado / observação"
-            );
-        }
-
-        if (resultHelp) {
-            resultHelp.textContent = (
-                "Informe o resultado, providência adotada " +
-                "ou qualquer observação relevante sobre " +
-                "o compromisso."
-            );
-        }
-
-        if (result) {
-            result.required = false;
-
-            result.placeholder = (
-                "Ex.: Audiência realizada. Conciliação " +
-                "não obtida."
-            );
-        }
-
-        if (infoText) {
-            infoText.textContent = (
-                "A conclusão será registrada no histórico " +
-                "do caso. O compromisso continuará " +
-                "normalmente no Google Agenda."
-            );
-        }
+        const notCompletedIcon = $(
+            "agenda-outcome-not-completed-icon"
+        );
 
         if (completeIcon) {
-            completeIcon.classList.remove(
-                "hidden"
+            completeIcon.classList.toggle(
+                "hidden",
+                notCompleted
             );
         }
 
         if (notCompletedIcon) {
-            notCompletedIcon.classList.add(
-                "hidden"
+            notCompletedIcon.classList.toggle(
+                "hidden",
+                !notCompleted
             );
         }
+
+        const iconBox = $("agenda-outcome-icon-box");
 
         if (iconBox) {
-            iconBox.className = (
-                "flex h-10 w-10 shrink-0 items-center " +
-                "justify-center rounded-xl bg-emerald-50 " +
-                "text-emerald-700 ring-1 ring-inset " +
-                "ring-emerald-200"
-            );
+            iconBox.className = notCompleted
+                ? (
+                    "flex h-10 w-10 shrink-0 items-center "
+                    + "justify-center rounded-xl bg-red-50 "
+                    + "text-red-700 ring-1 ring-inset "
+                    + "ring-red-200"
+                )
+                : (
+                    "flex h-10 w-10 shrink-0 items-center "
+                    + "justify-center rounded-xl bg-emerald-50 "
+                    + "text-emerald-700 ring-1 ring-inset "
+                    + "ring-emerald-200"
+                );
         }
 
-        if (submit) {
-            submit.className = (
-                "inline-flex min-h-10 items-center " +
-                "justify-center rounded-xl bg-brand-950 " +
-                "px-4 text-sm font-semibold text-white " +
-                "shadow-sm transition hover:bg-brand-900 " +
-                "focus:outline-none focus:ring-4 " +
-                "focus:ring-brand-100 " +
-                "disabled:cursor-not-allowed " +
-                "disabled:opacity-60"
+        submit.className = notCompleted
+            ? (
+                "inline-flex min-h-10 items-center justify-center "
+                + "rounded-xl bg-red-700 px-4 text-sm "
+                + "font-semibold text-white shadow-sm "
+                + "hover:bg-red-800 disabled:opacity-60"
+            )
+            : (
+                "inline-flex min-h-10 items-center justify-center "
+                + "rounded-xl bg-brand-950 px-4 text-sm "
+                + "font-semibold text-white shadow-sm "
+                + "hover:bg-brand-900 disabled:opacity-60"
             );
-        }
+    }
 
-        if (submitLabel) {
-            submitLabel.textContent = (
-                "Confirmar conclusão"
-            );
-        }
-    };
+    function openModal(button) {
+        actionUrl = button.dataset.actionUrl || "";
 
+        const eventType = (
+            button.dataset.eventType || ""
+        );
 
-    // =========================================================
-    // ABRIR MODAL
-    // =========================================================
-
-    const openModal = (button) => {
-        actionUrl = (
-            button.dataset.actionUrl || ""
+        currentIsDeadline = (
+            eventType.trim().toLowerCase() === "prazo"
         );
 
         setMode(
             button.dataset.outcome || "complete"
         );
 
-
-        const eventType = getElement(
+        const typeElement = $(
             "agenda-complete-event-type"
         );
 
-        const eventTitle = getElement(
+        if (typeElement) {
+            typeElement.textContent = eventType;
+        }
+
+        const titleElement = $(
             "agenda-complete-event-title"
         );
 
-        const eventDate = getElement(
+        if (titleElement) {
+            titleElement.textContent = (
+                button.dataset.eventTitle
+                || "Compromisso"
+            );
+        }
+
+        const dateElement = $(
             "agenda-complete-event-date"
         );
 
-
-        if (eventType) {
-            eventType.textContent = (
-                button.dataset.eventType || ""
+        if (dateElement) {
+            dateElement.textContent = (
+                button.dataset.eventDate || ""
             );
         }
 
-        if (eventTitle) {
-            eventTitle.textContent = (
-                button.dataset.eventTitle || ""
+        const timeElement = $(
+            "agenda-complete-event-time"
+        );
+
+        if (timeElement) {
+            timeElement.textContent = (
+                button.dataset.eventTime || ""
             );
         }
 
+        result.value = "";
+        clearError();
 
-        const date = (
-            button.dataset.eventDate || ""
-        );
+        modal.classList.remove("hidden");
 
-        const time = (
-            button.dataset.eventTime || ""
-        );
+        window.setTimeout(() => {
+            result.focus();
+        }, 100);
+    }
 
-
-        if (eventDate) {
-            eventDate.textContent = time
-                ? `${date} às ${time}`
-                : date;
-        }
-
-
-        if (result) {
-            result.value = "";
-        }
-
-        hideError();
-
-        modal.classList.remove(
-            "hidden"
-        );
-
-        document.body.classList.add(
-            "overflow-hidden"
-        );
-
-
-        window.setTimeout(
-            () => {
-                if (result) {
-                    result.focus();
-                }
-            },
-            50
-        );
-    };
-
-
-    // =========================================================
-    // FECHAR MODAL
-    // =========================================================
-
-    const closeModal = () => {
+    function closeModal() {
         if (submitting) {
             return;
         }
 
-        modal.classList.add(
-            "hidden"
-        );
-
-        document.body.classList.remove(
-            "overflow-hidden"
-        );
-
+        modal.classList.add("hidden");
+        clearError();
+        result.value = "";
         actionUrl = "";
+        currentIsDeadline = false;
+    }
 
-        if (result) {
-            result.value = "";
+    document.addEventListener("click", (event) => {
+        const trigger = event.target.closest(
+            "[data-agenda-outcome]"
+        );
+
+        if (trigger) {
+            event.preventDefault();
+            openModal(trigger);
+            return;
         }
 
-        hideError();
-    };
+        const closeButton = event.target.closest(
+            "[data-agenda-complete-close]"
+        );
 
+        if (closeButton) {
+            event.preventDefault();
+            closeModal();
+        }
+    });
 
-    // =========================================================
-    // BOTÕES DE DESFECHO
-    // =========================================================
+    document.addEventListener("keydown", (event) => {
+        if (
+            event.key === "Escape"
+            && !modal.classList.contains("hidden")
+        ) {
+            closeModal();
+        }
+    });
 
-    buttons.forEach(
-        (button) => {
-            button.addEventListener(
-                "click",
-                () => {
-                    openModal(button);
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        if (submitting || !actionUrl) {
+            return;
+        }
+
+        const resultValue = result.value.trim();
+
+        if (
+            outcome === "not_completed"
+            && !resultValue
+        ) {
+            showError(
+                currentIsDeadline
+                    ? (
+                        "Informe o motivo ou uma observação "
+                        + "para registrar o prazo como "
+                        + "não cumprido."
+                    )
+                    : (
+                        "Informe o motivo ou uma observação "
+                        + "para registrar o compromisso "
+                        + "como não realizado."
+                    )
+            );
+
+            result.focus();
+            return;
+        }
+
+        submitting = true;
+        clearError();
+
+        submit.disabled = true;
+        submitLabel.textContent = "Salvando...";
+
+        const body = new URLSearchParams();
+        body.set("resultado", resultValue);
+
+        try {
+            const response = await fetch(
+                actionUrl,
+                {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCsrfToken(),
+                        "X-Requested-With": "XMLHttpRequest",
+                        "Content-Type": (
+                            "application/x-www-form-urlencoded"
+                        ),
+                    },
+                    body: body.toString(),
                 }
             );
-        }
-    );
 
+            let data = {};
 
-    // =========================================================
-    // FECHAMENTO DA MODAL
-    // =========================================================
-
-    const closeButton = getElement(
-        "agenda-complete-modal-close"
-    );
-
-    const cancelButton = getElement(
-        "agenda-complete-cancel"
-    );
-
-    const backdrop = getElement(
-        "agenda-complete-modal-backdrop"
-    );
-
-
-    if (closeButton) {
-        closeButton.addEventListener(
-            "click",
-            closeModal
-        );
-    }
-
-
-    if (cancelButton) {
-        cancelButton.addEventListener(
-            "click",
-            closeModal
-        );
-    }
-
-
-    if (backdrop) {
-        backdrop.addEventListener(
-            "click",
-            closeModal
-        );
-    }
-
-
-    document.addEventListener(
-        "keydown",
-        (event) => {
-            if (
-                event.key === "Escape"
-                && !modal.classList.contains(
-                    "hidden"
-                )
-            ) {
-                closeModal();
+            try {
+                data = await response.json();
+            } catch (jsonError) {
+                data = {};
             }
-        }
-    );
 
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.message
+                    || "Não foi possível registrar o desfecho."
+                );
+            }
 
-    // =========================================================
-    // ENVIO
-    // =========================================================
+            window.location.reload();
 
-    if (form) {
-        form.addEventListener(
-            "submit",
-            async (event) => {
-                event.preventDefault();
+        } catch (error) {
+            showError(
+                error.message
+                || "Não foi possível registrar o desfecho."
+            );
 
-                if (
-                    submitting
-                    || !actionUrl
-                ) {
-                    return;
-                }
+            submitting = false;
+            submit.disabled = false;
 
-
-                const resultValue = result
-                    ? result.value.trim()
-                    : "";
-
-
-                // =============================================
-                // MOTIVO OBRIGATÓRIO PARA NÃO REALIZADO
-                // =============================================
-
-                if (
+            submitLabel.textContent = currentIsDeadline
+                ? (
                     outcome === "not_completed"
-                    && !resultValue
-                ) {
-                    showError(
-                        "Informe o motivo ou uma observação " +
-                        "para registrar o compromisso como " +
-                        "não realizado."
-                    );
-
-                    if (result) {
-                        result.focus();
-                    }
-
-                    return;
-                }
-
-
-                hideError();
-
-                submitting = true;
-
-                if (submit) {
-                    submit.disabled = true;
-                }
-
-                if (submitLabel) {
-                    submitLabel.textContent = (
-                        "Salvando..."
-                    );
-                }
-
-
-                try {
-                    const csrfInput = (
-                        form.querySelector(
-                            "[name=csrfmiddlewaretoken]"
-                        )
-                    );
-
-                    const formData = new FormData(
-                        form
-                    );
-
-
-                    const response = await fetch(
-                        actionUrl,
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "X-CSRFToken": (
-                                    csrfInput
-                                        ? csrfInput.value
-                                        : ""
-                                ),
-
-                                "X-Requested-With": (
-                                    "XMLHttpRequest"
-                                ),
-                            },
-
-                            credentials: "same-origin",
-
-                            body: formData,
-                        }
-                    );
-
-
-                    const data = await response.json();
-
-
-                    if (
-                        !response.ok
-                        || !data.success
-                    ) {
-                        throw new Error(
-                            data.message
-                            || (
-                                "Não foi possível registrar " +
-                                "o desfecho do compromisso."
-                            )
-                        );
-                    }
-
-
-                    if (submitLabel) {
-                        submitLabel.textContent = (
-                            outcome === "not_completed"
-                                ? "Registrado"
-                                : "Concluído"
-                        );
-                    }
-
-
-                    window.setTimeout(
-                        () => {
-                            window.location.reload();
-                        },
-                        500
-                    );
-
-                } catch (error) {
-                    showError(
-                        error.message
-                        || (
-                            "Não foi possível registrar " +
-                            "o desfecho do compromisso."
-                        )
-                    );
-
-
-                    submitting = false;
-
-
-                    if (submit) {
-                        submit.disabled = false;
-                    }
-
-
-                    if (submitLabel) {
-                        submitLabel.textContent = (
-                            outcome === "not_completed"
-                                ? "Confirmar não realizado"
-                                : "Confirmar conclusão"
-                        );
-                    }
-                }
-            }
-        );
-    }
+                        ? "Confirmar não cumprimento"
+                        : "Confirmar cumprimento"
+                )
+                : (
+                    outcome === "not_completed"
+                        ? "Confirmar não realizado"
+                        : "Confirmar conclusão"
+                );
+        }
+    });
 });
