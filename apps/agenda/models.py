@@ -37,6 +37,12 @@ class GoogleCalendarConnection(models.Model):
         verbose_name="Conectado em",
     )
 
+    ultima_sincronizacao_em = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Última sincronização",
+    )
+
     atualizado_em = models.DateTimeField(
         auto_now=True,
         verbose_name="Atualizado em",
@@ -44,9 +50,7 @@ class GoogleCalendarConnection(models.Model):
 
     class Meta:
         verbose_name = "Conexão com Google Calendar"
-        verbose_name_plural = (
-            "Conexões com Google Calendar"
-        )
+        verbose_name_plural = "Conexões com Google Calendar"
 
     def __str__(self):
         if self.google_email:
@@ -70,6 +74,41 @@ class AgendaEvent(models.Model):
         ("diligencia", "Diligência"),
         ("outro", "Outro"),
     ]
+
+    # =========================================================
+    # STATUS OPERACIONAL DO COMPROMISSO
+    # =========================================================
+
+    class Status(models.TextChoices):
+        SCHEDULED = (
+            "scheduled",
+            "Agendado",
+        )
+
+        CONFIRMED = (
+            "confirmed",
+            "Confirmado",
+        )
+
+        COMPLETED = (
+            "completed",
+            "Concluído",
+        )
+
+        NOT_COMPLETED = (
+            "not_completed",
+            "Não realizado",
+        )
+
+        CANCELED = (
+            "canceled",
+            "Cancelado",
+        )
+
+        RESCHEDULED = (
+            "rescheduled",
+            "Reagendado",
+        )
 
     # =========================================================
     # STATUS DA SINCRONIZAÇÃO COM GOOGLE
@@ -154,6 +193,42 @@ class AgendaEvent(models.Model):
     )
 
     # =========================================================
+    # SITUAÇÃO OPERACIONAL
+    # =========================================================
+
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.SCHEDULED,
+        db_index=True,
+        verbose_name="Status",
+    )
+
+    resultado = models.TextField(
+        blank=True,
+        verbose_name="Resultado",
+        help_text=(
+            "Resultado, providência ou observação referente "
+            "à realização do compromisso."
+        ),
+    )
+
+    concluido_em = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Concluído em",
+    )
+
+    concluido_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="eventos_concluidos",
+        verbose_name="Concluído por",
+    )
+
+    # =========================================================
     # GOOGLE CALENDAR
     # =========================================================
 
@@ -186,9 +261,7 @@ class AgendaEvent(models.Model):
         choices=GoogleSyncStatus.choices,
         default=GoogleSyncStatus.NOT_SYNCED,
         db_index=True,
-        verbose_name=(
-            "Status da sincronização Google"
-        ),
+        verbose_name="Status da sincronização Google",
     )
 
     # =========================================================
@@ -210,15 +283,41 @@ class AgendaEvent(models.Model):
         ]
 
         verbose_name = "Evento da agenda"
-        verbose_name_plural = (
-            "Eventos da agenda"
-        )
+        verbose_name_plural = "Eventos da agenda"
 
     def __str__(self):
         return (
             f"{self.get_tipo_display()} - "
             f"{self.titulo}"
         )
+
+    # =========================================================
+    # PROPRIEDADES OPERACIONAIS
+    # =========================================================
+
+    @property
+    def agendado(self):
+        return self.status == self.Status.SCHEDULED
+
+    @property
+    def confirmado(self):
+        return self.status == self.Status.CONFIRMED
+
+    @property
+    def concluido(self):
+        return self.status == self.Status.COMPLETED
+
+    @property
+    def nao_realizado(self):
+        return self.status == self.Status.NOT_COMPLETED
+
+    @property
+    def cancelado(self):
+        return self.status == self.Status.CANCELED
+
+    @property
+    def reagendado(self):
+        return self.status == self.Status.RESCHEDULED
 
     # =========================================================
     # PROPRIEDADES GOOGLE

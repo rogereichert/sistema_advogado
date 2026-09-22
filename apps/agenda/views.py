@@ -1,6 +1,10 @@
+from calendar import monthrange
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -128,6 +132,62 @@ def _sync_updated_event_with_google(event, user):
         }
 
 
+def _build_completion_history_description(event):
+    """
+    Monta a descrição registrada no histórico do caso
+    quando um compromisso é concluído.
+    """
+
+    date_text = event.data.strftime("%d/%m/%Y")
+
+    if event.hora:
+        time_text = event.hora.strftime("%H:%M")
+        scheduled_text = (
+            f"{date_text} às {time_text}"
+        )
+    else:
+        scheduled_text = date_text
+
+    description = (
+        f"{event.get_tipo_display()} "
+        f"'{event.titulo}', previsto para "
+        f"{scheduled_text}, foi concluído."
+    )
+
+    if event.resultado:
+        description += (
+            f"\n\nResultado:\n{event.resultado}"
+        )
+
+    return description
+
+
+def _build_not_completed_history_description(event):
+    """
+    Monta a descrição registrada no histórico do caso
+    quando um compromisso é marcado como não realizado.
+    """
+
+    date_text = event.data.strftime("%d/%m/%Y")
+
+    if event.hora:
+        time_text = event.hora.strftime("%H:%M")
+        scheduled_text = f"{date_text} às {time_text}"
+    else:
+        scheduled_text = date_text
+
+    description = (
+        f"{event.get_tipo_display()} "
+        f"'{event.titulo}', previsto para "
+        f"{scheduled_text}, foi marcado como não realizado."
+    )
+
+    if event.resultado:
+        description += f"\n\nMotivo / observação:\n{event.resultado}"
+
+    return description
+
+
 # =========================================================
 # LISTA DA AGENDA
 # =========================================================
@@ -137,41 +197,121 @@ def _sync_updated_event_with_google(event, user):
 def agenda_list(request):
     today = timezone.localdate()
 
-    upcoming_events = (
+    valid_views = {"overview", "upcoming", "pending", "history"}
+    agenda_view = request.GET.get("view", "overview").strip().lower()
+    if agenda_view not in valid_views:
+        agenda_view = "overview"
+
+    valid_periods = {"day", "week", "month"}
+    agenda_period = request.GET.get("period", "month").strip().lower()
+    if agenda_period not in valid_periods:
+        agenda_period = "month"
+
+    preview_limit = 5
+    items_per_page = 10
+
+    # Semana atual: domingo -> sábado.
+    days_since_sunday = (today.weekday() + 1) % 7
+    week_start = today - timedelta(days=days_since_sunday)
+    week_end = week_start + timedelta(days=6)
+
+    # Mês atual: dia 1 -> último dia real (28/29/30/31).
+    month_start = today.replace(day=1)
+    month_last_day = monthrange(today.year, today.month)[1]
+    month_end = today.replace(day=month_last_day)
+
+    active_statuses = [
+        AgendaEvent.Status.SCHEDULED,
+        AgendaEvent.Status.CONFIRMED,
+    ]
+
+    historical_statuses = [
+        AgendaEvent.Status.COMPLETED,
+        AgendaEvent.Status.NOT_COMPLETED,
+        AgendaEvent.Status.CANCELED,
+        AgendaEvent.Status.RESCHEDULED,
+    ]
+
+    # Os períodos abaixo são somente filtros locais.
+    # Nenhuma sincronização Google é executada nesta view.
+    active_events_queryset = (
         AgendaEvent.objects
-        .select_related(
-            "caso",
-            "caso__cliente",
-        )
-        .filter(
-            data__gte=today,
-        )
-        .order_by(
-            "data",
-            "hora",
-        )
+        .select_related("caso", "caso__cliente", "concluido_por")
+        .filter(status__in=active_statuses)
     )
 
-    past_events = (
+    upcoming_period_querysets = {
+        "day": (
+            active_events_queryset
+            .filter(data=today)
+            .order_by("data", "hora")
+        ),
+        "week": (
+            active_events_queryset
+            .filter(data__range=(week_start, week_end))
+            .order_by("data", "hora")
+        ),
+        "month": (
+            active_events_queryset
+            .filter(data__range=(month_start, month_end))
+            .order_by("data", "hora")
+        ),
+    }
+
+    upcoming_queryset = upcoming_period_querysets[agenda_period]
+    upcoming_month_queryset = upcoming_period_querysets["month"]
+
+    pending_queryset = (
         AgendaEvent.objects
-        .select_related(
-            "caso",
-            "caso__cliente",
-        )
+        .select_related("caso", "caso__cliente", "concluido_por")
         .filter(
             data__lt=today,
+            status__in=active_statuses,
         )
-        .order_by(
-            "-data",
-            "-hora",
-        )[:20]
+        .order_by("-data", "-hora")
     )
+
+    historical_queryset = (
+        AgendaEvent.objects
+        .select_related("caso", "caso__cliente", "concluido_por")
+        .filter(status__in=historical_statuses)
+        .order_by("-data", "-hora")
+    )
+
+    # O card Próximos representa o mês atual.
+    upcoming_count = upcoming_month_queryset.count()
+    upcoming_period_count = upcoming_queryset.count()
+    upcoming_day_count = upcoming_period_querysets["day"].count()
+    upcoming_week_count = upcoming_period_querysets["week"].count()
+    upcoming_month_count = upcoming_count
+
+    pending_count = pending_queryset.count()
+    history_count = historical_queryset.count()
+
+    # Painel principal: prévias enxutas.
+    upcoming_events = upcoming_month_queryset[:preview_limit]
+    pending_confirmation_events = pending_queryset[:preview_limit]
+    historical_events = historical_queryset[:preview_limit]
+
+    agenda_events = None
+    page_obj = None
+    paginator = None
+
+    if agenda_view != "overview":
+        queryset_by_view = {
+            "upcoming": upcoming_queryset,
+            "pending": pending_queryset,
+            "history": historical_queryset,
+        }
+
+        selected_queryset = queryset_by_view[agenda_view]
+        paginator = Paginator(selected_queryset, items_per_page)
+        page_obj = paginator.get_page(request.GET.get("page"))
+        agenda_events = page_obj.object_list
 
     google_connection = (
         GoogleCalendarConnection.objects
-        .filter(
-            usuario=request.user,
-        )
+        .filter(usuario=request.user)
         .first()
     )
 
@@ -179,15 +319,43 @@ def agenda_list(request):
         request,
         "agenda/agenda_list.html",
         {
-            "upcoming_events": upcoming_events,
-            "past_events": past_events,
+            "agenda_view": agenda_view,
+            "agenda_period": agenda_period,
+
             "today": today,
-            "google_calendar_connected": bool(
-                google_connection
+            "week_start": week_start,
+            "week_end": week_end,
+            "month_start": month_start,
+            "month_end": month_end,
+
+            "upcoming_events": upcoming_events,
+            "pending_confirmation_events": pending_confirmation_events,
+            "historical_events": historical_events,
+
+            "upcoming_count": upcoming_count,
+            "pending_count": pending_count,
+            "history_count": history_count,
+
+            "upcoming_period_count": upcoming_period_count,
+            "upcoming_day_count": upcoming_day_count,
+            "upcoming_week_count": upcoming_week_count,
+            "upcoming_month_count": upcoming_month_count,
+
+            "agenda_events": agenda_events,
+            "page_obj": page_obj,
+            "paginator": paginator,
+
+            "agenda_preview_limit": preview_limit,
+            "agenda_items_per_page": items_per_page,
+
+            "google_calendar_connected": bool(google_connection),
+            "google_calendar_last_sync": (
+                google_connection.ultima_sincronizacao_em
+                if google_connection
+                else None
             ),
         },
     )
-
 
 # =========================================================
 # CRIAÇÃO DE COMPROMISSO
@@ -462,6 +630,232 @@ def agenda_update(request, pk):
             "event": event,
             "editing": True,
         },
+    )
+
+# =========================================================
+# CONCLUSÃO DE COMPROMISSO
+# =========================================================
+
+
+@login_required
+@require_POST
+def agenda_complete(request, pk):
+    """
+    Conclui um compromisso no LexControl.
+
+    A conclusão é operacional e não altera nem remove
+    o compromisso correspondente no Google Agenda.
+    """
+
+    event = get_object_or_404(
+        AgendaEvent.objects.select_related(
+            "caso",
+            "caso__cliente",
+            "criado_por",
+        ),
+        pk=pk,
+    )
+
+    # -----------------------------------------------------
+    # PROTEÇÃO CONTRA CONCLUSÃO DUPLICADA
+    # -----------------------------------------------------
+
+    if event.status == event.Status.COMPLETED:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Este compromisso já foi concluído."
+                ),
+            },
+            status=400,
+        )
+
+    # -----------------------------------------------------
+    # SOMENTE EVENTOS ATIVOS PODEM SER CONCLUÍDOS
+    # -----------------------------------------------------
+
+    allowed_statuses = {
+        event.Status.SCHEDULED,
+        event.Status.CONFIRMED,
+    }
+
+    if event.status not in allowed_statuses:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Este compromisso não pode ser concluído "
+                    "no status atual."
+                ),
+            },
+            status=400,
+        )
+
+    # -----------------------------------------------------
+    # RESULTADO
+    # -----------------------------------------------------
+
+    resultado = (
+        request.POST.get(
+            "resultado",
+            "",
+        )
+        .strip()
+    )
+
+    # -----------------------------------------------------
+    # CONCLUSÃO
+    # -----------------------------------------------------
+
+    event.status = event.Status.COMPLETED
+    event.resultado = resultado
+    event.concluido_em = timezone.now()
+    event.concluido_por = request.user
+
+    event.save(
+        update_fields=[
+            "status",
+            "resultado",
+            "concluido_em",
+            "concluido_por",
+            "atualizado_em",
+        ]
+    )
+
+    # -----------------------------------------------------
+    # HISTÓRICO DO CASO
+    # -----------------------------------------------------
+
+    CaseHistory.objects.create(
+        caso=event.caso,
+        usuario=request.user,
+        titulo="Compromisso concluído",
+        descricao=(
+            _build_completion_history_description(
+                event
+            )
+        ),
+    )
+
+    # -----------------------------------------------------
+    # IMPORTANTE:
+    # nenhuma chamada ao Google Calendar é feita aqui.
+    # O evento continua existindo normalmente no Google.
+    # -----------------------------------------------------
+
+    return JsonResponse(
+        {
+            "success": True,
+            "event_id": event.pk,
+            "status": event.status,
+            "status_display": (
+                event.get_status_display()
+            ),
+            "concluido_em": (
+                event.concluido_em.isoformat()
+            ),
+            "message": (
+                "Compromisso concluído com sucesso."
+            ),
+        }
+    )
+
+
+# =========================================================
+# COMPROMISSO NÃO REALIZADO
+# =========================================================
+
+
+@login_required
+@require_POST
+def agenda_not_completed(request, pk):
+    """
+    Marca um compromisso como não realizado no LexControl.
+
+    O motivo / observação é obrigatório.
+
+    Esta ação é operacional e não altera nem remove
+    o compromisso correspondente no Google Agenda.
+    """
+
+    event = get_object_or_404(
+        AgendaEvent.objects.select_related(
+            "caso",
+            "caso__cliente",
+            "criado_por",
+        ),
+        pk=pk,
+    )
+
+    allowed_statuses = {
+        event.Status.SCHEDULED,
+        event.Status.CONFIRMED,
+    }
+
+    if event.status not in allowed_statuses:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Este compromisso não pode ser marcado "
+                    "como não realizado no status atual."
+                ),
+            },
+            status=400,
+        )
+
+    resultado = request.POST.get("resultado", "").strip()
+
+    if not resultado:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Informe o motivo ou uma observação "
+                    "para registrar o compromisso como "
+                    "não realizado."
+                ),
+            },
+            status=400,
+        )
+
+    event.status = event.Status.NOT_COMPLETED
+    event.resultado = resultado
+    event.concluido_em = timezone.now()
+    event.concluido_por = request.user
+
+    event.save(
+        update_fields=[
+            "status",
+            "resultado",
+            "concluido_em",
+            "concluido_por",
+            "atualizado_em",
+        ]
+    )
+
+    CaseHistory.objects.create(
+        caso=event.caso,
+        usuario=request.user,
+        titulo="Compromisso não realizado",
+        descricao=_build_not_completed_history_description(event),
+    )
+
+    # Nenhuma chamada ao Google é feita aqui.
+    # O evento permanece no Google Agenda.
+
+    return JsonResponse(
+        {
+            "success": True,
+            "event_id": event.pk,
+            "status": event.status,
+            "status_display": event.get_status_display(),
+            "concluido_em": event.concluido_em.isoformat(),
+            "message": (
+                "Compromisso registrado como não realizado."
+            ),
+        }
     )
 
 
@@ -791,6 +1185,35 @@ def google_calendar_sync(request):
             "Nenhuma alteração encontrada."
         )
 
+    # =====================================================
+    # ÚLTIMA SINCRONIZAÇÃO BEM-SUCEDIDA
+    # =====================================================
+    #
+    # Só atualizamos este horário quando a consulta ao Google
+    # termina sem falha de autenticação e sem erros de eventos.
+    #
+    # Eventos identificados como removidos no Google não são
+    # considerados falha: eles foram consultados corretamente
+    # e o LexControl conseguiu registrar esse estado.
+    #
+    # Se houver erro, preservamos a data/hora da última
+    # sincronização realmente bem-sucedida.
+    #
+
+    sync_completed_successfully = (
+        not auth_error
+        and error_count == 0
+    )
+
+    if sync_completed_successfully:
+        connection.ultima_sincronizacao_em = timezone.now()
+        connection.save(
+            update_fields=[
+                "ultima_sincronizacao_em",
+                "atualizado_em",
+            ]
+        )
+
     return JsonResponse(
         {
             "success": not auth_error,
@@ -799,6 +1222,14 @@ def google_calendar_sync(request):
             "removed": removed_count,
             "errors": error_count,
             "auth_error": auth_error,
+            "sync_completed_successfully": (
+                sync_completed_successfully
+            ),
+            "last_sync_at": (
+                connection.ultima_sincronizacao_em.isoformat()
+                if connection.ultima_sincronizacao_em
+                else None
+            ),
             "message": message,
         },
         status=(

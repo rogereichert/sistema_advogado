@@ -1,0 +1,51 @@
+<!-- MODAL - DESFECHO DO COMPROMISSO -->
+<div id="agenda-complete-modal" class="fixed inset-0 z-[80] hidden" aria-labelledby="agenda-complete-modal-title" aria-modal="true" role="dialog">
+    <div id="agenda-complete-modal-backdrop" class="absolute inset-0 bg-slate-950/45 backdrop-blur-[1px]"></div>
+    <div class="relative flex min-h-full items-center justify-center p-4 sm:p-6">
+        <div class="relative w-full max-w-xl overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-2xl">
+            <header class="flex items-start justify-between gap-4 border-b border-brand-100 px-5 py-5 sm:px-6">
+                <div class="flex min-w-0 items-start gap-3.5">
+                    <div id="agenda-outcome-icon-box" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200" aria-hidden="true">
+                        <svg id="agenda-outcome-complete-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>
+                        <svg id="agenda-outcome-not-completed-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="hidden h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+                    </div>
+                    <div class="min-w-0">
+                        <p id="agenda-outcome-eyebrow" class="text-[10px] font-semibold uppercase tracking-[0.14em] text-emerald-700">Realização do compromisso</p>
+                        <h2 id="agenda-complete-modal-title" class="mt-1 text-lg font-semibold tracking-tight text-brand-950">Concluir compromisso</h2>
+                        <p id="agenda-outcome-description" class="mt-1 text-sm leading-5 text-slate-500">Registre a realização deste compromisso no LexControl.</p>
+                    </div>
+                </div>
+                <button type="button" id="agenda-complete-modal-close" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-4 focus:ring-brand-100" aria-label="Fechar">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+                </button>
+            </header>
+            <form id="agenda-complete-form">
+                {% csrf_token %}
+                <div class="space-y-5 px-5 py-5 sm:px-6">
+                    <div class="rounded-xl border border-brand-100 bg-brand-50/50 p-4">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span id="agenda-complete-event-type" class="inline-flex rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-brand-700 ring-1 ring-inset ring-brand-100"></span>
+                            <span id="agenda-complete-event-date" class="text-xs font-medium text-slate-500"></span>
+                        </div>
+                        <p id="agenda-complete-event-title" class="mt-2 font-semibold text-brand-950"></p>
+                    </div>
+                    <div>
+                        <label id="agenda-outcome-result-label" for="agenda-complete-result" class="block text-sm font-semibold text-brand-950">Resultado / observação</label>
+                        <p id="agenda-outcome-result-help" class="mt-1 text-xs leading-5 text-slate-500">Informe o resultado, providência adotada ou qualquer observação relevante sobre o compromisso.</p>
+                        <textarea id="agenda-complete-result" name="resultado" rows="5" class="app-input mt-2 resize-y"></textarea>
+                    </div>
+                    <div class="flex items-start gap-2.5 rounded-xl border border-blue-100 bg-blue-50/60 px-4 py-3">
+                        <p id="agenda-outcome-info-text" class="text-xs leading-5 text-blue-800">A conclusão será registrada no histórico do caso. O compromisso continuará normalmente no Google Agenda.</p>
+                    </div>
+                    <div id="agenda-complete-error" class="hidden rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert"></div>
+                </div>
+                <footer class="flex flex-col-reverse gap-2 border-t border-brand-100 bg-slate-50/60 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+                    <button type="button" id="agenda-complete-cancel" class="inline-flex min-h-10 items-center justify-center rounded-xl border border-brand-100 bg-white px-4 text-sm font-semibold text-brand-700 shadow-sm">Cancelar</button>
+                    <button type="submit" id="agenda-complete-submit" class="inline-flex min-h-10 items-center justify-center rounded-xl bg-brand-950 px-4 text-sm font-semibold text-white shadow-sm disabled:opacity-60">
+                        <span id="agenda-complete-submit-label">Confirmar conclusão</span>
+                    </button>
+                </footer>
+            </form>
+        </div>
+    </div>
+</div>

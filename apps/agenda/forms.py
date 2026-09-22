@@ -36,16 +36,28 @@ class AgendaEventForm(forms.ModelForm):
             ),
 
             "data": forms.DateInput(
-                attrs={"type": "date"}
+                format="%Y-%m-%d",
+                attrs={"type": "date"},
             ),
 
             "hora": forms.TimeInput(
-                attrs={"type": "time"}
+                format="%H:%M",
+                attrs={"type": "time"},
             ),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.fields["data"].input_formats = [
+            "%Y-%m-%d",
+            "%d/%m/%Y",
+        ]
+
+        self.fields["hora"].input_formats = [
+            "%H:%M",
+            "%H:%M:%S",
+        ]
 
         for field in self.fields.values():
             field.widget.attrs["class"] = INPUT_CLASSES

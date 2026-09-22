@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
     Agenda | Advogado Company
@@ -76,33 +77,56 @@
 
                 {% if google_calendar_connected %}
 
-                    <button
-                        type="button"
-                        id="google-calendar-sync-button"
-                        data-sync-url="{% url 'agenda:google_sync' %}"
-                        class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-brand-200 bg-white px-4 text-sm font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                        <svg
-                            id="google-calendar-sync-icon"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.8"
-                            stroke="currentColor"
-                            class="h-4 w-4"
-                            aria-hidden="true"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M16.023 9.348h4.992V4.356m-.97 4.022A8.25 8.25 0 1 0 21 12.75M3.955 15.622A8.25 8.25 0 0 0 12 21a8.25 8.25 0 0 0 5.197-1.84"
-                            />
-                        </svg>
+                    <div class="flex flex-col items-start gap-1.5 lg:items-end">
 
-                        <span id="google-calendar-sync-label">
-                            Sincronizar Google Agenda
-                        </span>
-                    </button>
+                        <button
+                            type="button"
+                            id="google-calendar-sync-button"
+                            data-sync-url="{% url 'agenda:google_sync' %}"
+                            class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-brand-200 bg-white px-4 text-sm font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            <svg
+                                id="google-calendar-sync-icon"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-4 w-4"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M16.023 9.348h4.992V4.356m-.97 4.022A8.25 8.25 0 1 0 21 12.75M3.955 15.622A8.25 8.25 0 0 0 12 21a8.25 8.25 0 0 0 5.197-1.84"
+                                />
+                            </svg>
+
+                            <span id="google-calendar-sync-label">
+                                Sincronizar Google Agenda
+                            </span>
+                        </button>
+
+                        <p
+                            id="google-calendar-last-sync"
+                            class="text-[11px] font-medium text-slate-400"
+                        >
+                            {% if google_calendar_last_sync %}
+                                Última sincronização:
+                                <span class="text-slate-500">
+                                    {{ google_calendar_last_sync|date:"d/m/Y" }}
+                                    às
+                                    {{ google_calendar_last_sync|date:"H:i" }}
+                                </span>
+                            {% else %}
+                                Última sincronização:
+                                <span class="text-slate-500">
+                                    ainda não realizada
+                                </span>
+                            {% endif %}
+                        </p>
+
+                    </div>
 
                 {% else %}
 
@@ -147,590 +171,607 @@
 
     </header>
 
-
     <!-- =========================================================
-         PRÓXIMOS COMPROMISSOS
+         RESUMO DA AGENDA
     ========================================================== -->
 
-    <section
-        class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
-        aria-labelledby="upcoming-events-title"
-    >
+    <section class="mb-5 grid gap-4 md:grid-cols-3" aria-label="Resumo da agenda">
 
-        <header
-            class="border-b border-brand-100 px-5 py-5 sm:px-6"
+        <a
+            href="{% url 'agenda:list' %}?view=upcoming&period=month"
+            class="group rounded-2xl border border-brand-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-brand-100"
         >
-
-            <p
-                class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
-            >
-                Agenda
-            </p>
-
-            <h2
-                id="upcoming-events-title"
-                class="mt-1 font-semibold tracking-tight text-brand-950"
-            >
-                Próximos compromissos
-            </h2>
-
-            <p class="mt-1 text-sm text-slate-500">
-                Eventos agendados a partir de hoje.
-            </p>
-
-        </header>
-
-
-        <div class="divide-y divide-brand-50">
-
-            {% for event in upcoming_events %}
-
-                <article
-                    class="flex flex-col gap-5 px-5 py-5 transition-colors hover:bg-brand-50/30 sm:px-6 lg:flex-row lg:items-center lg:justify-between"
-                >
-
-                    <div class="flex min-w-0 items-start gap-4 sm:gap-5">
-
-                        <!-- DATA -->
-
-                        <div
-                            class="flex h-[60px] w-[60px] shrink-0 flex-col items-center justify-center rounded-xl bg-brand-950 text-white shadow-sm"
-                            aria-label="{{ event.data|date:'d/m/Y' }}"
-                        >
-
-                            <span
-                                class="text-lg font-semibold leading-none"
-                            >
-                                {{ event.data|date:"d" }}
-                            </span>
-
-                            <span
-                                class="mt-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-brand-200"
-                            >
-                                {{ event.data|date:"M" }}
-                            </span>
-
-                        </div>
-
-
-                        <!-- INFORMAÇÕES -->
-
-                        <div class="min-w-0">
-
-                            <div
-                                class="flex flex-wrap items-center gap-2.5"
-                            >
-
-                                <h3
-                                    class="font-semibold text-brand-950"
-                                >
-                                    {{ event.titulo }}
-                                </h3>
-
-                                <span
-                                    class="inline-flex items-center gap-1.5 rounded-full bg-gold-50 px-2.5 py-1 text-xs font-semibold text-gold-800 ring-1 ring-inset ring-gold-200"
-                                >
-                                    <span
-                                        class="h-1.5 w-1.5 rounded-full bg-gold-500"
-                                        aria-hidden="true"
-                                    ></span>
-
-                                    {{ event.get_tipo_display }}
-                                </span>
-
-
-                                <!-- STATUS GOOGLE -->
-
-                                {% if event.removido_do_google %}
-
-                                    <span
-                                        class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200"
-                                        title="Este compromisso foi removido do Google Agenda, mas continua salvo no LexControl."
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke-width="2"
-                                            stroke="currentColor"
-                                            class="h-3.5 w-3.5"
-                                            aria-hidden="true"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M12 9v3.75m9.303 3.376c.866 1.5-.217 3.374-1.948 3.374H4.645c-1.73 0-2.813-1.874-1.948-3.374L10.05 3.378c.865-1.5 3.03-1.5 3.896 0l7.357 12.748ZM12 15.75h.008v.008H12v-.008Z"
-                                            />
-                                        </svg>
-
-                                        Removido do Google
-                                    </span>
-
-                                {% elif event.erro_sincronizacao_google %}
-
-                                    <span
-                                        class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 ring-1 ring-inset ring-red-200"
-                                        title="Ocorreu um erro na última tentativa de sincronização com o Google Agenda."
-                                    >
-                                        <span
-                                            class="h-1.5 w-1.5 rounded-full bg-red-500"
-                                            aria-hidden="true"
-                                        ></span>
-
-                                        Erro no Google
-                                    </span>
-
-                                {% endif %}
-
-                            </div>
-
-
-                            <p
-                                class="mt-2 text-sm leading-5 text-slate-500"
-                            >
-                                <span class="font-medium text-slate-600">
-                                    {{ event.caso.cliente.nome_completo }}
-                                </span>
-
-                                <span
-                                    class="mx-1 text-slate-300"
-                                    aria-hidden="true"
-                                >
-                                    ·
-                                </span>
-
-                                {{ event.caso.titulo }}
-                            </p>
-
-
-                            <div
-                                class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-500"
-                            >
-
-                                <span
-                                    class="inline-flex items-center gap-1.5"
-                                >
-
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.8"
-                                        stroke="currentColor"
-                                        class="h-3.5 w-3.5 text-slate-400"
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M12 6v6l4 2m5-2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                        />
-                                    </svg>
-
-                                    {% if event.hora %}
-                                        {{ event.hora|time:"H:i" }}
-                                    {% else %}
-                                        Horário não informado
-                                    {% endif %}
-
-                                </span>
-
-
-                                {% if event.local %}
-
-                                    <span
-                                        class="text-slate-300"
-                                        aria-hidden="true"
-                                    >
-                                        ·
-                                    </span>
-
-                                    <span
-                                        class="inline-flex items-center gap-1.5"
-                                    >
-
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke-width="1.8"
-                                            stroke="currentColor"
-                                            class="h-3.5 w-3.5 text-slate-400"
-                                            aria-hidden="true"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M12 21s6-4.35 6-11a6 6 0 1 0-12 0c0 6.65 6 11 6 11Z"
-                                            />
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M12 12.75a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z"
-                                            />
-                                        </svg>
-
-                                        {{ event.local }}
-
-                                    </span>
-
-                                {% endif %}
-
-                            </div>
-
-
-                            <!-- AVISO GOOGLE REMOVIDO -->
-
-                            {% if event.removido_do_google %}
-
-                                <p
-                                    class="mt-2.5 flex items-center gap-1.5 text-xs font-medium text-amber-700"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.8"
-                                        stroke="currentColor"
-                                        class="h-3.5 w-3.5 shrink-0"
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 3L21 3m0 0h-6.75M21 3v6.75"
-                                        />
-                                    </svg>
-
-                                    Continua salvo no LexControl.
-                                    Reenvie para recriá-lo no Google Agenda.
-                                </p>
-
-                            {% endif %}
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- AÇÕES -->
-
-                    <div
-                        class="flex shrink-0 flex-wrap items-center gap-2 pl-[76px] sm:pl-20 lg:pl-0"
-                    >
-
-                        {% if event.removido_do_google %}
-
-                            <button
-                                type="button"
-                                class="google-calendar-resend-button inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 text-xs font-semibold text-amber-800 shadow-sm transition hover:border-amber-300 hover:bg-amber-100 focus:outline-none focus:ring-4 focus:ring-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
-                                data-resend-url="{% url 'agenda:google_resend' event.pk %}"
-                                data-event-title="{{ event.titulo|escape }}"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.8"
-                                    stroke="currentColor"
-                                    class="google-calendar-resend-icon h-3.5 w-3.5"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M16.023 9.348h4.992V4.356m-.97 4.022A8.25 8.25 0 1 0 21 12.75M3.955 15.622A8.25 8.25 0 0 0 12 21a8.25 8.25 0 0 0 5.197-1.84"
-                                    />
-                                </svg>
-
-                                <span
-                                    class="google-calendar-resend-label"
-                                >
-                                    Reenviar ao Google
-                                </span>
-                            </button>
-
-                        {% endif %}
-
-
-                        <a
-                            href="{% url 'agenda:update' event.pk %}"
-                            class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.8"
-                                stroke="currentColor"
-                                class="h-3.5 w-3.5"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931"
-                                />
-                            </svg>
-
-                            Editar
-                        </a>
-
-
-                        <a
-                            href="{% url 'cases:detail' event.caso.pk %}"
-                            class="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
-                        >
-                            Abrir caso
-
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.8"
-                                stroke="currentColor"
-                                class="h-3.5 w-3.5"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="m9 18 6-6-6-6"
-                                />
-                            </svg>
-
-                        </a>
-
-                    </div>
-
-                </article>
-
-
-            {% empty %}
-
-                <div
-                    class="flex min-h-52 flex-col items-center justify-center px-6 py-12 text-center"
-                >
-
-                    <div
-                        class="flex h-11 w-11 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-600"
-                        aria-hidden="true"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.8"
-                            stroke="currentColor"
-                            class="h-5 w-5"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
-                            />
-                        </svg>
-                    </div>
-
-                    <p
-                        class="mt-4 font-semibold text-brand-950"
-                    >
-                        Nenhum compromisso agendado
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700">
+                        Próximos
                     </p>
-
-                    <p
-                        class="mt-1 max-w-sm text-sm leading-6 text-slate-500"
-                    >
-                        Os próximos compromissos jurídicos aparecerão
-                        aqui quando forem cadastrados.
+                    <p class="mt-2 text-3xl font-semibold tracking-tight text-brand-950">
+                        {{ upcoming_count }}
                     </p>
-
+                    <p class="mt-1 text-sm text-slate-500">
+                        compromisso{{ upcoming_count|pluralize:"s" }} a partir de hoje
+                    </p>
                 </div>
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700 transition group-hover:bg-brand-100" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-5 w-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-brand-700">
+                Ver todos
+                <span aria-hidden="true">→</span>
+            </div>
+        </a>
 
-            {% endfor %}
+        <a
+            href="{% url 'agenda:list' %}?view=pending"
+            class="group rounded-2xl border border-amber-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-amber-300 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-amber-100"
+        >
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-700">
+                        Pendentes
+                    </p>
+                    <p class="mt-2 text-3xl font-semibold tracking-tight text-brand-950">
+                        {{ pending_count }}
+                    </p>
+                    <p class="mt-1 text-sm text-slate-500">
+                        precisa{{ pending_count|pluralize:"m" }} de confirmação
+                    </p>
+                </div>
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-700 transition group-hover:bg-amber-100" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-5 w-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9.303 3.376c.866 1.5-.217 3.374-1.948 3.374H4.645c-1.73 0-2.813-1.874-1.948-3.374L10.05 3.378c.865-1.5 3.03-1.5 3.896 0l7.357 12.748ZM12 15.75h.008v.008H12v-.008Z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-amber-700">
+                Ver pendências
+                <span aria-hidden="true">→</span>
+            </div>
+        </a>
 
-        </div>
+        <a
+            href="{% url 'agenda:list' %}?view=history"
+            class="group rounded-2xl border border-brand-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-brand-100"
+        >
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+                        Histórico
+                    </p>
+                    <p class="mt-2 text-3xl font-semibold tracking-tight text-brand-950">
+                        {{ history_count }}
+                    </p>
+                    <p class="mt-1 text-sm text-slate-500">
+                        compromisso{{ history_count|pluralize:"s" }} com desfecho
+                    </p>
+                </div>
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600 transition group-hover:bg-slate-200" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-5 w-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2m5-2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-1.5 text-xs font-semibold text-brand-700">
+                Ver histórico
+                <span aria-hidden="true">→</span>
+            </div>
+        </a>
 
     </section>
 
 
-    <!-- =========================================================
-         COMPROMISSOS ANTERIORES
-    ========================================================== -->
+    {% if agenda_view == "overview" %}
 
-    {% if past_events %}
+        <!-- =====================================================
+             PAINEL: PRÓXIMOS
+        ====================================================== -->
 
-        <section
-            class="mt-5 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
-            aria-labelledby="past-events-title"
-        >
+        <section class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm" aria-labelledby="upcoming-events-title">
 
-            <header
-                class="border-b border-brand-100 px-5 py-5 sm:px-6"
-            >
+            <header class="flex flex-col gap-4 border-b border-brand-100 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <div>
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700">Agenda</p>
+                    <h2 id="upcoming-events-title" class="mt-1 font-semibold tracking-tight text-brand-950">
+                        Próximos compromissos
+                    </h2>
+                    <p class="mt-1 text-sm text-slate-500">
+                        Os compromissos mais próximos a partir de hoje.
+                    </p>
+                </div>
 
-                <p
-                    class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
-                >
-                    Histórico
-                </p>
-
-                <h2
-                    id="past-events-title"
-                    class="mt-1 font-semibold tracking-tight text-brand-950"
-                >
-                    Compromissos anteriores
-                </h2>
-
-                <p class="mt-1 text-sm text-slate-500">
-                    Eventos e compromissos já realizados.
-                </p>
-
+                {% if upcoming_count > agenda_preview_limit %}
+                    <a href="{% url 'agenda:list' %}?view=upcoming&period=month" class="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3.5 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100">
+                        Ver todos os {{ upcoming_count }}
+                        <span aria-hidden="true">→</span>
+                    </a>
+                {% endif %}
             </header>
 
-
             <div class="divide-y divide-brand-50">
-
-                {% for event in past_events %}
-
-                    <article
-                        class="flex flex-col gap-4 px-5 py-4 transition-colors hover:bg-brand-50/30 sm:flex-row sm:items-center sm:justify-between sm:px-6"
-                    >
-
-                        <div class="min-w-0">
-
-                            <div
-                                class="flex flex-wrap items-center gap-2"
-                            >
-
-                                <h3
-                                    class="text-sm font-semibold text-brand-950"
-                                >
-                                    {{ event.titulo }}
-                                </h3>
-
-                                <span
-                                    class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500 ring-1 ring-inset ring-slate-200"
-                                >
-                                    {{ event.get_tipo_display }}
-                                </span>
-
-
-                                {% if event.removido_do_google %}
-
-                                    <span
-                                        class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700 ring-1 ring-inset ring-amber-200"
-                                    >
-                                        <span
-                                            class="h-1.5 w-1.5 rounded-full bg-amber-500"
-                                            aria-hidden="true"
-                                        ></span>
-
-                                        Removido do Google
-                                    </span>
-
-                                {% endif %}
-
+                {% for event in upcoming_events %}
+                    <article class="flex flex-col gap-5 px-5 py-5 transition-colors hover:bg-brand-50/30 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+                        <div class="flex min-w-0 items-start gap-4 sm:gap-5">
+                            <div class="flex h-[60px] w-[60px] shrink-0 flex-col items-center justify-center rounded-xl bg-brand-950 text-white shadow-sm" aria-label="{{ event.data|date:'d/m/Y' }}">
+                                <span class="text-lg font-semibold leading-none">{{ event.data|date:"d" }}</span>
+                                <span class="mt-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-brand-200">{{ event.data|date:"M" }}</span>
                             </div>
 
+                            <div class="min-w-0">
+                                <div class="flex flex-wrap items-center gap-2.5">
+                                    <h3 class="font-semibold text-brand-950">{{ event.titulo }}</h3>
 
-                            <p
-                                class="mt-1.5 text-xs leading-5 text-slate-400"
-                            >
-                                {{ event.data|date:"d/m/Y" }}
+                                    <span class="inline-flex items-center gap-1.5 rounded-full bg-gold-50 px-2.5 py-1 text-xs font-semibold text-gold-800 ring-1 ring-inset ring-gold-200">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-gold-500" aria-hidden="true"></span>
+                                        {{ event.get_tipo_display }}
+                                    </span>
 
-                                {% if event.hora %}
-                                    às {{ event.hora|time:"H:i" }}
+                                    {% if event.removido_do_google %}
+                                        <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200" title="Este compromisso foi removido do Google Agenda, mas continua salvo no LexControl.">
+                                            Removido do Google
+                                        </span>
+                                    {% elif event.erro_sincronizacao_google %}
+                                        <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 ring-1 ring-inset ring-red-200">
+                                            Erro no Google
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                <p class="mt-2 text-sm leading-5 text-slate-500">
+                                    <span class="font-medium text-slate-600">{{ event.caso.cliente.nome_completo }}</span>
+                                    <span class="mx-1 text-slate-300" aria-hidden="true">·</span>
+                                    {{ event.caso.titulo }}
+                                </p>
+
+                                <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-500">
+                                    <span>
+                                        {% if event.hora %}{{ event.hora|time:"H:i" }}{% else %}Horário não informado{% endif %}
+                                    </span>
+                                    {% if event.local %}
+                                        <span class="text-slate-300" aria-hidden="true">·</span>
+                                        <span>{{ event.local }}</span>
+                                    {% endif %}
+                                </div>
+
+                                {% if event.removido_do_google %}
+                                    <p class="mt-2.5 text-xs font-medium text-amber-700">
+                                        Continua salvo no LexControl. Reenvie para recriá-lo no Google Agenda.
+                                    </p>
                                 {% endif %}
-
-                                <span
-                                    class="mx-1 text-slate-300"
-                                    aria-hidden="true"
-                                >
-                                    ·
-                                </span>
-
-                                {{ event.caso.cliente.nome_completo }}
-                            </p>
-
+                            </div>
                         </div>
 
-
-                        <div
-                            class="flex shrink-0 flex-wrap items-center gap-2"
-                        >
-
+                        <div class="flex shrink-0 flex-wrap items-center gap-2 pl-[76px] sm:pl-20 lg:pl-0">
                             {% if event.removido_do_google %}
-
-                                <button
-                                    type="button"
-                                    class="google-calendar-resend-button inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 text-xs font-semibold text-amber-800 shadow-sm transition hover:border-amber-300 hover:bg-amber-100 focus:outline-none focus:ring-4 focus:ring-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
-                                    data-resend-url="{% url 'agenda:google_resend' event.pk %}"
-                                    data-event-title="{{ event.titulo|escape }}"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.8"
-                                        stroke="currentColor"
-                                        class="google-calendar-resend-icon h-3.5 w-3.5"
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M16.023 9.348h4.992V4.356m-.97 4.022A8.25 8.25 0 1 0 21 12.75M3.955 15.622A8.25 8.25 0 0 0 12 21a8.25 8.25 0 0 0 5.197-1.84"
-                                        />
-                                    </svg>
-
-                                    <span
-                                        class="google-calendar-resend-label"
-                                    >
-                                        Reenviar ao Google
-                                    </span>
+                                <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 text-xs font-semibold text-amber-800 shadow-sm transition hover:border-amber-300 hover:bg-amber-100 focus:outline-none focus:ring-4 focus:ring-amber-100 disabled:cursor-not-allowed disabled:opacity-60" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
+                                    <span class="google-calendar-resend-label">Reenviar ao Google</span>
                                 </button>
-
                             {% endif %}
 
+                            <button type="button" class="agenda-outcome-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg bg-brand-950 px-3.5 text-xs font-semibold text-white shadow-sm transition hover:bg-brand-900 focus:outline-none focus:ring-4 focus:ring-brand-100" data-outcome="complete" data-action-url="{% url 'agenda:complete' event.pk %}" data-event-title="{{ event.titulo|escape }}" data-event-type="{{ event.get_tipo_display|escape }}" data-event-date="{{ event.data|date:'d/m/Y' }}" data-event-time="{% if event.hora %}{{ event.hora|time:'H:i' }}{% endif %}">
+                                Concluir
+                            </button>
 
-                            <a
-                                href="{% url 'cases:detail' event.caso.pk %}"
-                                class="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
-                            >
-                                Abrir caso
+                            <button type="button" class="agenda-outcome-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg border border-red-200 bg-white px-3.5 text-xs font-semibold text-red-700 shadow-sm transition hover:bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-100" data-outcome="not_completed" data-action-url="{% url 'agenda:not_completed' event.pk %}" data-event-title="{{ event.titulo|escape }}" data-event-type="{{ event.get_tipo_display|escape }}" data-event-date="{{ event.data|date:'d/m/Y' }}" data-event-time="{% if event.hora %}{{ event.hora|time:'H:i' }}{% endif %}">
+                                Não realizado
+                            </button>
 
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.8"
-                                    stroke="currentColor"
-                                    class="h-3.5 w-3.5"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="m9 18 6-6-6-6"
-                                    />
-                                </svg>
-
+                            <a href="{% url 'agenda:update' event.pk %}" class="agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100">
+                                Editar
                             </a>
 
+                            <a href="{% url 'cases:detail' event.caso.pk %}" class="inline-flex min-h-9 items-center justify-center rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100">
+                                Abrir caso
+                            </a>
                         </div>
-
                     </article>
-
+                {% empty %}
+                    <div class="flex min-h-44 flex-col items-center justify-center px-6 py-10 text-center">
+                        <div class="flex h-11 w-11 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-600" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-5 w-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z" />
+                            </svg>
+                        </div>
+                        <p class="mt-4 font-semibold text-brand-950">Nenhum compromisso agendado</p>
+                        <p class="mt-1 max-w-sm text-sm leading-6 text-slate-500">Os próximos compromissos jurídicos aparecerão aqui quando forem cadastrados.</p>
+                    </div>
                 {% endfor %}
-
             </div>
+        </section>
+
+
+        <!-- =====================================================
+             PAINEL: PENDENTES
+        ====================================================== -->
+
+        {% if pending_count %}
+            <section class="mt-5 overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-sm" aria-labelledby="pending-events-title">
+                <header class="flex flex-col gap-4 border-b border-amber-100 bg-amber-50/40 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                    <div class="flex items-start gap-3">
+                        <div class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-4.5 w-4.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9.303 3.376c.866 1.5-.217 3.374-1.948 3.374H4.645c-1.73 0-2.813-1.874-1.948-3.374L10.05 3.378c.865-1.5 3.03-1.5 3.896 0l7.357 12.748ZM12 15.75h.008v.008H12v-.008Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-700">Atenção</p>
+                            <h2 id="pending-events-title" class="mt-1 font-semibold tracking-tight text-brand-950">Pendentes de confirmação</h2>
+                            <p class="mt-1 text-sm leading-5 text-slate-500">Compromissos cuja data já passou e ainda precisam ter sua realização informada.</p>
+                        </div>
+                    </div>
+
+                    {% if pending_count > agenda_preview_limit %}
+                        <a href="{% url 'agenda:list' %}?view=pending" class="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-white px-3.5 text-xs font-semibold text-amber-800 shadow-sm transition hover:bg-amber-50 focus:outline-none focus:ring-4 focus:ring-amber-100">
+                            Ver todos os {{ pending_count }}
+                            <span aria-hidden="true">→</span>
+                        </a>
+                    {% endif %}
+                </header>
+
+                <div class="divide-y divide-amber-100">
+                    {% for event in pending_confirmation_events %}
+                        <article class="flex flex-col gap-4 px-5 py-5 transition-colors hover:bg-amber-50/20 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+                            <div class="flex min-w-0 items-start gap-4">
+                                <div class="flex h-[56px] w-[56px] shrink-0 flex-col items-center justify-center rounded-xl bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-200">
+                                    <span class="text-lg font-semibold leading-none">{{ event.data|date:"d" }}</span>
+                                    <span class="mt-1 text-[10px] font-semibold uppercase tracking-[0.08em]">{{ event.data|date:"M" }}</span>
+                                </div>
+
+                                <div class="min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <h3 class="font-semibold text-brand-950">{{ event.titulo }}</h3>
+                                        <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 ring-1 ring-inset ring-slate-200">{{ event.get_tipo_display }}</span>
+                                        <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200">
+                                            <span class="h-1.5 w-1.5 rounded-full bg-amber-500" aria-hidden="true"></span>
+                                            {{ event.get_status_display }}
+                                        </span>
+                                        {% if event.removido_do_google %}
+                                            <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200">Removido do Google</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <p class="mt-2 text-sm leading-5 text-slate-500">
+                                        <span class="font-medium text-slate-600">{{ event.caso.cliente.nome_completo }}</span>
+                                        <span class="mx-1 text-slate-300" aria-hidden="true">·</span>
+                                        {{ event.caso.titulo }}
+                                    </p>
+
+                                    <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-500">
+                                        <span>{{ event.data|date:"d/m/Y" }}{% if event.hora %} às {{ event.hora|time:"H:i" }}{% endif %}</span>
+                                        {% if event.local %}
+                                            <span class="text-slate-300" aria-hidden="true">·</span>
+                                            <span>{{ event.local }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <p class="mt-2.5 text-xs font-medium text-amber-700">A data deste compromisso já passou. Informe o que aconteceu.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex shrink-0 flex-wrap items-center gap-2 pl-[72px] lg:pl-0">
+                                <button type="button" class="agenda-outcome-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg bg-brand-950 px-3.5 text-xs font-semibold text-white shadow-sm transition hover:bg-brand-900 focus:outline-none focus:ring-4 focus:ring-brand-100" data-outcome="complete" data-action-url="{% url 'agenda:complete' event.pk %}" data-event-title="{{ event.titulo|escape }}" data-event-type="{{ event.get_tipo_display|escape }}" data-event-date="{{ event.data|date:'d/m/Y' }}" data-event-time="{% if event.hora %}{{ event.hora|time:'H:i' }}{% endif %}">
+                                    Concluir
+                                </button>
+
+                                <button type="button" class="agenda-outcome-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg border border-red-200 bg-white px-3.5 text-xs font-semibold text-red-700 shadow-sm transition hover:bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-100" data-outcome="not_completed" data-action-url="{% url 'agenda:not_completed' event.pk %}" data-event-title="{{ event.titulo|escape }}" data-event-type="{{ event.get_tipo_display|escape }}" data-event-date="{{ event.data|date:'d/m/Y' }}" data-event-time="{% if event.hora %}{{ event.hora|time:'H:i' }}{% endif %}">
+                                    Não realizado
+                                </button>
+
+                                <a href="{% url 'agenda:update' event.pk %}" class="agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100">Editar</a>
+                                <a href="{% url 'cases:detail' event.caso.pk %}" class="inline-flex min-h-9 items-center justify-center rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100">Abrir caso</a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+
+        <!-- =====================================================
+             PAINEL: HISTÓRICO
+        ====================================================== -->
+
+        {% if history_count %}
+            <section class="mt-5 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm" aria-labelledby="historical-events-title">
+                <header class="flex flex-col gap-4 border-b border-brand-100 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700">Histórico</p>
+                        <h2 id="historical-events-title" class="mt-1 font-semibold tracking-tight text-brand-950">Histórico recente</h2>
+                        <p class="mt-1 text-sm text-slate-500">Últimos compromissos com desfecho registrado no LexControl.</p>
+                    </div>
+
+                    {% if history_count > agenda_preview_limit %}
+                        <a href="{% url 'agenda:list' %}?view=history" class="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3.5 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100">
+                            Ver histórico completo
+                            <span aria-hidden="true">→</span>
+                        </a>
+                    {% endif %}
+                </header>
+
+                <div class="divide-y divide-brand-50">
+                    {% for event in historical_events %}
+                        <article class="flex flex-col gap-4 px-5 py-4 transition-colors hover:bg-brand-50/30 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                            <div class="min-w-0">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <h3 class="text-sm font-semibold text-brand-950">{{ event.titulo }}</h3>
+                                    <span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500 ring-1 ring-inset ring-slate-200">{{ event.get_tipo_display }}</span>
+
+                                    {% if event.concluido %}
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>{{ event.get_status_display }}</span>
+                                    {% elif event.nao_realizado %}
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-700 ring-1 ring-inset ring-red-200"><span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>{{ event.get_status_display }}</span>
+                                    {% elif event.cancelado %}
+                                        <span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 ring-1 ring-inset ring-slate-200">{{ event.get_status_display }}</span>
+                                    {% elif event.reagendado %}
+                                        <span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700 ring-1 ring-inset ring-blue-200">{{ event.get_status_display }}</span>
+                                    {% endif %}
+
+                                    {% if event.removido_do_google %}
+                                        <span class="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700 ring-1 ring-inset ring-amber-200">Removido do Google</span>
+                                    {% endif %}
+                                </div>
+
+                                <p class="mt-1.5 text-xs leading-5 text-slate-400">
+                                    {{ event.data|date:"d/m/Y" }}{% if event.hora %} às {{ event.hora|time:"H:i" }}{% endif %}
+                                    <span class="mx-1 text-slate-300" aria-hidden="true">·</span>
+                                    {{ event.caso.cliente.nome_completo }}
+                                </p>
+
+                                {% if event.resultado %}
+                                    <p class="mt-2 max-w-3xl text-xs leading-5 text-slate-600">
+                                        <span class="font-semibold text-slate-700">{% if event.nao_realizado %}Motivo:{% else %}Resultado:{% endif %}</span>
+                                        {{ event.resultado|linebreaksbr }}
+                                    </p>
+                                {% endif %}
+
+                                {% if event.concluido and event.concluido_em %}
+                                    <p class="mt-1 text-[11px] text-slate-400">
+                                        Concluído em {{ event.concluido_em|date:"d/m/Y \à\s H:i" }}
+                                        {% if event.concluido_por %}por {{ event.concluido_por.get_full_name|default:event.concluido_por.username }}{% endif %}
+                                    </p>
+                                {% elif event.nao_realizado and event.concluido_em %}
+                                    <p class="mt-1 text-[11px] text-slate-400">
+                                        Registrado em {{ event.concluido_em|date:"d/m/Y \à\s H:i" }}
+                                        {% if event.concluido_por %}por {{ event.concluido_por.get_full_name|default:event.concluido_por.username }}{% endif %}
+                                    </p>
+                                {% endif %}
+                            </div>
+
+                            <div class="flex shrink-0 flex-wrap items-center gap-2">
+                                {% if event.removido_do_google %}
+                                    <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 text-xs font-semibold text-amber-800 shadow-sm transition hover:border-amber-300 hover:bg-amber-100 focus:outline-none focus:ring-4 focus:ring-amber-100 disabled:cursor-not-allowed disabled:opacity-60" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
+                                        <span class="google-calendar-resend-label">Reenviar ao Google</span>
+                                    </button>
+                                {% endif %}
+                                <a href="{% url 'cases:detail' event.caso.pk %}" class="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100">
+                                    Abrir caso
+                                    <span aria-hidden="true">→</span>
+                                </a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+    {% else %}
+
+        <!-- =====================================================
+             VISUALIZAÇÃO COMPLETA
+        ====================================================== -->
+
+        <section class="overflow-hidden rounded-2xl border {% if agenda_view == 'pending' %}border-amber-200{% else %}border-brand-100{% endif %} bg-white shadow-sm">
+
+            <header class="flex flex-col gap-4 border-b {% if agenda_view == 'pending' %}border-amber-100 bg-amber-50/40{% else %}border-brand-100{% endif %} px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <div>
+                    <a href="{% url 'agenda:list' %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-700 transition hover:text-brand-950">
+                        <span aria-hidden="true">←</span>
+                        Voltar ao painel da Agenda
+                    </a>
+
+                    {% if agenda_view == "upcoming" %}
+                        <p class="mt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700">Agenda</p>
+                        {% if agenda_period == "day" %}
+                            <h2 class="mt-1 text-lg font-semibold tracking-tight text-brand-950">Compromissos do dia</h2>
+                            <p class="mt-1 text-sm text-slate-500">{{ today|date:"d/m/Y" }} · {{ upcoming_period_count }} compromisso{{ upcoming_period_count|pluralize:"s" }}</p>
+                        {% elif agenda_period == "week" %}
+                            <h2 class="mt-1 text-lg font-semibold tracking-tight text-brand-950">Compromissos da semana</h2>
+                            <p class="mt-1 text-sm text-slate-500">{{ week_start|date:"d/m" }} a {{ week_end|date:"d/m/Y" }} · {{ upcoming_period_count }} compromisso{{ upcoming_period_count|pluralize:"s" }}</p>
+                        {% else %}
+                            <h2 class="mt-1 text-lg font-semibold tracking-tight text-brand-950">Compromissos do mês</h2>
+                            <p class="mt-1 text-sm text-slate-500">{{ month_start|date:"F \d\e Y"|capfirst }} · {{ upcoming_period_count }} compromisso{{ upcoming_period_count|pluralize:"s" }}</p>
+                        {% endif %}
+                    {% elif agenda_view == "pending" %}
+                        <p class="mt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-amber-700">Atenção</p>
+                        <h2 class="mt-1 text-lg font-semibold tracking-tight text-brand-950">Pendentes de confirmação</h2>
+                        <p class="mt-1 text-sm text-slate-500">{{ pending_count }} compromisso{{ pending_count|pluralize:"s" }} ainda precisa{{ pending_count|pluralize:"m" }} de desfecho.</p>
+                    {% else %}
+                        <p class="mt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700">Histórico</p>
+                        <h2 class="mt-1 text-lg font-semibold tracking-tight text-brand-950">Histórico de compromissos</h2>
+                        <p class="mt-1 text-sm text-slate-500">{{ history_count }} compromisso{{ history_count|pluralize:"s" }} com desfecho registrado.</p>
+                    {% endif %}
+                </div>
+
+                {% if agenda_view == "upcoming" %}
+                    <div class="flex flex-wrap items-center gap-2" aria-label="Período dos próximos compromissos">
+                        <a href="{% url 'agenda:list' %}?view=upcoming&period=day" class="inline-flex min-h-9 items-center justify-center rounded-lg px-3.5 text-xs font-semibold transition focus:outline-none focus:ring-4 focus:ring-brand-100 {% if agenda_period == 'day' %}bg-brand-950 text-white shadow-sm{% else %}border border-brand-100 bg-white text-brand-700 shadow-sm hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950{% endif %}">
+                            Dia
+                            <span class="ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] {% if agenda_period == 'day' %}bg-white/15 text-white{% else %}bg-brand-50 text-brand-600{% endif %}">{{ upcoming_day_count }}</span>
+                        </a>
+
+                        <a href="{% url 'agenda:list' %}?view=upcoming&period=week" class="inline-flex min-h-9 items-center justify-center rounded-lg px-3.5 text-xs font-semibold transition focus:outline-none focus:ring-4 focus:ring-brand-100 {% if agenda_period == 'week' %}bg-brand-950 text-white shadow-sm{% else %}border border-brand-100 bg-white text-brand-700 shadow-sm hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950{% endif %}">
+                            Semana
+                            <span class="ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] {% if agenda_period == 'week' %}bg-white/15 text-white{% else %}bg-brand-50 text-brand-600{% endif %}">{{ upcoming_week_count }}</span>
+                        </a>
+
+                        <a href="{% url 'agenda:list' %}?view=upcoming&period=month" class="inline-flex min-h-9 items-center justify-center rounded-lg px-3.5 text-xs font-semibold transition focus:outline-none focus:ring-4 focus:ring-brand-100 {% if agenda_period == 'month' %}bg-brand-950 text-white shadow-sm{% else %}border border-brand-100 bg-white text-brand-700 shadow-sm hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950{% endif %}">
+                            Mês
+                            <span class="ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] {% if agenda_period == 'month' %}bg-white/15 text-white{% else %}bg-brand-50 text-brand-600{% endif %}">{{ upcoming_month_count }}</span>
+                        </a>
+                    </div>
+                {% endif %}
+            </header>
+
+            <div class="divide-y {% if agenda_view == 'pending' %}divide-amber-100{% else %}divide-brand-50{% endif %}">
+                {% for event in agenda_events %}
+
+                    {% if agenda_view == "history" %}
+                        <article class="flex flex-col gap-4 px-5 py-4 transition-colors hover:bg-brand-50/30 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                            <div class="min-w-0">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <h3 class="text-sm font-semibold text-brand-950">{{ event.titulo }}</h3>
+                                    <span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500 ring-1 ring-inset ring-slate-200">{{ event.get_tipo_display }}</span>
+
+                                    {% if event.concluido %}
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>{{ event.get_status_display }}</span>
+                                    {% elif event.nao_realizado %}
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-700 ring-1 ring-inset ring-red-200"><span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>{{ event.get_status_display }}</span>
+                                    {% elif event.cancelado %}
+                                        <span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 ring-1 ring-inset ring-slate-200">{{ event.get_status_display }}</span>
+                                    {% elif event.reagendado %}
+                                        <span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700 ring-1 ring-inset ring-blue-200">{{ event.get_status_display }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <p class="mt-1.5 text-xs leading-5 text-slate-400">
+                                    {{ event.data|date:"d/m/Y" }}{% if event.hora %} às {{ event.hora|time:"H:i" }}{% endif %}
+                                    <span class="mx-1 text-slate-300" aria-hidden="true">·</span>
+                                    {{ event.caso.cliente.nome_completo }}
+                                </p>
+
+                                {% if event.resultado %}
+                                    <p class="mt-2 max-w-3xl text-xs leading-5 text-slate-600">
+                                        <span class="font-semibold text-slate-700">{% if event.nao_realizado %}Motivo:{% else %}Resultado:{% endif %}</span>
+                                        {{ event.resultado|linebreaksbr }}
+                                    </p>
+                                {% endif %}
+
+                                {% if event.concluido and event.concluido_em %}
+                                    <p class="mt-1 text-[11px] text-slate-400">Concluído em {{ event.concluido_em|date:"d/m/Y \à\s H:i" }}{% if event.concluido_por %} por {{ event.concluido_por.get_full_name|default:event.concluido_por.username }}{% endif %}</p>
+                                {% elif event.nao_realizado and event.concluido_em %}
+                                    <p class="mt-1 text-[11px] text-slate-400">Registrado em {{ event.concluido_em|date:"d/m/Y \à\s H:i" }}{% if event.concluido_por %} por {{ event.concluido_por.get_full_name|default:event.concluido_por.username }}{% endif %}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="flex shrink-0 flex-wrap items-center gap-2">
+                                {% if event.removido_do_google %}
+                                    <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg border border-amber-200 bg-amber-50 px-3 text-xs font-semibold text-amber-800 shadow-sm transition hover:bg-amber-100" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
+                                        <span class="google-calendar-resend-label">Reenviar ao Google</span>
+                                    </button>
+                                {% endif %}
+                                <a href="{% url 'cases:detail' event.caso.pk %}" class="inline-flex min-h-9 items-center justify-center rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:bg-brand-50">Abrir caso</a>
+                            </div>
+                        </article>
+
+                    {% else %}
+                        <article class="flex flex-col gap-4 px-5 py-5 transition-colors {% if agenda_view == 'pending' %}hover:bg-amber-50/20{% else %}hover:bg-brand-50/30{% endif %} sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+                            <div class="flex min-w-0 items-start gap-4">
+                                <div class="flex h-[56px] w-[56px] shrink-0 flex-col items-center justify-center rounded-xl {% if agenda_view == 'pending' %}bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-200{% else %}bg-brand-950 text-white{% endif %}">
+                                    <span class="text-lg font-semibold leading-none">{{ event.data|date:"d" }}</span>
+                                    <span class="mt-1 text-[10px] font-semibold uppercase tracking-[0.08em] {% if agenda_view != 'pending' %}text-brand-200{% endif %}">{{ event.data|date:"M" }}</span>
+                                </div>
+
+                                <div class="min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <h3 class="font-semibold text-brand-950">{{ event.titulo }}</h3>
+                                        <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 ring-1 ring-inset ring-slate-200">{{ event.get_tipo_display }}</span>
+                                        {% if agenda_view == "pending" %}
+                                            <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200"><span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>{{ event.get_status_display }}</span>
+                                        {% endif %}
+                                        {% if event.removido_do_google %}
+                                            <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200">Removido do Google</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <p class="mt-2 text-sm leading-5 text-slate-500">
+                                        <span class="font-medium text-slate-600">{{ event.caso.cliente.nome_completo }}</span>
+                                        <span class="mx-1 text-slate-300">·</span>
+                                        {{ event.caso.titulo }}
+                                    </p>
+
+                                    <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-500">
+                                        <span>{{ event.data|date:"d/m/Y" }}{% if event.hora %} às {{ event.hora|time:"H:i" }}{% endif %}</span>
+                                        {% if event.local %}<span class="text-slate-300">·</span><span>{{ event.local }}</span>{% endif %}
+                                    </div>
+
+                                    {% if agenda_view == "pending" %}
+                                        <p class="mt-2.5 text-xs font-medium text-amber-700">A data deste compromisso já passou. Informe o que aconteceu.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="flex shrink-0 flex-wrap items-center gap-2 pl-[72px] lg:pl-0">
+                                {% if event.removido_do_google %}
+                                    <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg border border-amber-200 bg-amber-50 px-3 text-xs font-semibold text-amber-800 shadow-sm transition hover:bg-amber-100" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
+                                        <span class="google-calendar-resend-label">Reenviar ao Google</span>
+                                    </button>
+                                {% endif %}
+
+                                <button type="button" class="agenda-outcome-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg bg-brand-950 px-3.5 text-xs font-semibold text-white shadow-sm transition hover:bg-brand-900 focus:outline-none focus:ring-4 focus:ring-brand-100" data-outcome="complete" data-action-url="{% url 'agenda:complete' event.pk %}" data-event-title="{{ event.titulo|escape }}" data-event-type="{{ event.get_tipo_display|escape }}" data-event-date="{{ event.data|date:'d/m/Y' }}" data-event-time="{% if event.hora %}{{ event.hora|time:'H:i' }}{% endif %}">Concluir</button>
+
+                                <button type="button" class="agenda-outcome-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg border border-red-200 bg-white px-3.5 text-xs font-semibold text-red-700 shadow-sm transition hover:bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-100" data-outcome="not_completed" data-action-url="{% url 'agenda:not_completed' event.pk %}" data-event-title="{{ event.titulo|escape }}" data-event-type="{{ event.get_tipo_display|escape }}" data-event-date="{{ event.data|date:'d/m/Y' }}" data-event-time="{% if event.hora %}{{ event.hora|time:'H:i' }}{% endif %}">Não realizado</button>
+
+                                <a href="{% url 'agenda:update' event.pk %}" class="agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:bg-brand-50">Editar</a>
+                                <a href="{% url 'cases:detail' event.caso.pk %}" class="inline-flex min-h-9 items-center justify-center rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:bg-brand-50">Abrir caso</a>
+                            </div>
+                        </article>
+                    {% endif %}
+
+                {% empty %}
+                    <div class="flex min-h-52 flex-col items-center justify-center px-6 py-12 text-center">
+                        <p class="font-semibold text-brand-950">
+                            {% if agenda_view == "upcoming" %}Nenhum próximo compromisso{% elif agenda_view == "pending" %}Nenhuma pendência de confirmação{% else %}Nenhum item no histórico{% endif %}
+                        </p>
+                        <p class="mt-1 text-sm text-slate-500">Não há registros para exibir nesta visualização.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if page_obj and paginator.num_pages > 1 %}
+                <footer class="flex flex-col gap-4 border-t border-brand-100 bg-app-soft px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                    <p class="text-xs text-slate-500">
+                        Página <span class="font-semibold text-slate-700">{{ page_obj.number }}</span>
+                        de <span class="font-semibold text-slate-700">{{ paginator.num_pages }}</span>
+                        · {{ paginator.count }} registro{{ paginator.count|pluralize:"s" }}
+                    </p>
+
+                    <nav class="flex flex-wrap items-center gap-1.5" aria-label="Paginação da agenda">
+                        {% if page_obj.has_previous %}
+                            <a href="?view={{ agenda_view }}{% if agenda_view == 'upcoming' %}&period={{ agenda_period }}{% endif %}&page={{ page_obj.previous_page_number }}" class="inline-flex min-h-9 items-center justify-center rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:bg-brand-50">Anterior</a>
+                        {% else %}
+                            <span class="inline-flex min-h-9 cursor-not-allowed items-center justify-center rounded-lg border border-slate-200 bg-slate-50 px-3 text-xs font-semibold text-slate-400">Anterior</span>
+                        {% endif %}
+
+                        {% for page_number in paginator.page_range %}
+                            {% if page_number >= page_obj.number|add:"-2" and page_number <= page_obj.number|add:"2" %}
+                                {% if page_number == page_obj.number %}
+                                    <span class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg bg-brand-950 px-2 text-xs font-semibold text-white">{{ page_number }}</span>
+                                {% else %}
+                                    <a href="?view={{ agenda_view }}{% if agenda_view == 'upcoming' %}&period={{ agenda_period }}{% endif %}&page={{ page_number }}" class="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-brand-100 bg-white px-2 text-xs font-semibold text-brand-700 shadow-sm transition hover:bg-brand-50">{{ page_number }}</a>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <a href="?view={{ agenda_view }}{% if agenda_view == 'upcoming' %}&period={{ agenda_period }}{% endif %}&page={{ page_obj.next_page_number }}" class="inline-flex min-h-9 items-center justify-center rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:bg-brand-50">Próxima</a>
+                        {% else %}
+                            <span class="inline-flex min-h-9 cursor-not-allowed items-center justify-center rounded-lg border border-slate-200 bg-slate-50 px-3 text-xs font-semibold text-slate-400">Próxima</span>
+                        {% endif %}
+                    </nav>
+                </footer>
+            {% endif %}
 
         </section>
 
     {% endif %}
 
 </div>
+
+
+{% include "agenda/_agenda_complete_modal.html" %}
 
 
 <!-- =========================================================
@@ -758,8 +799,25 @@
                 "google-calendar-sync-message"
             );
 
+            const lastSync = document.getElementById(
+                "google-calendar-last-sync"
+            );
+
             const resendButtons = document.querySelectorAll(
                 ".google-calendar-resend-button"
+            );
+
+            const writeActions = document.querySelectorAll(
+                ".agenda-sync-write-action"
+            );
+
+            let syncInProgress = false;
+
+            // Evita o ciclo:
+            // sincroniza -> encontra alteração -> recarrega ->
+            // sincroniza novamente -> recarrega...
+            const AUTO_SYNC_RELOAD_KEY = (
+                "lexcontrol-agenda-auto-sync-reload"
             );
 
 
@@ -790,7 +848,8 @@
 
             const showMessage = (
                 text,
-                type = "success"
+                type = "success",
+                shouldScroll = false
             ) => {
                 if (!message) {
                     return;
@@ -802,7 +861,14 @@
                     "mt-4 rounded-xl border px-4 py-3 text-sm"
                 );
 
-                if (type === "error") {
+                if (type === "syncing") {
+                    message.classList.add(
+                        "border-brand-200",
+                        "bg-brand-50",
+                        "text-brand-800"
+                    );
+
+                } else if (type === "error") {
                     message.classList.add(
                         "border-red-200",
                         "bg-red-50",
@@ -824,120 +890,289 @@
                     );
                 }
 
-                message.scrollIntoView({
-                    behavior: "smooth",
-                    block: "nearest",
+                if (shouldScroll) {
+                    message.scrollIntoView({
+                        behavior: "smooth",
+                        block: "nearest",
+                    });
+                }
+            };
+
+
+            // =====================================================
+            // BLOQUEIO TEMPORÁRIO DE AÇÕES DE ESCRITA
+            // =====================================================
+
+            const setWriteActionsLocked = (locked) => {
+                writeActions.forEach(action => {
+
+                    if (action === syncButton) {
+                        return;
+                    }
+
+                    if (action.tagName === "BUTTON") {
+                        action.disabled = locked;
+                    }
+
+                    if (locked) {
+                        action.setAttribute(
+                            "aria-disabled",
+                            "true"
+                        );
+
+                        action.classList.add(
+                            "pointer-events-none",
+                            "opacity-50",
+                            "cursor-not-allowed"
+                        );
+
+                    } else {
+                        action.removeAttribute(
+                            "aria-disabled"
+                        );
+
+                        action.classList.remove(
+                            "pointer-events-none",
+                            "opacity-50",
+                            "cursor-not-allowed"
+                        );
+                    }
                 });
             };
 
 
             // =====================================================
-            // SINCRONIZAR GOOGLE -> LEXCONTROL
+            // ESTADO VISUAL DA SINCRONIZAÇÃO
+            // =====================================================
+
+            const setSyncState = (syncing) => {
+                syncInProgress = syncing;
+
+                if (syncButton) {
+                    syncButton.disabled = syncing;
+                }
+
+                setWriteActionsLocked(syncing);
+
+                if (syncLabel) {
+                    syncLabel.textContent = syncing
+                        ? "Sincronizando..."
+                        : "Sincronizar Google Agenda";
+                }
+
+                if (syncIcon) {
+                    syncIcon.classList.toggle(
+                        "animate-spin",
+                        syncing
+                    );
+                }
+            };
+
+
+            // =====================================================
+            // ÚLTIMA SINCRONIZAÇÃO
+            // =====================================================
+
+            const updateLastSync = (isoDateTime) => {
+                if (!lastSync || !isoDateTime) {
+                    return;
+                }
+
+                const date = new Date(isoDateTime);
+
+                if (Number.isNaN(date.getTime())) {
+                    return;
+                }
+
+                const formattedDate = new Intl.DateTimeFormat(
+                    "pt-BR",
+                    {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                    }
+                ).format(date);
+
+                const formattedTime = new Intl.DateTimeFormat(
+                    "pt-BR",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                    }
+                ).format(date);
+
+                lastSync.innerHTML = (
+                    "Última sincronização: "
+                    + '<span class="text-slate-500">'
+                    + formattedDate
+                    + " às "
+                    + formattedTime
+                    + "</span>"
+                );
+            };
+
+
+            // =====================================================
+            // GOOGLE -> LEXCONTROL
+            // =====================================================
+
+            const synchronizeGoogleCalendar = async ({
+                automatic = false,
+            } = {}) => {
+
+                if (!syncButton || syncInProgress) {
+                    return;
+                }
+
+                setSyncState(true);
+
+                showMessage(
+                    automatic
+                        ? "Sincronizando com o Google Agenda. Você pode consultar a agenda enquanto verificamos as alterações."
+                        : "Sincronizando com o Google Agenda...",
+                    "syncing",
+                    !automatic
+                );
+
+                try {
+                    const response = await fetch(
+                        syncButton.dataset.syncUrl,
+                        {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": (
+                                    getCsrfToken()
+                                ),
+                                "X-Requested-With": (
+                                    "XMLHttpRequest"
+                                ),
+                            },
+                            credentials: "same-origin",
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (
+                        !response.ok
+                        || !data.success
+                    ) {
+                        throw new Error(
+                            data.message
+                            || "Não foi possível sincronizar o Google Agenda."
+                        );
+                    }
+
+                    const hasWarnings = (
+                        Number(data.errors || 0) > 0
+                        || Number(data.removed || 0) > 0
+                    );
+
+                    const shouldReload = (
+                        Number(data.updated || 0) > 0
+                        || Number(data.removed || 0) > 0
+                    );
+
+                    showMessage(
+                        data.message,
+                        hasWarnings
+                            ? "warning"
+                            : "success",
+                        !automatic
+                    );
+
+                    if (
+                        data.sync_completed_successfully
+                        && data.last_sync_at
+                    ) {
+                        updateLastSync(
+                            data.last_sync_at
+                        );
+                    }
+
+                    if (shouldReload) {
+
+                        if (automatic) {
+                            sessionStorage.setItem(
+                                AUTO_SYNC_RELOAD_KEY,
+                                "1"
+                            );
+                        }
+
+                        window.setTimeout(
+                            () => {
+                                window.location.reload();
+                            },
+                            automatic ? 650 : 1000
+                        );
+
+                        return;
+                    }
+
+                } catch (error) {
+                    showMessage(
+                        error.message
+                        || "Não foi possível sincronizar o Google Agenda.",
+                        "error",
+                        !automatic
+                    );
+
+                } finally {
+                    setSyncState(false);
+                }
+            };
+
+
+            // =====================================================
+            // SINCRONIZAÇÃO MANUAL
             // =====================================================
 
             if (syncButton) {
-
                 syncButton.addEventListener(
                     "click",
-                    async () => {
-
-                        if (syncButton.disabled) {
-                            return;
-                        }
-
-                        syncButton.disabled = true;
-
-                        if (syncLabel) {
-                            syncLabel.textContent = (
-                                "Sincronizando..."
-                            );
-                        }
-
-                        if (syncIcon) {
-                            syncIcon.classList.add(
-                                "animate-spin"
-                            );
-                        }
-
-                        try {
-                            const response = await fetch(
-                                syncButton.dataset.syncUrl,
-                                {
-                                    method: "POST",
-                                    headers: {
-                                        "X-CSRFToken": (
-                                            getCsrfToken()
-                                        ),
-                                        "X-Requested-With": (
-                                            "XMLHttpRequest"
-                                        ),
-                                    },
-                                    credentials: "same-origin",
-                                }
-                            );
-
-                            const data = await response.json();
-
-                            if (
-                                !response.ok
-                                || !data.success
-                            ) {
-                                throw new Error(
-                                    data.message
-                                    || "Não foi possível sincronizar o Google Agenda."
-                                );
-                            }
-
-                            const hasWarnings = (
-                                Number(data.errors || 0) > 0
-                                || Number(data.removed || 0) > 0
-                            );
-
-                            showMessage(
-                                data.message,
-                                hasWarnings
-                                    ? "warning"
-                                    : "success"
-                            );
-
-                            const shouldReload = (
-                                Number(data.updated || 0) > 0
-                                || Number(data.removed || 0) > 0
-                            );
-
-                            if (shouldReload) {
-                                window.setTimeout(
-                                    () => {
-                                        window.location.reload();
-                                    },
-                                    1000
-                                );
-                            }
-
-                        } catch (error) {
-                            showMessage(
-                                error.message
-                                || "Não foi possível sincronizar o Google Agenda.",
-                                "error"
-                            );
-
-                        } finally {
-                            syncButton.disabled = false;
-
-                            if (syncLabel) {
-                                syncLabel.textContent = (
-                                    "Sincronizar Google Agenda"
-                                );
-                            }
-
-                            if (syncIcon) {
-                                syncIcon.classList.remove(
-                                    "animate-spin"
-                                );
-                            }
-                        }
+                    () => {
+                        synchronizeGoogleCalendar({
+                            automatic: false,
+                        });
                     }
                 );
+            }
+
+
+            // =====================================================
+            // SINCRONIZAÇÃO AUTOMÁTICA AO ENTRAR NA AGENDA
+            // =====================================================
+            //
+            // Se esta página acabou de ser recarregada pela própria
+            // sincronização automática, apenas consumimos a marca e
+            // não sincronizamos uma segunda vez.
+            //
+            // Uma nova entrada normal na Agenda volta a sincronizar.
+            //
+
+            if (syncButton) {
+                const cameFromAutoSyncReload = (
+                    sessionStorage.getItem(
+                        AUTO_SYNC_RELOAD_KEY
+                    ) === "1"
+                );
+
+                if (cameFromAutoSyncReload) {
+                    sessionStorage.removeItem(
+                        AUTO_SYNC_RELOAD_KEY
+                    );
+
+                } else {
+                    window.setTimeout(
+                        () => {
+                            synchronizeGoogleCalendar({
+                                automatic: true,
+                            });
+                        },
+                        250
+                    );
+                }
             }
 
 
@@ -952,7 +1187,10 @@
                         "click",
                         async () => {
 
-                            if (button.disabled) {
+                            if (
+                                button.disabled
+                                || syncInProgress
+                            ) {
                                 return;
                             }
 
@@ -1009,7 +1247,8 @@
 
                                 showMessage(
                                     data.message,
-                                    "success"
+                                    "success",
+                                    true
                                 );
 
                                 window.setTimeout(
@@ -1023,7 +1262,8 @@
                                 showMessage(
                                     error.message
                                     || "Não foi possível reenviar o compromisso.",
-                                    "error"
+                                    "error",
+                                    true
                                 );
 
                                 button.disabled = false;
@@ -1047,7 +1287,8 @@
 
         });
     </script>
-
 {% endif %}
+
+<script src="{% static 'js/agenda/agenda-complete.js' %}"></script>
 
 {% endblock %}
