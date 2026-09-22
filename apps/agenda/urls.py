@@ -37,6 +37,11 @@ urlpatterns = [
         name="confirm",
     ),
     path(
+        "<int:pk>/reagendar/",
+        views.agenda_reschedule,
+        name="reschedule",
+    ),
+    path(
         "<int:pk>/concluir/",
         views.agenda_complete,
         name="complete",

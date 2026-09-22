@@ -95,6 +95,7 @@
             --color-app-bg: #f5f7fa;
             --color-app-surface: #ffffff;
             --color-app-soft: #f8fafc;
+
         }
 
 
@@ -134,11 +135,6 @@
         /*
          * =========================================================
          * FORMULÁRIOS
-         * =========================================================
-         *
-         * O Django adiciona a classe .app-input através do forms.py.
-         *
-         * Vamos adicioná-la no próximo passo.
          * =========================================================
          */
 
@@ -237,11 +233,75 @@
          * =========================================================
          * SELEÇÃO DE TEXTO
          * =========================================================
+         *
+         * Mantém contraste adequado ao selecionar conteúdo
+         * em textos e campos de formulário.
+         * =========================================================
          */
 
         ::selection {
-            background-color: #c9dbef;
+            background-color: #bfdbfe;
             color: #17253d;
+        }
+
+
+        ::-moz-selection {
+            background-color: #bfdbfe;
+            color: #17253d;
+        }
+
+
+        input::selection,
+        textarea::selection {
+            background-color: #93c5fd;
+            color: #17253d;
+        }
+
+
+        input::-moz-selection,
+        textarea::-moz-selection {
+            background-color: #93c5fd;
+            color: #17253d;
+        }
+
+
+        /*
+         * ---------------------------------------------------------
+         * DATA E HORÁRIO — CHROME / EDGE
+         * ---------------------------------------------------------
+         *
+         * Garante texto escuro também nos segmentos internos
+         * dos controles nativos de data e horário.
+         * ---------------------------------------------------------
+         */
+
+        input[type="date"],
+        input[type="time"] {
+            color: #172033;
+            color-scheme: light;
+        }
+
+
+        input[type="date"]::-webkit-datetime-edit,
+        input[type="time"]::-webkit-datetime-edit {
+            color: #172033;
+        }
+
+
+        input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+        input[type="time"]::-webkit-datetime-edit-fields-wrapper {
+            color: #172033;
+        }
+
+
+        input[type="date"]::-webkit-datetime-edit-text,
+        input[type="date"]::-webkit-datetime-edit-day-field,
+        input[type="date"]::-webkit-datetime-edit-month-field,
+        input[type="date"]::-webkit-datetime-edit-year-field,
+        input[type="time"]::-webkit-datetime-edit-hour-field,
+        input[type="time"]::-webkit-datetime-edit-minute-field,
+        input[type="time"]::-webkit-datetime-edit-ampm-field {
+            color: #172033;
         }
 
     </style>

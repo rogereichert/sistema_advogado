@@ -13,7 +13,7 @@ from django.views.decorators.http import require_POST
 
 from apps.cases.models import CaseHistory, LegalCase
 
-from .forms import AgendaEventForm
+from .forms import AgendaEventForm, AgendaRescheduleForm
 from .models import AgendaEvent, GoogleCalendarConnection
 from .services.google_calendar import (
     build_google_oauth_flow,
@@ -213,6 +213,57 @@ def _build_cancellation_history_description(event):
     if event.resultado:
         description += (
             f"\n\nMotivo do cancelamento:\n{event.resultado}"
+        )
+
+    return description
+
+
+def _format_agenda_schedule(date_value, time_value):
+    """
+    Formata data e horário para mensagens do histórico.
+    """
+
+    date_text = date_value.strftime("%d/%m/%Y")
+
+    if time_value:
+        return (
+            f"{date_text} às "
+            f"{time_value.strftime('%H:%M')}"
+        )
+
+    return date_text
+
+
+def _build_reschedule_history_description(
+    event,
+    old_date,
+    old_time,
+    reason,
+):
+    """
+    Monta a descrição registrada no histórico do caso
+    quando um compromisso é reagendado.
+    """
+
+    old_schedule = _format_agenda_schedule(
+        old_date,
+        old_time,
+    )
+
+    new_schedule = _format_agenda_schedule(
+        event.data,
+        event.hora,
+    )
+
+    description = (
+        f"{event.get_tipo_display()} "
+        f"'{event.titulo}' foi reagendado de "
+        f"{old_schedule} para {new_schedule}."
+    )
+
+    if reason:
+        description += (
+            f"\n\nMotivo do reagendamento:\n{reason}"
         )
 
     return description
@@ -684,6 +735,194 @@ def agenda_update(request, pk):
             "event": event,
             "editing": True,
         },
+    )
+
+
+# =========================================================
+# REAGENDAMENTO DE COMPROMISSO
+# =========================================================
+
+
+@login_required
+@require_POST
+def agenda_reschedule(request, pk):
+    """
+    Reagenda um compromisso ativo no LexControl.
+
+    O mesmo AgendaEvent é preservado. Data e horário são
+    alterados, o status volta para Agendado e a mudança fica
+    registrada no histórico do caso.
+
+    Depois do commit local, o LexControl tenta atualizar o
+    mesmo evento correspondente no Google Agenda.
+    """
+
+    event = get_object_or_404(
+        AgendaEvent.objects.select_related(
+            "caso",
+            "caso__cliente",
+            "criado_por",
+        ),
+        pk=pk,
+    )
+
+    allowed_statuses = {
+        event.Status.SCHEDULED,
+        event.Status.CONFIRMED,
+    }
+
+    if event.status not in allowed_statuses:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Este compromisso não pode ser reagendado "
+                    "no status atual."
+                ),
+            },
+            status=400,
+        )
+
+    form = AgendaRescheduleForm(
+        request.POST,
+        event=event,
+    )
+
+    if not form.is_valid():
+        field_errors = {}
+
+        for field_name, errors in form.errors.items():
+            field_errors[field_name] = [
+                str(error)
+                for error in errors
+            ]
+
+        first_error = next(
+            (
+                str(error)
+                for errors in form.errors.values()
+                for error in errors
+            ),
+            "Verifique os dados do reagendamento.",
+        )
+
+        return JsonResponse(
+            {
+                "success": False,
+                "message": first_error,
+                "errors": field_errors,
+            },
+            status=400,
+        )
+
+    old_date = event.data
+    old_time = event.hora
+
+    new_date = form.cleaned_data["nova_data"]
+    new_time = form.cleaned_data["novo_horario"]
+    reason = form.cleaned_data["motivo"]
+
+    with transaction.atomic():
+        event.data = new_date
+        event.hora = new_time
+        event.status = event.Status.SCHEDULED
+
+        # O compromisso continua ativo.
+        # Campos de desfecho devem permanecer livres para
+        # conclusão, não realização ou cancelamento futuros.
+        event.resultado = ""
+        event.concluido_em = None
+        event.concluido_por = None
+
+        event.save(
+            update_fields=[
+                "data",
+                "hora",
+                "status",
+                "resultado",
+                "concluido_em",
+                "concluido_por",
+                "atualizado_em",
+            ]
+        )
+
+        CaseHistory.objects.create(
+            caso=event.caso,
+            usuario=request.user,
+            titulo="Compromisso reagendado",
+            descricao=(
+                _build_reschedule_history_description(
+                    event,
+                    old_date,
+                    old_time,
+                    reason,
+                )
+            ),
+        )
+
+    # A operação local já foi confirmada.
+    # O Google é atualizado somente depois do commit.
+    google_sync = _sync_updated_event_with_google(
+        event,
+        request.user,
+    )
+
+    if google_sync["success"]:
+        result_message = (
+            "Compromisso reagendado e sincronizado "
+            "com o Google Agenda."
+        )
+
+    elif google_sync.get("removed"):
+        result_message = (
+            "Compromisso reagendado no LexControl. "
+            "Como o evento foi removido do Google Agenda, "
+            "a nova data ficou salva apenas no LexControl. "
+            "Use “Reenviar ao Google” para recriá-lo."
+        )
+
+    elif google_sync["attempted"]:
+        result_message = (
+            "Compromisso reagendado no LexControl, "
+            "mas não foi possível atualizar o Google Agenda."
+        )
+
+    else:
+        result_message = (
+            "Compromisso reagendado com sucesso."
+        )
+
+    event.refresh_from_db()
+
+    return JsonResponse(
+        {
+            "success": True,
+            "event_id": event.pk,
+            "status": event.status,
+            "status_display": event.get_status_display(),
+            "data": event.data.isoformat(),
+            "hora": (
+                event.hora.strftime("%H:%M")
+                if event.hora
+                else ""
+            ),
+            "google_sync_attempted": (
+                google_sync["attempted"]
+            ),
+            "google_synced": (
+                google_sync["success"]
+            ),
+            "google_removed": (
+                google_sync.get(
+                    "removed",
+                    False,
+                )
+            ),
+            "google_sync_status": (
+                event.google_sync_status
+            ),
+            "message": result_message,
+        }
     )
 
 

@@ -387,11 +387,11 @@
                                     class="agenda-more-actions-menu absolute right-0 z-30 hidden w-64 overflow-hidden rounded-xl border border-brand-100 bg-white p-1.5 shadow-lg"
                                     role="menu"
                                 >
-                                    {% if event.status == "scheduled" %}
-                                        <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-                                            Gerenciar
-                                        </p>
+                                    <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                                        Gerenciar
+                                    </p>
 
+                                    {% if event.status == "scheduled" %}
                                         <button
                                             type="button"
                                             class="agenda-confirm-button agenda-sync-write-action flex w-full items-start gap-2.5 rounded-lg px-3 py-2.5 text-left transition hover:bg-brand-50 focus:outline-none focus:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-60"
@@ -408,9 +408,30 @@
                                                 </span>
                                             </span>
                                         </button>
-
-                                        <div class="my-1.5 border-t border-brand-50"></div>
                                     {% endif %}
+
+                                    <button
+                                        type="button"
+                                        class="agenda-reschedule-button agenda-sync-write-action mt-0.5 flex w-full items-start gap-2.5 rounded-lg px-3 py-2.5 text-left transition hover:bg-brand-50 focus:outline-none focus:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                        role="menuitem"
+                                        data-action-url="{% url 'agenda:reschedule' event.pk %}"
+                                        data-event-title="{{ event.titulo|escape }}"
+                                        data-event-date="{{ event.data|date:'Y-m-d' }}"
+                                        data-event-date-display="{{ event.data|date:'d/m/Y' }}"
+                                        data-event-time="{% if event.hora %}{{ event.hora|time:'H:i' }}{% endif %}"
+                                    >
+                                        <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-700" aria-hidden="true">↻</span>
+                                        <span class="min-w-0">
+                                            <span class="block text-xs font-semibold text-brand-900">
+                                                Reagendar compromisso
+                                            </span>
+                                            <span class="mt-0.5 block text-[11px] font-normal leading-4 text-slate-500">
+                                                Alterar data ou horário
+                                            </span>
+                                        </span>
+                                    </button>
+
+                                    <div class="my-1.5 border-t border-brand-50"></div>
 
                                     <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
                                         Registrar desfecho
@@ -910,6 +931,66 @@
 
 
 <!-- =========================================================
+     MODAL — REAGENDAR COMPROMISSO
+========================================================== -->
+
+<div id="agenda-reschedule-modal" class="fixed inset-0 z-[10000] hidden" aria-hidden="true">
+    <div id="agenda-reschedule-modal-backdrop" class="absolute inset-0 bg-slate-950/45 backdrop-blur-[1px]"></div>
+
+    <div class="relative flex min-h-full items-center justify-center p-4 sm:p-6">
+        <section class="relative w-full max-w-lg overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="agenda-reschedule-modal-title" aria-describedby="agenda-reschedule-modal-description">
+            <header class="flex items-start justify-between gap-4 border-b border-brand-100 bg-brand-50/50 px-5 py-5 sm:px-6">
+                <div class="flex min-w-0 items-start gap-3">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-100" aria-hidden="true">↻</div>
+                    <div class="min-w-0">
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700">Gerenciar compromisso</p>
+                        <h2 id="agenda-reschedule-modal-title" class="mt-1 text-lg font-semibold tracking-tight text-brand-950">Reagendar compromisso</h2>
+                        <p id="agenda-reschedule-modal-description" class="mt-1 text-sm leading-5 text-slate-500">Defina a nova data ou horário e registre o motivo.</p>
+                    </div>
+                </div>
+                <button type="button" id="agenda-reschedule-modal-close" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white hover:text-slate-700 focus:outline-none focus:ring-4 focus:ring-brand-100" aria-label="Fechar"><span class="text-xl leading-none" aria-hidden="true">×</span></button>
+            </header>
+
+            <form id="agenda-reschedule-form" class="px-5 py-5 sm:px-6">
+                <div class="rounded-xl border border-brand-100 bg-app-soft px-4 py-3">
+                    <p id="agenda-reschedule-event-title" class="text-sm font-semibold text-brand-950"></p>
+                    <p id="agenda-reschedule-current-schedule" class="mt-1 text-xs text-slate-500"></p>
+                </div>
+
+                <div class="mt-5 grid gap-4 sm:grid-cols-2">
+                    <div>
+                        <label for="agenda-reschedule-date" class="block text-sm font-semibold text-brand-950">Nova data <span class="text-red-600" aria-hidden="true">*</span></label>
+                        <input id="agenda-reschedule-date" name="nova_data" type="date" required class="app-input mt-2">
+                    </div>
+                    <div>
+                        <label for="agenda-reschedule-time" class="block text-sm font-semibold text-brand-950">Novo horário</label>
+                        <input id="agenda-reschedule-time" name="novo_horario" type="time" class="app-input mt-2">
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <label for="agenda-reschedule-reason" class="block text-sm font-semibold text-brand-950">Motivo do reagendamento <span class="text-red-600" aria-hidden="true">*</span></label>
+                    <textarea id="agenda-reschedule-reason" name="motivo" rows="4" required class="app-input mt-2" placeholder="Ex.: Reagendado a pedido do cliente."></textarea>
+                    <p class="mt-1.5 text-xs leading-5 text-slate-500">A alteração e o motivo ficarão registrados no histórico do caso.</p>
+                </div>
+
+                <div class="mt-5 rounded-xl border border-blue-200 bg-blue-50/60 px-4 py-3">
+                    <p class="text-xs leading-5 text-blue-900">Se este compromisso estiver vinculado ao Google Agenda, o LexControl tentará atualizar o mesmo evento, sem criar uma cópia.</p>
+                </div>
+
+                <div id="agenda-reschedule-error" class="mt-4 hidden rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert"></div>
+
+                <footer class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                    <button type="button" id="agenda-reschedule-cancel" class="inline-flex min-h-11 items-center justify-center rounded-xl border border-brand-100 bg-white px-4 text-sm font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100">Voltar</button>
+                    <button type="submit" id="agenda-reschedule-submit" class="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand-950 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-900 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60"><span id="agenda-reschedule-submit-label">Confirmar reagendamento</span></button>
+                </footer>
+            </form>
+        </section>
+    </div>
+</div>
+
+
+<!-- =========================================================
      MODAL — CANCELAR COMPROMISSO
 ========================================================== -->
 
@@ -1339,6 +1420,173 @@
             },
             true
         );
+    });
+</script>
+
+
+<!-- =========================================================
+     REAGENDAR COMPROMISSO
+========================================================== -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById("agenda-reschedule-modal");
+        const form = document.getElementById("agenda-reschedule-form");
+        const closeButton = document.getElementById("agenda-reschedule-modal-close");
+        const backButton = document.getElementById("agenda-reschedule-cancel");
+        const backdrop = document.getElementById("agenda-reschedule-modal-backdrop");
+        const dateInput = document.getElementById("agenda-reschedule-date");
+        const timeInput = document.getElementById("agenda-reschedule-time");
+        const reasonInput = document.getElementById("agenda-reschedule-reason");
+        const titleElement = document.getElementById("agenda-reschedule-event-title");
+        const scheduleElement = document.getElementById("agenda-reschedule-current-schedule");
+        const errorElement = document.getElementById("agenda-reschedule-error");
+        const submitButton = document.getElementById("agenda-reschedule-submit");
+        const submitLabel = document.getElementById("agenda-reschedule-submit-label");
+
+        let currentActionUrl = "";
+        let originalDate = "";
+        let originalTime = "";
+        let submitting = false;
+
+        const getCsrfToken = () => {
+            const cookie = document.cookie.split("; ").find(row => row.startsWith("csrftoken="));
+            return cookie ? decodeURIComponent(cookie.split("=")[1]) : "";
+        };
+
+        const hideError = () => {
+            errorElement.textContent = "";
+            errorElement.classList.add("hidden");
+        };
+
+        const showError = message => {
+            errorElement.textContent = message;
+            errorElement.classList.remove("hidden");
+        };
+
+        const setSubmitting = value => {
+            submitting = value;
+            submitButton.disabled = value;
+            dateInput.disabled = value;
+            timeInput.disabled = value;
+            reasonInput.disabled = value;
+            submitLabel.textContent = value ? "Reagendando..." : "Confirmar reagendamento";
+        };
+
+        const closeModal = () => {
+            if (!modal || submitting) return;
+            modal.classList.add("hidden");
+            modal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("overflow-hidden");
+            currentActionUrl = "";
+            originalDate = "";
+            originalTime = "";
+            form.reset();
+            hideError();
+        };
+
+        const openModal = button => {
+            currentActionUrl = button.dataset.actionUrl || "";
+            if (!currentActionUrl) return;
+
+            originalDate = button.dataset.eventDate || "";
+            originalTime = button.dataset.eventTime || "";
+
+            form.reset();
+            dateInput.value = originalDate;
+            timeInput.value = originalTime;
+            titleElement.textContent = button.dataset.eventTitle || "Compromisso";
+
+            const displayDate = button.dataset.eventDateDisplay || "";
+            scheduleElement.textContent = originalTime
+                ? `Agendamento atual: ${displayDate} às ${originalTime}`
+                : `Agendamento atual: ${displayDate}`;
+
+            hideError();
+            setSubmitting(false);
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("overflow-hidden");
+            window.setTimeout(() => dateInput.focus(), 0);
+        };
+
+        document.querySelectorAll(".agenda-reschedule-button").forEach(button => {
+            button.addEventListener("click", event => {
+                event.preventDefault();
+                document.body.click();
+                openModal(button);
+            });
+        });
+
+        closeButton.addEventListener("click", closeModal);
+        backButton.addEventListener("click", closeModal);
+        backdrop.addEventListener("click", closeModal);
+
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape" && modal && !modal.classList.contains("hidden")) {
+                closeModal();
+            }
+        });
+
+        form.addEventListener("submit", async event => {
+            event.preventDefault();
+            if (submitting || !currentActionUrl) return;
+
+            const newDate = dateInput.value;
+            const newTime = timeInput.value;
+            const reason = reasonInput.value.trim();
+
+            if (!newDate) {
+                showError("Informe a nova data do compromisso.");
+                dateInput.focus();
+                return;
+            }
+
+            if (newDate === originalDate && newTime === originalTime) {
+                showError("Informe uma nova data ou um novo horário para reagendar o compromisso.");
+                dateInput.focus();
+                return;
+            }
+
+            if (!reason) {
+                showError("Informe o motivo do reagendamento.");
+                reasonInput.focus();
+                return;
+            }
+
+            hideError();
+            setSubmitting(true);
+
+            const body = new URLSearchParams();
+            body.set("nova_data", newDate);
+            body.set("novo_horario", newTime);
+            body.set("motivo", reason);
+
+            try {
+                const response = await fetch(currentActionUrl, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCsrfToken(),
+                        "X-Requested-With": "XMLHttpRequest",
+                        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                    },
+                    credentials: "same-origin",
+                    body: body.toString(),
+                });
+
+                let data = {};
+                try { data = await response.json(); } catch (error) { data = {}; }
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || "Não foi possível reagendar o compromisso.");
+                }
+
+                window.location.reload();
+            } catch (error) {
+                setSubmitting(false);
+                showError(error.message || "Não foi possível reagendar o compromisso.");
+            }
+        });
     });
 </script>
 
