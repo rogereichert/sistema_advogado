@@ -32,9 +32,24 @@ urlpatterns = [
     # =========================================================
 
     path(
+        "<int:pk>/confirmar/",
+        views.agenda_confirm,
+        name="confirm",
+    ),
+    path(
         "<int:pk>/concluir/",
         views.agenda_complete,
         name="complete",
+    ),
+    path(
+        "<int:pk>/nao-realizado/",
+        views.agenda_not_completed,
+        name="not_completed",
+    ),
+    path(
+        "<int:pk>/cancelar/",
+        views.agenda_cancel,
+        name="cancel",
     ),
 
     # =========================================================
@@ -65,20 +80,5 @@ urlpatterns = [
         "<int:pk>/google/reenviar/",
         views.google_calendar_resend,
         name="google_resend",
-    ),
-
-    # =========================================================
-    # AÇÕES DO COMPROMISSO
-    # =========================================================
-
-    path(
-        "<int:pk>/concluir/",
-        views.agenda_complete,
-        name="complete",
-    ),
-    path(
-        "<int:pk>/nao-realizado/",
-        views.agenda_not_completed,
-        name="not_completed",
     ),
 ]

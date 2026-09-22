@@ -309,6 +309,13 @@
                                         {{ event.get_tipo_display }}
                                     </span>
 
+                                    {% if event.status == "confirmed" %}
+                                        <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 ring-1 ring-inset ring-blue-200">
+                                            <span class="h-1.5 w-1.5 rounded-full bg-blue-500" aria-hidden="true"></span>
+                                            Confirmado
+                                        </span>
+                                    {% endif %}
+
                                     {% if event.removido_do_google %}
                                         <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200" title="Este compromisso foi removido do Google Agenda, mas continua salvo no LexControl.">
                                             Removido do Google
@@ -380,6 +387,31 @@
                                     class="agenda-more-actions-menu absolute right-0 z-30 hidden w-64 overflow-hidden rounded-xl border border-brand-100 bg-white p-1.5 shadow-lg"
                                     role="menu"
                                 >
+                                    {% if event.status == "scheduled" %}
+                                        <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                                            Gerenciar
+                                        </p>
+
+                                        <button
+                                            type="button"
+                                            class="agenda-confirm-button agenda-sync-write-action flex w-full items-start gap-2.5 rounded-lg px-3 py-2.5 text-left transition hover:bg-brand-50 focus:outline-none focus:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                            role="menuitem"
+                                            data-action-url="{% url 'agenda:confirm' event.pk %}"
+                                        >
+                                            <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-700" aria-hidden="true">✓</span>
+                                            <span class="min-w-0">
+                                                <span class="block text-xs font-semibold text-brand-900">
+                                                    Confirmar compromisso
+                                                </span>
+                                                <span class="mt-0.5 block text-[11px] font-normal leading-4 text-slate-500">
+                                                    Registrar que o compromisso está confirmado
+                                                </span>
+                                            </span>
+                                        </button>
+
+                                        <div class="my-1.5 border-t border-brand-50"></div>
+                                    {% endif %}
+
                                     <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
                                         Registrar desfecho
                                     </p>
@@ -404,6 +436,28 @@
                                             </span>
                                             <span class="mt-0.5 block text-[11px] font-normal leading-4 text-slate-500">
                                                 {% if event.tipo == "prazo" %}Informar motivo do não cumprimento{% else %}Informar motivo da não realização{% endif %}
+                                            </span>
+                                        </span>
+                                    </button>
+
+                                    <div class="my-1.5 border-t border-brand-50"></div>
+
+                                    <button
+                                        type="button"
+                                        class="agenda-cancel-button agenda-sync-write-action flex w-full items-start gap-2.5 rounded-lg px-3 py-2.5 text-left transition hover:bg-red-50 focus:outline-none focus:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                        role="menuitem"
+                                        data-action-url="{% url 'agenda:cancel' event.pk %}"
+                                        data-event-title="{{ event.titulo|escape }}"
+                                        data-event-date="{{ event.data|date:'d/m/Y' }}"
+                                        data-event-time="{% if event.hora %}{{ event.hora|time:'H:i' }}{% endif %}"
+                                    >
+                                        <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-700 ring-1 ring-inset ring-red-200" aria-hidden="true">×</span>
+                                        <span class="min-w-0">
+                                            <span class="block text-xs font-semibold text-red-700">
+                                                Cancelar compromisso
+                                            </span>
+                                            <span class="mt-0.5 block text-[11px] font-normal leading-4 text-slate-500">
+                                                Registrar cancelamento e motivo
                                             </span>
                                         </span>
                                     </button>
@@ -578,7 +632,7 @@
 
                                 {% if event.resultado %}
                                     <p class="mt-2 max-w-3xl text-xs leading-5 text-slate-600">
-                                        <span class="font-semibold text-slate-700">{% if event.nao_realizado %}Motivo:{% else %}Resultado:{% endif %}</span>
+                                        <span class="font-semibold text-slate-700">{% if event.nao_realizado or event.cancelado %}Motivo:{% else %}Resultado:{% endif %}</span>
                                         {{ event.resultado|linebreaksbr }}
                                     </p>
                                 {% endif %}
@@ -593,11 +647,16 @@
                                         Registrado em {{ event.concluido_em|date:"d/m/Y \à\s H:i" }}
                                         {% if event.concluido_por %}por {{ event.concluido_por.get_full_name|default:event.concluido_por.username }}{% endif %}
                                     </p>
+                                {% elif event.cancelado and event.concluido_em %}
+                                    <p class="mt-1 text-[11px] text-slate-400">
+                                        Cancelado em {{ event.concluido_em|date:"d/m/Y \à\s H:i" }}
+                                        {% if event.concluido_por %}por {{ event.concluido_por.get_full_name|default:event.concluido_por.username }}{% endif %}
+                                    </p>
                                 {% endif %}
                             </div>
 
                             <div class="flex shrink-0 flex-wrap items-center gap-2">
-                                {% if event.removido_do_google %}
+                                {% if event.removido_do_google and not event.cancelado %}
                                     <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 text-xs font-semibold text-amber-800 shadow-sm transition hover:border-amber-300 hover:bg-amber-100 focus:outline-none focus:ring-4 focus:ring-amber-100 disabled:cursor-not-allowed disabled:opacity-60" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
                                         <span class="google-calendar-resend-label">Reenviar ao Google</span>
                                     </button>
@@ -700,7 +759,7 @@
 
                                 {% if event.resultado %}
                                     <p class="mt-2 max-w-3xl text-xs leading-5 text-slate-600">
-                                        <span class="font-semibold text-slate-700">{% if event.nao_realizado %}Motivo:{% else %}Resultado:{% endif %}</span>
+                                        <span class="font-semibold text-slate-700">{% if event.nao_realizado or event.cancelado %}Motivo:{% else %}Resultado:{% endif %}</span>
                                         {{ event.resultado|linebreaksbr }}
                                     </p>
                                 {% endif %}
@@ -709,11 +768,13 @@
                                     <p class="mt-1 text-[11px] text-slate-400">Concluído em {{ event.concluido_em|date:"d/m/Y \à\s H:i" }}{% if event.concluido_por %} por {{ event.concluido_por.get_full_name|default:event.concluido_por.username }}{% endif %}</p>
                                 {% elif event.nao_realizado and event.concluido_em %}
                                     <p class="mt-1 text-[11px] text-slate-400">Registrado em {{ event.concluido_em|date:"d/m/Y \à\s H:i" }}{% if event.concluido_por %} por {{ event.concluido_por.get_full_name|default:event.concluido_por.username }}{% endif %}</p>
+                                {% elif event.cancelado and event.concluido_em %}
+                                    <p class="mt-1 text-[11px] text-slate-400">Cancelado em {{ event.concluido_em|date:"d/m/Y \à\s H:i" }}{% if event.concluido_por %} por {{ event.concluido_por.get_full_name|default:event.concluido_por.username }}{% endif %}</p>
                                 {% endif %}
                             </div>
 
                             <div class="flex shrink-0 flex-wrap items-center gap-2">
-                                {% if event.removido_do_google %}
+                                {% if event.removido_do_google and not event.cancelado %}
                                     <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg border border-amber-200 bg-amber-50 px-3 text-xs font-semibold text-amber-800 shadow-sm transition hover:bg-amber-100" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
                                         <span class="google-calendar-resend-label">Reenviar ao Google</span>
                                     </button>
@@ -776,7 +837,7 @@
                             </div>
 
                             <div class="flex shrink-0 flex-wrap items-center gap-3 pl-[72px] lg:pl-0">
-                                {% if event.removido_do_google %}
+                                {% if event.removido_do_google and not event.cancelado %}
                                     <button type="button" class="google-calendar-resend-button agenda-sync-write-action text-xs font-semibold text-amber-700 transition hover:text-amber-900 focus:outline-none focus:underline" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
                                         <span class="google-calendar-resend-label">Recriar no Google</span>
                                     </button>
@@ -849,6 +910,122 @@
 
 
 <!-- =========================================================
+     MODAL — CANCELAR COMPROMISSO
+========================================================== -->
+
+<div
+    id="agenda-cancel-modal"
+    class="fixed inset-0 z-[10000] hidden"
+    aria-hidden="true"
+>
+    <div
+        id="agenda-cancel-modal-backdrop"
+        class="absolute inset-0 bg-slate-950/45 backdrop-blur-[1px]"
+    ></div>
+
+    <div class="relative flex min-h-full items-center justify-center p-4 sm:p-6">
+        <section
+            class="relative w-full max-w-lg overflow-hidden rounded-2xl border border-red-100 bg-white shadow-2xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="agenda-cancel-modal-title"
+            aria-describedby="agenda-cancel-modal-description"
+        >
+            <header class="flex items-start justify-between gap-4 border-b border-red-100 bg-red-50/50 px-5 py-5 sm:px-6">
+                <div class="flex min-w-0 items-start gap-3">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-700" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-5 w-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </div>
+
+                    <div class="min-w-0">
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-red-600">
+                            Gerenciar compromisso
+                        </p>
+                        <h2 id="agenda-cancel-modal-title" class="mt-1 text-lg font-semibold tracking-tight text-brand-950">
+                            Cancelar compromisso
+                        </h2>
+                        <p id="agenda-cancel-modal-description" class="mt-1 text-sm leading-5 text-slate-500">
+                            Informe o motivo para registrar o cancelamento.
+                        </p>
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    id="agenda-cancel-modal-close"
+                    class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white hover:text-slate-700 focus:outline-none focus:ring-4 focus:ring-red-100"
+                    aria-label="Fechar"
+                >
+                    <span class="text-xl leading-none" aria-hidden="true">×</span>
+                </button>
+            </header>
+
+            <form id="agenda-cancel-form" class="px-5 py-5 sm:px-6">
+                <div class="rounded-xl border border-brand-100 bg-app-soft px-4 py-3">
+                    <p id="agenda-cancel-event-title" class="text-sm font-semibold text-brand-950"></p>
+                    <p id="agenda-cancel-event-schedule" class="mt-1 text-xs text-slate-500"></p>
+                </div>
+
+                <div class="mt-5">
+                    <label for="agenda-cancel-reason" class="block text-sm font-semibold text-brand-950">
+                        Motivo do cancelamento
+                        <span class="text-red-600" aria-hidden="true">*</span>
+                    </label>
+                    <textarea
+                        id="agenda-cancel-reason"
+                        name="motivo"
+                        rows="4"
+                        required
+                        class="app-input mt-2"
+                        placeholder="Ex.: Audiência cancelada pelo juízo."
+                    ></textarea>
+                    <p class="mt-1.5 text-xs leading-5 text-slate-500">
+                        O motivo ficará registrado no histórico do caso.
+                    </p>
+                </div>
+
+                <div class="mt-5 rounded-xl border border-amber-200 bg-amber-50/60 px-4 py-3">
+                    <p class="text-xs leading-5 text-amber-900">
+                        Se este compromisso estiver vinculado ao Google Agenda,
+                        o LexControl também tentará removê-lo de lá. Uma falha
+                        no Google não desfaz o cancelamento registrado no LexControl.
+                    </p>
+                </div>
+
+                <div
+                    id="agenda-cancel-error"
+                    class="mt-4 hidden rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                    role="alert"
+                ></div>
+
+                <footer class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                    <button
+                        type="button"
+                        id="agenda-cancel-cancel"
+                        class="inline-flex min-h-11 items-center justify-center rounded-xl border border-brand-100 bg-white px-4 text-sm font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                    >
+                        Voltar
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="agenda-cancel-submit"
+                        class="inline-flex min-h-11 items-center justify-center rounded-xl bg-red-700 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-100 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        <span id="agenda-cancel-submit-label">
+                            Confirmar cancelamento
+                        </span>
+                    </button>
+                </footer>
+            </form>
+        </section>
+    </div>
+</div>
+
+
+<!-- =========================================================
      MAIS AÇÕES — PRÓXIMOS COMPROMISSOS
 ========================================================== -->
 
@@ -862,6 +1039,22 @@
         let activeButton = null;
         let activeMenu = null;
         let menuPlaceholder = null;
+
+        const getCsrfToken = () => {
+            const cookie = document.cookie
+                .split("; ")
+                .find(
+                    row => row.startsWith("csrftoken=")
+                );
+
+            if (!cookie) {
+                return "";
+            }
+
+            return decodeURIComponent(
+                cookie.split("=")[1]
+            );
+        };
 
         const restoreMenu = () => {
             if (
@@ -1049,6 +1242,79 @@
             });
         });
 
+        document
+            .querySelectorAll(".agenda-confirm-button")
+            .forEach(button => {
+                button.addEventListener(
+                    "click",
+                    async event => {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        if (button.disabled) {
+                            return;
+                        }
+
+                        const actionUrl = (
+                            button.dataset.actionUrl
+                        );
+
+                        if (!actionUrl) {
+                            return;
+                        }
+
+                        button.disabled = true;
+                        restoreMenu();
+
+                        try {
+                            const response = await fetch(
+                                actionUrl,
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "X-CSRFToken": (
+                                            getCsrfToken()
+                                        ),
+                                        "X-Requested-With": (
+                                            "XMLHttpRequest"
+                                        ),
+                                    },
+                                    credentials: "same-origin",
+                                }
+                            );
+
+                            let data = {};
+
+                            try {
+                                data = await response.json();
+                            } catch (error) {
+                                data = {};
+                            }
+
+                            if (
+                                !response.ok
+                                || !data.success
+                            ) {
+                                throw new Error(
+                                    data.message
+                                    || "Não foi possível confirmar o compromisso."
+                                );
+                            }
+
+                            window.location.reload();
+
+                        } catch (error) {
+                            button.disabled = false;
+
+                            window.alert(
+                                error.message
+                                || "Não foi possível confirmar o compromisso."
+                            );
+                        }
+                    }
+                );
+            });
+
         document.addEventListener("click", () => {
             restoreMenu();
         });
@@ -1073,6 +1339,323 @@
             },
             true
         );
+    });
+</script>
+
+
+<!-- =========================================================
+     CANCELAR COMPROMISSO
+========================================================== -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById(
+            "agenda-cancel-modal"
+        );
+
+        const form = document.getElementById(
+            "agenda-cancel-form"
+        );
+
+        const closeButton = document.getElementById(
+            "agenda-cancel-modal-close"
+        );
+
+        const backButton = document.getElementById(
+            "agenda-cancel-cancel"
+        );
+
+        const backdrop = document.getElementById(
+            "agenda-cancel-modal-backdrop"
+        );
+
+        const reasonInput = document.getElementById(
+            "agenda-cancel-reason"
+        );
+
+        const titleElement = document.getElementById(
+            "agenda-cancel-event-title"
+        );
+
+        const scheduleElement = document.getElementById(
+            "agenda-cancel-event-schedule"
+        );
+
+        const errorElement = document.getElementById(
+            "agenda-cancel-error"
+        );
+
+        const submitButton = document.getElementById(
+            "agenda-cancel-submit"
+        );
+
+        const submitLabel = document.getElementById(
+            "agenda-cancel-submit-label"
+        );
+
+        let currentActionUrl = "";
+        let submitting = false;
+
+        const getCsrfToken = () => {
+            const cookie = document.cookie
+                .split("; ")
+                .find(
+                    row => row.startsWith("csrftoken=")
+                );
+
+            if (!cookie) {
+                return "";
+            }
+
+            return decodeURIComponent(
+                cookie.split("=")[1]
+            );
+        };
+
+        const hideError = () => {
+            if (!errorElement) {
+                return;
+            }
+
+            errorElement.textContent = "";
+            errorElement.classList.add("hidden");
+        };
+
+        const showError = message => {
+            if (!errorElement) {
+                return;
+            }
+
+            errorElement.textContent = message;
+            errorElement.classList.remove("hidden");
+        };
+
+        const setSubmitting = value => {
+            submitting = value;
+
+            if (submitButton) {
+                submitButton.disabled = value;
+            }
+
+            if (reasonInput) {
+                reasonInput.disabled = value;
+            }
+
+            if (submitLabel) {
+                submitLabel.textContent = value
+                    ? "Cancelando..."
+                    : "Confirmar cancelamento";
+            }
+        };
+
+        const closeModal = () => {
+            if (!modal || submitting) {
+                return;
+            }
+
+            modal.classList.add("hidden");
+            modal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("overflow-hidden");
+
+            currentActionUrl = "";
+
+            if (form) {
+                form.reset();
+            }
+
+            hideError();
+        };
+
+        const openModal = button => {
+            if (!modal || !button) {
+                return;
+            }
+
+            currentActionUrl = (
+                button.dataset.actionUrl || ""
+            );
+
+            if (!currentActionUrl) {
+                return;
+            }
+
+            if (titleElement) {
+                titleElement.textContent = (
+                    button.dataset.eventTitle
+                    || "Compromisso"
+                );
+            }
+
+            if (scheduleElement) {
+                const date = button.dataset.eventDate || "";
+                const time = button.dataset.eventTime || "";
+
+                scheduleElement.textContent = time
+                    ? `${date} às ${time}`
+                    : date;
+            }
+
+            if (form) {
+                form.reset();
+            }
+
+            hideError();
+            setSubmitting(false);
+
+            modal.classList.remove("hidden");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("overflow-hidden");
+
+            window.setTimeout(
+                () => {
+                    if (reasonInput) {
+                        reasonInput.focus();
+                    }
+                },
+                0
+            );
+        };
+
+        document
+            .querySelectorAll(".agenda-cancel-button")
+            .forEach(button => {
+                button.addEventListener(
+                    "click",
+                    event => {
+                        event.preventDefault();
+
+                        // O menu ⋯ usa portal e impede propagação.
+                        // Um clique no body fecha/restaura o menu
+                        // antes da abertura do modal.
+                        document.body.click();
+                        openModal(button);
+                    }
+                );
+            });
+
+        if (closeButton) {
+            closeButton.addEventListener(
+                "click",
+                closeModal
+            );
+        }
+
+        if (backButton) {
+            backButton.addEventListener(
+                "click",
+                closeModal
+            );
+        }
+
+        if (backdrop) {
+            backdrop.addEventListener(
+                "click",
+                closeModal
+            );
+        }
+
+        document.addEventListener(
+            "keydown",
+            event => {
+                if (
+                    event.key === "Escape"
+                    && modal
+                    && !modal.classList.contains("hidden")
+                ) {
+                    closeModal();
+                }
+            }
+        );
+
+        if (form) {
+            form.addEventListener(
+                "submit",
+                async event => {
+                    event.preventDefault();
+
+                    if (
+                        submitting
+                        || !currentActionUrl
+                    ) {
+                        return;
+                    }
+
+                    const motivo = (
+                        reasonInput
+                        ? reasonInput.value.trim()
+                        : ""
+                    );
+
+                    if (!motivo) {
+                        showError(
+                            "Informe o motivo do cancelamento."
+                        );
+
+                        if (reasonInput) {
+                            reasonInput.focus();
+                        }
+
+                        return;
+                    }
+
+                    hideError();
+                    setSubmitting(true);
+
+                    const body = new URLSearchParams();
+                    body.set("motivo", motivo);
+
+                    try {
+                        const response = await fetch(
+                            currentActionUrl,
+                            {
+                                method: "POST",
+                                headers: {
+                                    "X-CSRFToken": (
+                                        getCsrfToken()
+                                    ),
+                                    "X-Requested-With": (
+                                        "XMLHttpRequest"
+                                    ),
+                                    "Content-Type": (
+                                        "application/x-www-form-urlencoded;charset=UTF-8"
+                                    ),
+                                },
+                                credentials: "same-origin",
+                                body: body.toString(),
+                            }
+                        );
+
+                        let data = {};
+
+                        try {
+                            data = await response.json();
+                        } catch (error) {
+                            data = {};
+                        }
+
+                        if (
+                            !response.ok
+                            || !data.success
+                        ) {
+                            throw new Error(
+                                data.message
+                                || "Não foi possível cancelar o compromisso."
+                            );
+                        }
+
+                        window.location.reload();
+
+                    } catch (error) {
+                        setSubmitting(false);
+
+                        showError(
+                            error.message
+                            || "Não foi possível cancelar o compromisso."
+                        );
+                    }
+                }
+            );
+        }
     });
 </script>
 

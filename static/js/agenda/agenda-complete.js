@@ -20,6 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let submitting = false;
     let currentIsDeadline = false;
 
+
+    // =========================================================
+    // CSRF
+    // =========================================================
+
     function getCsrfToken() {
         const cookie = document.cookie
             .split("; ")
@@ -30,6 +35,11 @@ document.addEventListener("DOMContentLoaded", () => {
             : "";
     }
 
+
+    // =========================================================
+    // ERROS
+    // =========================================================
+
     function showError(message) {
         if (!errorBox) {
             return;
@@ -38,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
         errorBox.textContent = message;
         errorBox.classList.remove("hidden");
     }
+
 
     function clearError() {
         if (!errorBox) {
@@ -48,12 +59,22 @@ document.addEventListener("DOMContentLoaded", () => {
         errorBox.classList.add("hidden");
     }
 
+
+    // =========================================================
+    // CONFIGURAÇÃO DO MODAL
+    // =========================================================
+
     function setMode(mode) {
         outcome = mode;
 
         const notCompleted = (
             mode === "not_completed"
         );
+
+
+        // -----------------------------------------------------
+        // PRAZO
+        // -----------------------------------------------------
 
         if (currentIsDeadline) {
             $("agenda-outcome-eyebrow").textContent =
@@ -106,6 +127,11 @@ document.addEventListener("DOMContentLoaded", () => {
             submitLabel.textContent = notCompleted
                 ? "Confirmar não cumprimento"
                 : "Confirmar cumprimento";
+
+
+        // -----------------------------------------------------
+        // DEMAIS COMPROMISSOS
+        // -----------------------------------------------------
 
         } else {
             $("agenda-outcome-eyebrow").textContent =
@@ -174,7 +200,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 : "Confirmar conclusão";
         }
 
+
+        // -----------------------------------------------------
+        // CAMPO OBRIGATÓRIO
+        // -----------------------------------------------------
+
         result.required = notCompleted;
+
+
+        // -----------------------------------------------------
+        // ÍCONES
+        // -----------------------------------------------------
 
         const completeIcon = $(
             "agenda-outcome-complete-icon"
@@ -198,6 +234,11 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
+
+        // -----------------------------------------------------
+        // COR DO ÍCONE
+        // -----------------------------------------------------
+
         const iconBox = $("agenda-outcome-icon-box");
 
         if (iconBox) {
@@ -216,6 +257,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
         }
 
+
+        // -----------------------------------------------------
+        // BOTÃO PRINCIPAL
+        // -----------------------------------------------------
+
         submit.className = notCompleted
             ? (
                 "inline-flex min-h-10 items-center justify-center "
@@ -230,6 +276,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 + "hover:bg-brand-900 disabled:opacity-60"
             );
     }
+
+
+    // =========================================================
+    // ABRIR MODAL
+    // =========================================================
 
     function openModal(button) {
         actionUrl = button.dataset.actionUrl || "";
@@ -246,6 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
             button.dataset.outcome || "complete"
         );
 
+
         const typeElement = $(
             "agenda-complete-event-type"
         );
@@ -253,6 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (typeElement) {
             typeElement.textContent = eventType;
         }
+
 
         const titleElement = $(
             "agenda-complete-event-title"
@@ -265,6 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
+
         const dateElement = $(
             "agenda-complete-event-date"
         );
@@ -274,6 +328,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 button.dataset.eventDate || ""
             );
         }
+
 
         const timeElement = $(
             "agenda-complete-event-time"
@@ -285,6 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
+
         result.value = "";
         clearError();
 
@@ -295,141 +351,262 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 100);
     }
 
+
+    // =========================================================
+    // FECHAR MODAL
+    // =========================================================
+
     function closeModal() {
         if (submitting) {
             return;
         }
 
         modal.classList.add("hidden");
+
         clearError();
+
         result.value = "";
+
         actionUrl = "";
+        outcome = "complete";
         currentIsDeadline = false;
     }
 
-    document.addEventListener("click", (event) => {
-        const trigger = event.target.closest(
-            "[data-agenda-outcome]"
-        );
 
-        if (trigger) {
-            event.preventDefault();
-            openModal(trigger);
-            return;
-        }
+    // =========================================================
+    // BOTÕES DE DESFECHO
+    // =========================================================
 
-        const closeButton = event.target.closest(
-            "[data-agenda-complete-close]"
-        );
+    document
+        .querySelectorAll(".agenda-outcome-button")
+        .forEach((button) => {
+            button.addEventListener(
+                "click",
+                (event) => {
+                    event.preventDefault();
 
-        if (closeButton) {
-            event.preventDefault();
-            closeModal();
-        }
-    });
+                    /*
+                     * O menu de desfecho usa um dropdown
+                     * separado do card.
+                     *
+                     * Este clique no body permite que o
+                     * controlador do dropdown o feche antes
+                     * da abertura do modal.
+                     */
+                    document.body.click();
 
-    document.addEventListener("keydown", (event) => {
-        if (
-            event.key === "Escape"
-            && !modal.classList.contains("hidden")
-        ) {
-            closeModal();
-        }
-    });
-
-    form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        if (submitting || !actionUrl) {
-            return;
-        }
-
-        const resultValue = result.value.trim();
-
-        if (
-            outcome === "not_completed"
-            && !resultValue
-        ) {
-            showError(
-                currentIsDeadline
-                    ? (
-                        "Informe o motivo ou uma observação "
-                        + "para registrar o prazo como "
-                        + "não cumprido."
-                    )
-                    : (
-                        "Informe o motivo ou uma observação "
-                        + "para registrar o compromisso "
-                        + "como não realizado."
-                    )
-            );
-
-            result.focus();
-            return;
-        }
-
-        submitting = true;
-        clearError();
-
-        submit.disabled = true;
-        submitLabel.textContent = "Salvando...";
-
-        const body = new URLSearchParams();
-        body.set("resultado", resultValue);
-
-        try {
-            const response = await fetch(
-                actionUrl,
-                {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": getCsrfToken(),
-                        "X-Requested-With": "XMLHttpRequest",
-                        "Content-Type": (
-                            "application/x-www-form-urlencoded"
-                        ),
-                    },
-                    body: body.toString(),
+                    openModal(button);
                 }
             );
+        });
 
-            let data = {};
 
-            try {
-                data = await response.json();
-            } catch (jsonError) {
-                data = {};
+    // =========================================================
+    // FECHAMENTO DO MODAL
+    // =========================================================
+
+    const modalCloseButton = $(
+        "agenda-complete-modal-close"
+    );
+
+    const cancelButton = $(
+        "agenda-complete-cancel"
+    );
+
+    const modalBackdrop = $(
+        "agenda-complete-modal-backdrop"
+    );
+
+
+    // X
+    if (modalCloseButton) {
+        modalCloseButton.addEventListener(
+            "click",
+            (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                closeModal();
+            }
+        );
+    }
+
+
+    // CANCELAR
+    if (cancelButton) {
+        cancelButton.addEventListener(
+            "click",
+            (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                closeModal();
+            }
+        );
+    }
+
+
+    // FUNDO ESCURO
+    if (modalBackdrop) {
+        modalBackdrop.addEventListener(
+            "click",
+            (event) => {
+                event.preventDefault();
+
+                closeModal();
+            }
+        );
+    }
+
+
+    // =========================================================
+    // ENVIO DO FORMULÁRIO
+    // =========================================================
+
+    form.addEventListener(
+        "submit",
+        async (event) => {
+            event.preventDefault();
+
+            if (
+                submitting
+                || !actionUrl
+            ) {
+                return;
             }
 
-            if (!response.ok || !data.success) {
-                throw new Error(
-                    data.message
-                    || "Não foi possível registrar o desfecho."
-                );
-            }
 
-            window.location.reload();
-
-        } catch (error) {
-            showError(
-                error.message
-                || "Não foi possível registrar o desfecho."
+            const resultValue = (
+                result.value.trim()
             );
 
-            submitting = false;
-            submit.disabled = false;
 
-            submitLabel.textContent = currentIsDeadline
-                ? (
-                    outcome === "not_completed"
-                        ? "Confirmar não cumprimento"
-                        : "Confirmar cumprimento"
-                )
-                : (
-                    outcome === "not_completed"
-                        ? "Confirmar não realizado"
-                        : "Confirmar conclusão"
+            // -------------------------------------------------
+            // MOTIVO OBRIGATÓRIO PARA NÃO REALIZADO
+            // -------------------------------------------------
+
+            if (
+                outcome === "not_completed"
+                && !resultValue
+            ) {
+                showError(
+                    currentIsDeadline
+                        ? (
+                            "Informe o motivo ou uma observação "
+                            + "para registrar o prazo como "
+                            + "não cumprido."
+                        )
+                        : (
+                            "Informe o motivo ou uma observação "
+                            + "para registrar o compromisso "
+                            + "como não realizado."
+                        )
                 );
+
+                result.focus();
+                return;
+            }
+
+
+            submitting = true;
+            clearError();
+
+            submit.disabled = true;
+            submitLabel.textContent = "Salvando...";
+
+
+            const body = new URLSearchParams();
+
+            body.set(
+                "resultado",
+                resultValue
+            );
+
+
+            try {
+                const response = await fetch(
+                    actionUrl,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "X-CSRFToken": (
+                                getCsrfToken()
+                            ),
+
+                            "X-Requested-With": (
+                                "XMLHttpRequest"
+                            ),
+
+                            "Content-Type": (
+                                "application/"
+                                + "x-www-form-urlencoded"
+                            ),
+                        },
+
+                        body: body.toString(),
+                    }
+                );
+
+
+                let data = {};
+
+                try {
+                    data = await response.json();
+
+                } catch (jsonError) {
+                    data = {};
+                }
+
+
+                if (
+                    !response.ok
+                    || !data.success
+                ) {
+                    throw new Error(
+                        data.message
+                        || (
+                            "Não foi possível registrar "
+                            + "o desfecho."
+                        )
+                    );
+                }
+
+
+                // ---------------------------------------------
+                // SUCESSO
+                // ---------------------------------------------
+
+                window.location.reload();
+
+
+            } catch (error) {
+                showError(
+                    error.message
+                    || (
+                        "Não foi possível registrar "
+                        + "o desfecho."
+                    )
+                );
+
+
+                submitting = false;
+                submit.disabled = false;
+
+
+                if (currentIsDeadline) {
+                    submitLabel.textContent =
+                        outcome === "not_completed"
+                            ? "Confirmar não cumprimento"
+                            : "Confirmar cumprimento";
+
+                } else {
+                    submitLabel.textContent =
+                        outcome === "not_completed"
+                            ? "Confirmar não realizado"
+                            : "Confirmar conclusão";
+                }
+            }
         }
-    });
+    );
 });

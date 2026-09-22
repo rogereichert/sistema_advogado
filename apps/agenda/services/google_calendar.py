@@ -578,6 +578,188 @@ def update_google_calendar_event(event, user):
 
 
 # =========================================================
+# REMOÇÃO NO GOOGLE
+# =========================================================
+
+
+def delete_google_calendar_event(event, user):
+    """
+    Remove do Google Calendar o compromisso vinculado
+    ao AgendaEvent sem excluir o registro do LexControl.
+
+    A ausência do evento no Google (404/410) é tratada
+    como remoção concluída, pois o estado desejado já foi
+    alcançado.
+    """
+
+    if not event.google_event_id:
+        return {
+            "success": True,
+            "attempted": False,
+            "reason": "not_linked",
+        }
+
+    if (
+        event.google_sync_status
+        == event.GoogleSyncStatus.REMOVED
+    ):
+        return {
+            "success": True,
+            "attempted": False,
+            "reason": "already_removed",
+        }
+
+    connection = get_google_calendar_connection(user)
+
+    if not connection:
+        return {
+            "success": False,
+            "attempted": False,
+            "reason": "not_connected",
+        }
+
+    calendar_id = (
+        event.google_calendar_id
+        or connection.calendar_id
+    )
+
+    try:
+        service = build_google_calendar_service(connection)
+
+        (
+            service.events()
+            .delete(
+                calendarId=calendar_id,
+                eventId=event.google_event_id,
+            )
+            .execute()
+        )
+
+    except RefreshError:
+        _set_google_sync_status(
+            event,
+            event.GoogleSyncStatus.ERROR,
+        )
+
+        logger.warning(
+            (
+                "Falha de autenticação ao remover evento "
+                "do Google Calendar. "
+                "usuario_id=%s agenda_event_id=%s "
+                "google_event_id=%s"
+            ),
+            user.pk,
+            event.pk,
+            event.google_event_id,
+        )
+
+        return {
+            "success": False,
+            "attempted": True,
+            "reason": "auth_error",
+        }
+
+    except HttpError as error:
+        status = _get_http_status(error)
+
+        if status in (404, 410):
+            _set_google_sync_status(
+                event,
+                event.GoogleSyncStatus.REMOVED,
+            )
+
+            logger.info(
+                (
+                    "Evento já ausente durante remoção "
+                    "no Google Calendar. "
+                    "usuario_id=%s agenda_event_id=%s "
+                    "google_event_id=%s status=%s"
+                ),
+                user.pk,
+                event.pk,
+                event.google_event_id,
+                status,
+            )
+
+            return {
+                "success": True,
+                "attempted": True,
+                "reason": "already_deleted",
+                "http_status": status,
+            }
+
+        _set_google_sync_status(
+            event,
+            event.GoogleSyncStatus.ERROR,
+        )
+
+        logger.exception(
+            (
+                "Erro da Google Calendar API ao remover "
+                "evento. usuario_id=%s agenda_event_id=%s "
+                "google_event_id=%s status=%s"
+            ),
+            user.pk,
+            event.pk,
+            event.google_event_id,
+            status,
+        )
+
+        return {
+            "success": False,
+            "attempted": True,
+            "reason": "google_error",
+            "http_status": status,
+        }
+
+    except Exception:
+        _set_google_sync_status(
+            event,
+            event.GoogleSyncStatus.ERROR,
+        )
+
+        logger.exception(
+            (
+                "Erro inesperado ao remover evento "
+                "do Google Calendar. "
+                "usuario_id=%s agenda_event_id=%s "
+                "google_event_id=%s"
+            ),
+            user.pk,
+            event.pk,
+            event.google_event_id,
+        )
+
+        return {
+            "success": False,
+            "attempted": True,
+            "reason": "google_error",
+        }
+
+    _set_google_sync_status(
+        event,
+        event.GoogleSyncStatus.REMOVED,
+    )
+
+    logger.info(
+        (
+            "Evento removido do Google Calendar. "
+            "usuario_id=%s agenda_event_id=%s "
+            "google_event_id=%s"
+        ),
+        user.pk,
+        event.pk,
+        event.google_event_id,
+    )
+
+    return {
+        "success": True,
+        "attempted": True,
+        "reason": "deleted",
+    }
+
+
+# =========================================================
 # CONVERSÃO GOOGLE -> LEXCONTROL
 # =========================================================
 

@@ -18,6 +18,7 @@ from .models import AgendaEvent, GoogleCalendarConnection
 from .services.google_calendar import (
     build_google_oauth_flow,
     create_google_calendar_event,
+    delete_google_calendar_event,
     get_google_calendar_connection,
     recreate_google_calendar_event,
     sync_google_event_to_lexcontrol,
@@ -189,6 +190,34 @@ def _build_not_completed_history_description(event):
     return description
 
 
+def _build_cancellation_history_description(event):
+    """
+    Monta a descrição registrada no histórico do caso
+    quando um compromisso é cancelado.
+    """
+
+    date_text = event.data.strftime("%d/%m/%Y")
+
+    if event.hora:
+        time_text = event.hora.strftime("%H:%M")
+        scheduled_text = f"{date_text} às {time_text}"
+    else:
+        scheduled_text = date_text
+
+    description = (
+        f"{event.get_tipo_display()} "
+        f"'{event.titulo}', previsto para "
+        f"{scheduled_text}, foi cancelado."
+    )
+
+    if event.resultado:
+        description += (
+            f"\n\nMotivo do cancelamento:\n{event.resultado}"
+        )
+
+    return description
+
+
 # =========================================================
 # LISTA DA AGENDA
 # =========================================================
@@ -274,9 +303,19 @@ def agenda_list(request):
 
     historical_queryset = (
         AgendaEvent.objects
-        .select_related("caso", "caso__cliente", "concluido_por")
-        .filter(status__in=historical_statuses)
-        .order_by("-data", "-hora")
+        .select_related(
+            "caso",
+            "caso__cliente",
+            "concluido_por",
+        )
+        .filter(
+            status__in=historical_statuses,
+        )
+        .order_by(
+            "-concluido_em",
+            "-atualizado_em",
+            "-pk",
+        )
     )
 
     # O card Próximos representa o mês atual.
@@ -646,6 +685,260 @@ def agenda_update(request, pk):
             "editing": True,
         },
     )
+
+
+# =========================================================
+# CONFIRMAÇÃO DE COMPROMISSO
+# =========================================================
+
+
+@login_required
+@require_POST
+def agenda_confirm(request, pk):
+    """
+    Confirma um compromisso no LexControl.
+
+    A confirmação é operacional e não altera
+    o compromisso correspondente no Google Agenda.
+    """
+
+    event = get_object_or_404(
+        AgendaEvent.objects.select_related(
+            "caso",
+            "caso__cliente",
+            "criado_por",
+        ),
+        pk=pk,
+    )
+
+    # -----------------------------------------------------
+    # PROTEÇÃO CONTRA CONFIRMAÇÃO DUPLICADA
+    # -----------------------------------------------------
+
+    if event.status == event.Status.CONFIRMED:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Este compromisso já está confirmado."
+                ),
+            },
+            status=400,
+        )
+
+    # -----------------------------------------------------
+    # SOMENTE AGENDADOS PODEM SER CONFIRMADOS
+    # -----------------------------------------------------
+
+    if event.status != event.Status.SCHEDULED:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Este compromisso não pode ser confirmado "
+                    "no status atual."
+                ),
+            },
+            status=400,
+        )
+
+    # -----------------------------------------------------
+    # CONFIRMAÇÃO + HISTÓRICO
+    # -----------------------------------------------------
+
+    with transaction.atomic():
+        event.status = event.Status.CONFIRMED
+
+        event.save(
+            update_fields=[
+                "status",
+                "atualizado_em",
+            ]
+        )
+
+        data_formatada = event.data.strftime(
+            "%d/%m/%Y"
+        )
+
+        if event.hora:
+            horario = event.hora.strftime("%H:%M")
+
+            descricao = (
+                f"Compromisso '{event.titulo}', previsto para "
+                f"{data_formatada} às {horario}, foi confirmado."
+            )
+
+        else:
+            descricao = (
+                f"Compromisso '{event.titulo}', previsto para "
+                f"{data_formatada}, foi confirmado."
+            )
+
+        CaseHistory.objects.create(
+            caso=event.caso,
+            usuario=request.user,
+            titulo="Compromisso confirmado",
+            descricao=descricao,
+        )
+
+    # -----------------------------------------------------
+    # Nenhuma chamada ao Google Calendar.
+    # -----------------------------------------------------
+
+    return JsonResponse(
+        {
+            "success": True,
+            "event_id": event.pk,
+            "status": event.status,
+            "status_display": (
+                event.get_status_display()
+            ),
+            "message": (
+                "Compromisso confirmado com sucesso."
+            ),
+        }
+    )
+
+# =========================================================
+# CANCELAMENTO DE COMPROMISSO
+# =========================================================
+
+
+@login_required
+@require_POST
+def agenda_cancel(request, pk):
+    """
+    Cancela um compromisso no LexControl.
+
+    O motivo é obrigatório. O cancelamento local e o histórico
+    são persistidos antes da tentativa de remoção no Google.
+    Uma falha no Google nunca desfaz o cancelamento local.
+    """
+
+    event = get_object_or_404(
+        AgendaEvent.objects.select_related(
+            "caso",
+            "caso__cliente",
+            "criado_por",
+        ),
+        pk=pk,
+    )
+
+    allowed_statuses = {
+        event.Status.SCHEDULED,
+        event.Status.CONFIRMED,
+    }
+
+    if event.status not in allowed_statuses:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": (
+                    "Este compromisso não pode ser cancelado "
+                    "no status atual."
+                ),
+            },
+            status=400,
+        )
+
+    motivo = request.POST.get("motivo", "").strip()
+
+    if not motivo:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Informe o motivo do cancelamento.",
+            },
+            status=400,
+        )
+
+    with transaction.atomic():
+        event.status = event.Status.CANCELED
+        event.resultado = motivo
+        event.concluido_em = timezone.now()
+        event.concluido_por = request.user
+
+        event.save(
+            update_fields=[
+                "status",
+                "resultado",
+                "concluido_em",
+                "concluido_por",
+                "atualizado_em",
+            ]
+        )
+
+        CaseHistory.objects.create(
+            caso=event.caso,
+            usuario=request.user,
+            titulo="Compromisso cancelado",
+            descricao=_build_cancellation_history_description(event),
+        )
+
+    try:
+        google_result = delete_google_calendar_event(
+            event,
+            request.user,
+        )
+    except Exception:
+        google_result = {
+            "success": False,
+            "attempted": True,
+            "reason": "google_error",
+        }
+
+    google_success = google_result.get("success", False)
+    google_attempted = google_result.get("attempted", False)
+    google_reason = google_result.get("reason")
+
+    if google_success:
+        if google_reason == "not_linked":
+            result_message = "Compromisso cancelado com sucesso."
+        elif google_reason in {"already_removed", "already_deleted"}:
+            result_message = (
+                "Compromisso cancelado no LexControl. "
+                "O evento já não estava disponível no Google Agenda."
+            )
+        else:
+            result_message = (
+                "Compromisso cancelado no LexControl "
+                "e removido do Google Agenda."
+            )
+    elif google_reason == "not_connected":
+        result_message = (
+            "Compromisso cancelado no LexControl. "
+            "Não foi possível refletir o cancelamento no Google Agenda "
+            "porque não há uma conta Google conectada."
+        )
+    elif google_reason == "auth_error":
+        result_message = (
+            "Compromisso cancelado no LexControl. "
+            "Não foi possível removê-lo do Google Agenda porque "
+            "a autorização da conta precisa ser renovada."
+        )
+    else:
+        result_message = (
+            "Compromisso cancelado no LexControl, "
+            "mas não foi possível removê-lo do Google Agenda."
+        )
+
+    event.refresh_from_db()
+
+    return JsonResponse(
+        {
+            "success": True,
+            "event_id": event.pk,
+            "status": event.status,
+            "status_display": event.get_status_display(),
+            "concluido_em": event.concluido_em.isoformat(),
+            "google_sync_attempted": google_attempted,
+            "google_synced": google_success,
+            "google_reason": google_reason,
+            "google_sync_status": event.google_sync_status,
+            "message": result_message,
+        }
+    )
+
 
 # =========================================================
 # CONCLUSÃO DE COMPROMISSO
