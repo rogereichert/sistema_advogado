@@ -362,12 +362,14 @@
 
                             {% if client.email %}
 
-                                <p
-                                    class="mt-0.5 truncate text-xs font-medium text-slate-700"
-                                    title="{{ client.email }}"
+                                <a
+                                    href="mailto:{{ client.email }}"
+                                    class="mt-0.5 block max-w-full cursor-pointer truncate rounded-sm text-xs font-medium text-slate-700 transition hover:text-brand-800 hover:underline hover:underline-offset-2 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                                    title="Enviar e-mail para {{ client.email }}"
+                                    aria-label="Enviar e-mail para {{ client.nome_completo }}"
                                 >
                                     {{ client.email }}
-                                </p>
+                                </a>
 
                             {% else %}
 

@@ -27,13 +27,11 @@
             class="flex flex-col justify-between gap-6 xl:flex-row xl:items-center"
         >
 
-
             <!-- =================================================
                  IDENTIFICAÇÃO DO CLIENTE
             ================================================== -->
 
             <div class="flex min-w-0 items-center gap-4 sm:gap-5">
-
 
                 <!-- =============================================
                      AVATAR
@@ -57,9 +55,7 @@
 
                 <div class="min-w-0">
 
-                    <div
-                        class="flex flex-wrap items-center gap-2"
-                    >
+                    <div class="flex flex-wrap items-center gap-2">
 
                         <span
                             class="inline-flex items-center gap-1.5 rounded-full border border-gold-200 bg-gold-50 px-2.5 py-1 text-xs font-semibold text-gold-700"
@@ -189,7 +185,6 @@
                 class="flex shrink-0 flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center"
             >
 
-
                 <!-- =============================================
                      GERAR DOSSIÊ
                 ============================================== -->
@@ -197,31 +192,35 @@
                 <button
                     type="button"
                     id="open-dossier-modal"
-                    class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-brand-200 bg-white px-4 text-sm font-semibold text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                    class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-brand-200 bg-white px-4 text-sm font-semibold leading-none text-brand-800 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
                 >
+                    <!-- ÍCONE DE DOCUMENTO / DOSSIÊ -->
+
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke-width="1.8"
                         stroke="currentColor"
-                        class="h-[18px] w-[18px]"
+                        class="h-[18px] w-[18px] shrink-0"
                         aria-hidden="true"
                     >
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M19.5 14.25v-9A2.25 2.25 0 0 0 17.25 3h-10A2.25 2.25 0 0 0 5 5.25v13.5A2.25 2.25 0 0 0 7.25 21h10a2.25 2.25 0 0 0 2.25-2.25v-4.5"
+                            d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
                         />
 
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M14.25 15.75 21 9m0 0-3.75-3.75M21 9h-6.75"
+                            d="M8.25 13.5h7.5M8.25 16.5h7.5M8.25 10.5H12"
                         />
                     </svg>
 
-                    <span>Gerar dossiê</span>
+                    <span class="leading-none">
+                        Gerar Dossiê
+                    </span>
                 </button>
 
 
@@ -232,7 +231,7 @@
                 <button
                     type="button"
                     id="open-edit-client-modal"
-                    class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-gold-200 bg-gold-50 px-4 text-sm font-semibold text-gold-800 shadow-sm transition hover:border-gold-300 hover:bg-gold-100 hover:text-gold-900 focus:outline-none focus:ring-4 focus:ring-gold-100"
+                    class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-gold-200 bg-gold-50 px-4 text-sm font-semibold leading-none text-gold-800 shadow-sm transition hover:border-gold-300 hover:bg-gold-100 hover:text-gold-900 focus:outline-none focus:ring-4 focus:ring-gold-100"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -240,7 +239,7 @@
                         viewBox="0 0 24 24"
                         stroke-width="1.8"
                         stroke="currentColor"
-                        class="h-[18px] w-[18px]"
+                        class="h-[18px] w-[18px] shrink-0"
                         aria-hidden="true"
                     >
                         <path
@@ -256,7 +255,9 @@
                         />
                     </svg>
 
-                    <span>Editar</span>
+                    <span class="leading-none">
+                        Editar
+                    </span>
                 </button>
 
 
@@ -268,7 +269,7 @@
                     href="{% url 'cases:create' client.pk %}"
                     data-case-modal-open
                     data-case-url="{% url 'cases:create' client.pk %}"
-                    class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200"
+                    class="inline-flex h-11 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-brand-900 px-5 text-sm font-semibold leading-none text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -276,7 +277,7 @@
                         viewBox="0 0 24 24"
                         stroke-width="2"
                         stroke="currentColor"
-                        class="h-[18px] w-[18px]"
+                        class="h-[18px] w-[18px] shrink-0"
                         aria-hidden="true"
                     >
                         <path
@@ -286,7 +287,9 @@
                         />
                     </svg>
 
-                    <span>Nova causa</span>
+                    <span class="leading-none">
+                        Nova Causa
+                    </span>
                 </a>
 
             </div>

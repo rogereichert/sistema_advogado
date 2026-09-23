@@ -15,9 +15,9 @@
             aria-hidden="true"
         >
 
-            {% if search or selected_status or area %}
+            {% if search or selected_status %}
 
-                <!-- BUSCA SEM RESULTADOS -->
+                <!-- BUSCA / FILTROS SEM RESULTADOS -->
 
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -71,10 +71,10 @@
 
 
         <!-- =====================================================
-             CONTEÚDO
+             BUSCA / FILTROS SEM RESULTADOS
         ====================================================== -->
 
-        {% if search or selected_status or area %}
+        {% if search or selected_status %}
 
             <p
                 class="mt-5 text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
@@ -82,13 +82,11 @@
                 Nenhum resultado
             </p>
 
-
             <h3
                 class="mt-2 text-lg font-semibold tracking-tight text-brand-950"
             >
                 Nenhum caso encontrado
             </h3>
-
 
             <p
                 class="mt-2 text-sm leading-6 text-slate-500"
@@ -148,23 +146,6 @@
 
                 {% endif %}
 
-
-                {% if area %}
-
-                    <span
-                        class="inline-flex max-w-full items-center gap-1.5 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-medium text-slate-600"
-                    >
-                        <span class="text-slate-400">
-                            Área:
-                        </span>
-
-                        <span class="max-w-[180px] truncate">
-                            {{ area }}
-                        </span>
-                    </span>
-
-                {% endif %}
-
             </div>
 
 
@@ -199,11 +180,12 @@
 
             </div>
 
-        {% else %}
 
-            <!-- =================================================
-                 BASE SEM CASOS
-            ================================================== -->
+        <!-- =====================================================
+             SEM CLIENTES CADASTRADOS
+        ====================================================== -->
+
+        {% elif not has_clients %}
 
             <p
                 class="mt-5 text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
@@ -211,76 +193,17 @@
                 Gestão jurídica
             </p>
 
-
             <h3
                 class="mt-2 text-lg font-semibold tracking-tight text-brand-950"
             >
                 Nenhum caso cadastrado
             </h3>
 
-
             <p
-                class="mt-2 text-sm leading-6 text-slate-500"
+                class="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500"
             >
-                Os casos jurídicos vinculados aos clientes do escritório
-                aparecerão aqui assim que forem cadastrados.
+                Para criar um caso jurídico, primeiro cadastre um cliente.
             </p>
-
-
-            <div
-                class="mx-auto mt-6 max-w-sm rounded-xl border border-brand-100 bg-brand-50/50 p-4 text-left"
-            >
-
-                <div class="flex items-start gap-3">
-
-                    <div
-                        class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-brand-700 shadow-sm ring-1 ring-inset ring-brand-100"
-                        aria-hidden="true"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.8"
-                            stroke="currentColor"
-                            class="h-4 w-4"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M11.25 11.25 12 10.5m0 0 .75.75M12 10.5v5.25m0-9.75h.008v.008H12V6Z"
-                            />
-
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"
-                            />
-                        </svg>
-                    </div>
-
-
-                    <div>
-
-                        <p
-                            class="text-sm font-semibold text-brand-950"
-                        >
-                            O cadastro começa pelo cliente
-                        </p>
-
-                        <p
-                            class="mt-1 text-xs leading-5 text-slate-500"
-                        >
-                            Abra o cadastro de um cliente para criar
-                            um novo caso jurídico vinculado a ele.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
 
             <div class="mt-6">
 
@@ -289,6 +212,58 @@
                     class="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-brand-950 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
                 >
                     Ir para clientes
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m9 18 6-6-6-6"
+                        />
+                    </svg>
+                </a>
+
+            </div>
+
+
+        <!-- =====================================================
+             EXISTEM CLIENTES, MAS NÃO EXISTEM CASOS
+        ====================================================== -->
+
+        {% else %}
+
+            <p
+                class="mt-5 text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+            >
+                Gestão jurídica
+            </p>
+
+            <h3
+                class="mt-2 text-lg font-semibold tracking-tight text-brand-950"
+            >
+                Nenhum caso cadastrado
+            </h3>
+
+            <p
+                class="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500"
+            >
+                Crie um caso jurídico a partir do cadastro de um cliente.
+            </p>
+
+            <div class="mt-6">
+
+                <a
+                    href="{% url 'clients:list' %}"
+                    class="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-brand-950 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                >
+                    Ver clientes
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

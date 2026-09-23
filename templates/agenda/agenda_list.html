@@ -348,8 +348,9 @@
                                         <span class="font-medium text-amber-700">
                                             Removido do Google Agenda.
                                         </span>
-                                        <button type="button" class="google-calendar-resend-button agenda-sync-write-action font-semibold text-amber-800 underline decoration-amber-300 underline-offset-2 transition hover:text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-200 disabled:cursor-not-allowed disabled:opacity-60" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
-                                            <span class="google-calendar-resend-label">Recriar no Google</span>
+                                        <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-4 w-4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992V4.356m-.582 11.292a8.25 8.25 0 1 1-2.433-8.4l3.015 2.1" /></svg>
+                                            <span class="google-calendar-resend-label">Reenviar ao Google</span>
                                         </button>
                                     </div>
                                 {% endif %}
@@ -678,7 +679,8 @@
 
                             <div class="flex shrink-0 flex-wrap items-center gap-2">
                                 {% if event.removido_do_google and not event.cancelado %}
-                                    <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 text-xs font-semibold text-amber-800 shadow-sm transition hover:border-amber-300 hover:bg-amber-100 focus:outline-none focus:ring-4 focus:ring-amber-100 disabled:cursor-not-allowed disabled:opacity-60" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
+                                    <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-4 w-4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992V4.356m-.582 11.292a8.25 8.25 0 1 1-2.433-8.4l3.015 2.1" /></svg>
                                         <span class="google-calendar-resend-label">Reenviar ao Google</span>
                                     </button>
                                 {% endif %}
@@ -796,7 +798,8 @@
 
                             <div class="flex shrink-0 flex-wrap items-center gap-2">
                                 {% if event.removido_do_google and not event.cancelado %}
-                                    <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center rounded-lg border border-amber-200 bg-amber-50 px-3 text-xs font-semibold text-amber-800 shadow-sm transition hover:bg-amber-100" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
+                                    <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-4 w-4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992V4.356m-.582 11.292a8.25 8.25 0 1 1-2.433-8.4l3.015 2.1" /></svg>
                                         <span class="google-calendar-resend-label">Reenviar ao Google</span>
                                     </button>
                                 {% endif %}
@@ -859,10 +862,10 @@
 
                             <div class="flex shrink-0 flex-wrap items-center gap-3 pl-[72px] lg:pl-0">
                                 {% if event.removido_do_google and not event.cancelado %}
-                                    <button type="button" class="google-calendar-resend-button agenda-sync-write-action text-xs font-semibold text-amber-700 transition hover:text-amber-900 focus:outline-none focus:underline" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
-                                        <span class="google-calendar-resend-label">Recriar no Google</span>
+                                    <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-4 w-4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992V4.356m-.582 11.292a8.25 8.25 0 1 1-2.433-8.4l3.015 2.1" /></svg>
+                                            <span class="google-calendar-resend-label">Reenviar ao Google</span>
                                     </button>
-                                    <span class="text-slate-300" aria-hidden="true">·</span>
                                 {% endif %}
 
                                 <a href="{% url 'agenda:update' event.pk %}" class="agenda-sync-write-action text-xs font-semibold text-slate-500 transition hover:text-brand-800 focus:outline-none focus:underline">
