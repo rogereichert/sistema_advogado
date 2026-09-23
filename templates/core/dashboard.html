@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    Visão Geral | Advogado Company
+    Visão Geral | LexControl
 {% endblock %}
 
 {% block page_header %}
@@ -14,18 +14,14 @@
 <div class="mx-auto max-w-[1600px]">
 
     <!-- =========================================================
-        CABEÇALHO DA PÁGINA
+         CABEÇALHO
     ========================================================== -->
 
-    <header
-        class="mb-7 flex flex-col justify-between gap-5 lg:flex-row lg:items-end"
-    >
+    <header class="mb-7 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
 
         <div class="min-w-0">
 
             <div class="flex items-center gap-3.5">
-
-                <!-- ÍCONE -->
 
                 <div
                     class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 text-brand-700 shadow-sm"
@@ -47,49 +43,25 @@
                     </svg>
                 </div>
 
-
-                <!-- IDENTIFICAÇÃO -->
-
                 <div>
-
-                    <p
-                        class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700"
-                    >
+                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-gold-700">
                         Painel do escritório
                     </p>
 
-                    <h1
-                        class="mt-0.5 text-2xl font-semibold tracking-tight text-brand-950 sm:text-3xl"
-                    >
+                    <h1 class="mt-0.5 text-2xl font-semibold tracking-tight text-brand-950 sm:text-3xl">
                         Visão Geral
                     </h1>
-
                 </div>
 
             </div>
 
-
-            <!-- DESCRIÇÃO -->
-
-            <p
-                class="mt-4 max-w-2xl text-sm leading-6 text-slate-500"
-            >
-                Acompanhe clientes, casos, documentos e compromissos
-                do escritório em um só lugar.
+            <p class="mt-4 max-w-2xl text-sm leading-6 text-slate-500">
+                Acompanhe a situação do escritório e os pontos que precisam da sua atenção.
             </p>
 
         </div>
 
-
-        <!-- =====================================================
-            AÇÕES PRINCIPAIS
-        ====================================================== -->
-
         <div class="flex flex-col gap-3 sm:flex-row">
-
-            <!-- =================================================
-                VER CASOS — AÇÃO SECUNDÁRIA
-            ================================================== -->
 
             <a
                 href="{% url 'cases:list' %}"
@@ -107,19 +79,12 @@
                     <path
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        d="M20.25 14.15v4.25a2.85 2.85 0 0 1-2.85 2.85H6.6a2.85 2.85 0 0 1-2.85-2.85V7.6A2.85 2.85 0 0 1 6.6 4.75h4.25m4.5 0h5.9m-2.95-2.95v5.9M9 12h6m-6 4h3"
+                        d="M20.25 14.15v4.25a2.85 2.85 0 0 1-2.85 2.85H6.6a2.85 2.85 0 0 1-2.85-2.85V7.6A2.85 2.85 0 0 1 6.6 4.75h4.25m4.5 0h5.9m-2.95-2.95v5.9"
                     />
                 </svg>
 
-                <span>
-                    Ver casos
-                </span>
+                Ver casos
             </a>
-
-
-            <!-- =================================================
-                NOVO CLIENTE — AÇÃO PRIMÁRIA
-            ================================================== -->
 
             <button
                 type="button"
@@ -142,9 +107,7 @@
                     />
                 </svg>
 
-                <span>
-                    Novo cliente
-                </span>
+                Novo cliente
             </button>
 
         </div>
@@ -153,51 +116,30 @@
 
 
     <!-- =========================================================
-         INDICADORES
+         RESUMO DO ESCRITÓRIO
     ========================================================== -->
 
     <section
-        class="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
-        aria-label="Indicadores do escritório"
+        class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+        aria-label="Resumo do escritório"
     >
 
-        <!-- CLIENTES -->
+        <div class="grid sm:grid-cols-3">
 
-        <a
-            href="{% url 'clients:list' %}"
-            class="group relative overflow-hidden rounded-2xl border border-brand-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md"
-        >
-            <div class="flex items-start justify-between gap-4">
+            <!-- CLIENTES -->
 
-                <div class="min-w-0">
-
-                    <p
-                        class="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400"
-                    >
-                        Clientes
-                    </p>
-
-                    <p
-                        class="mt-3 text-3xl font-semibold tracking-tight text-brand-950"
-                    >
-                        {{ total_clients }}
-                    </p>
-
-                    <p class="mt-1.5 text-sm text-slate-500">
-                        Clientes cadastrados
-                    </p>
-
-                </div>
-
-
+            <a
+                href="{% url 'clients:list' %}"
+                class="group flex items-center gap-4 px-6 py-5 transition hover:bg-brand-50/40 sm:px-7"
+            >
                 <span
-                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100 transition group-hover:bg-brand-950 group-hover:text-white"
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100 transition group-hover:bg-brand-950 group-hover:text-white"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke-width="1.7"
+                        stroke-width="1.8"
                         stroke="currentColor"
                         class="h-5 w-5"
                         aria-hidden="true"
@@ -205,59 +147,37 @@
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M18 18.72a9.72 9.72 0 0 0 3.74-.62 3 3 0 0 0-4.5-2.6M18 18.72v-.75c0-1-.2-1.95-.57-2.8M18 18.72a9.72 9.72 0 0 1-6 0m5.43-3.55a5.97 5.97 0 0 0-10.86 0M6 18.72a9.72 9.72 0 0 1-3.74-.62 3 3 0 0 1 4.5-2.6M6 18.72v-.75c0-1 .2-1.95.57-2.8m0 0a5.97 5.97 0 0 1 10.86 0M15 7.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                            d="M15 7.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM18.75 19.5a6.75 6.75 0 0 0-13.5 0"
                         />
                     </svg>
                 </span>
 
-            </div>
-
-            <div
-                class="mt-5 flex items-center gap-1.5 text-xs font-semibold text-brand-600 opacity-0 transition group-hover:opacity-100"
-            >
-                Ver clientes
-                <span aria-hidden="true">→</span>
-            </div>
-        </a>
-
-
-        <!-- CASOS ATIVOS -->
-
-        <a
-            href="{% url 'cases:list' %}"
-            class="group relative overflow-hidden rounded-2xl border border-brand-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md"
-        >
-            <div class="flex items-start justify-between gap-4">
-
-                <div>
-
-                    <p
-                        class="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400"
-                    >
-                        Casos ativos
+                <div class="min-w-0">
+                    <p class="text-2xl font-semibold tracking-tight text-brand-950">
+                        {{ total_clients }}
                     </p>
 
-                    <p
-                        class="mt-3 text-3xl font-semibold tracking-tight text-brand-950"
-                    >
-                        {{ active_cases }}
+                    <p class="mt-0.5 text-xs font-medium text-slate-500">
+                        Cliente{{ total_clients|pluralize }} cadastrado{{ total_clients|pluralize }}
                     </p>
-
-                    <p class="mt-1.5 text-sm text-slate-500">
-                        Causas em acompanhamento
-                    </p>
-
                 </div>
+            </a>
 
 
+            <!-- CASOS ATIVOS -->
+
+            <a
+                href="{% url 'cases:list' %}"
+                class="group flex items-center gap-4 border-t border-brand-100 px-6 py-5 transition hover:bg-brand-50/40 sm:border-l sm:border-t-0 sm:px-7"
+            >
                 <span
-                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold-50 text-gold-700 ring-1 ring-inset ring-gold-100"
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-50 text-gold-700 ring-1 ring-inset ring-gold-100"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke-width="1.7"
+                        stroke-width="1.8"
                         stroke="currentColor"
                         class="h-5 w-5"
                         aria-hidden="true"
@@ -270,53 +190,31 @@
                     </svg>
                 </span>
 
-            </div>
+                <div class="min-w-0">
+                    <p class="text-2xl font-semibold tracking-tight text-brand-950">
+                        {{ active_cases }}
+                    </p>
+
+                    <p class="mt-0.5 text-xs font-medium text-slate-500">
+                        Caso{{ active_cases|pluralize }} ativo{{ active_cases|pluralize }}
+                    </p>
+                </div>
+            </a>
+
+
+            <!-- DOCUMENTOS PENDENTES -->
 
             <div
-                class="mt-5 flex items-center gap-1.5 text-xs font-semibold text-gold-700 opacity-0 transition group-hover:opacity-100"
+                class="flex items-center gap-4 border-t border-brand-100 px-6 py-5 sm:border-l sm:border-t-0 sm:px-7"
             >
-                Ver casos
-                <span aria-hidden="true">→</span>
-            </div>
-        </a>
-
-
-        <!-- DOCUMENTAÇÃO -->
-
-        <div
-            class="relative overflow-hidden rounded-2xl border border-brand-100 bg-white p-5 shadow-sm"
-        >
-            <div class="flex items-start justify-between gap-4">
-
-                <div>
-
-                    <p
-                        class="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400"
-                    >
-                        Aguardando documentação
-                    </p>
-
-                    <p
-                        class="mt-3 text-3xl font-semibold tracking-tight text-brand-950"
-                    >
-                        {{ waiting_documents }}
-                    </p>
-
-                    <p class="mt-1.5 text-sm text-slate-500">
-                        Casos com pendências
-                    </p>
-
-                </div>
-
-
                 <span
-                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100"
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke-width="1.7"
+                        stroke-width="1.8"
                         stroke="currentColor"
                         class="h-5 w-5"
                         aria-hidden="true"
@@ -329,243 +227,270 @@
                     </svg>
                 </span>
 
-            </div>
-        </div>
-
-
-        <!-- PRÓXIMO COMPROMISSO -->
-
-        <a
-            href="{% url 'agenda:list' %}"
-            class="group relative overflow-hidden rounded-2xl border border-brand-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-gold-200 hover:shadow-md"
-        >
-            <div class="flex items-start justify-between gap-4">
-
                 <div class="min-w-0">
-
-                    <p
-                        class="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400"
-                    >
-                        Próximo compromisso
+                    <p class="text-2xl font-semibold tracking-tight text-brand-950">
+                        {{ waiting_document_cases }}
                     </p>
 
-                    {% if next_event %}
-
-                        <p
-                            class="mt-3 text-xl font-semibold tracking-tight text-brand-950"
-                        >
-                            {{ next_event.data|date:"d/m/Y" }}
-                        </p>
-
-                        <p class="mt-1 text-sm font-semibold text-gold-700">
-                            {% if next_event.hora %}
-                                {{ next_event.hora|time:"H:i" }}
-                            {% else %}
-                                Horário não informado
-                            {% endif %}
-                        </p>
-
-                        <p class="mt-2 truncate text-sm text-slate-500">
-                            {{ next_event.titulo }}
-                        </p>
-
-                    {% else %}
-
-                        <p
-                            class="mt-3 text-3xl font-semibold tracking-tight text-brand-950"
-                        >
-                            —
-                        </p>
-
-                        <p class="mt-1.5 text-sm text-slate-500">
-                            Nenhum compromisso agendado
-                        </p>
-
-                    {% endif %}
-
+                    <p class="mt-0.5 text-xs font-medium text-slate-500">
+                        {% if waiting_document_cases == 1 %}
+                            Caso com documento pendente
+                        {% else %}
+                            Casos com documentos pendentes
+                        {% endif %}
+                    </p>
                 </div>
-
-
-                <span
-                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold-50 text-gold-700 ring-1 ring-inset ring-gold-100"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.7"
-                        stroke="currentColor"
-                        class="h-5 w-5"
-                        aria-hidden="true"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
-                        />
-                    </svg>
-                </span>
-
             </div>
-        </a>
+
+        </div>
 
     </section>
 
 
     <!-- =========================================================
-         PRÓXIMOS COMPROMISSOS
+         O QUE PRECISA DE VOCÊ
     ========================================================== -->
 
     <section
-        class="mt-6 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+        class="mt-6 overflow-hidden rounded-2xl border {% if attention_count %}border-amber-200{% else %}border-brand-100{% endif %} bg-white shadow-sm"
     >
 
         <header
-            class="flex flex-col gap-3 border-b border-brand-100 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-7"
+            class="flex flex-col justify-between gap-4 border-b {% if attention_count %}border-amber-100 bg-amber-50/30{% else %}border-brand-100{% endif %} px-6 py-5 sm:flex-row sm:items-center sm:px-7"
         >
 
-            <div>
+            <div class="flex items-start gap-3.5">
 
-                <p
-                    class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
+                <span
+                    class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl {% if attention_count %}bg-amber-50 text-amber-700 ring-amber-200{% else %}bg-emerald-50 text-emerald-700 ring-emerald-100{% endif %} ring-1 ring-inset"
                 >
-                    Agenda
-                </p>
+                    {% if attention_count %}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4.5 w-4.5"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 9v3.75m9.303 3.376c.866 1.5-.217 3.374-1.948 3.374H4.645c-1.73 0-2.813-1.874-1.948-3.374L10.052 3.38c.865-1.5 3.03-1.5 3.896 0l7.355 12.746ZM12 16.5h.008v.008H12V16.5Z"
+                            />
+                        </svg>
+                    {% else %}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            class="h-4.5 w-4.5"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="m4.5 12.75 6 6 9-13.5"
+                            />
+                        </svg>
+                    {% endif %}
+                </span>
 
-                <h2 class="mt-0.5 font-semibold text-brand-950">
-                    Próximos compromissos
-                </h2>
+                <div>
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.14em] {% if attention_count %}text-amber-700{% else %}text-emerald-700{% endif %}">
+                        Atenção
+                    </p>
 
-                <p class="mt-1 text-sm text-slate-500">
-                    Audiências, prazos, reuniões e demais compromissos.
-                </p>
+                    <h2 class="mt-0.5 font-semibold text-brand-950">
+                        O que precisa de você
+                    </h2>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        {% if attention_count %}
+                            Pendências concretas que ainda precisam de acompanhamento.
+                        {% else %}
+                            Nenhuma pendência operacional identificada no momento.
+                        {% endif %}
+                    </p>
+                </div>
 
             </div>
 
-
-            <a
-                href="{% url 'agenda:list' %}"
-                class="inline-flex items-center gap-1.5 text-sm font-semibold text-gold-700 transition hover:text-gold-800"
-            >
-                Ver agenda
-                <span aria-hidden="true">→</span>
-            </a>
+            {% if attention_count %}
+                <span
+                    class="inline-flex w-fit items-center rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200"
+                >
+                    {{ attention_count }}
+                    item{{ attention_count|pluralize:" ,s" }}
+                </span>
+            {% endif %}
 
         </header>
 
 
-        <div class="divide-y divide-brand-50">
+        {% if attention_items %}
 
-            {% for event in upcoming_events %}
+            <div class="divide-y divide-brand-50">
 
-                <article
-                    class="group flex flex-col justify-between gap-5 px-6 py-5 transition hover:bg-brand-50/30 md:flex-row md:items-center sm:px-7"
-                >
-
-                    <div class="flex min-w-0 items-center gap-4 sm:gap-5">
-
-                        <!-- DATA -->
-
-                        <div
-                            class="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-brand-950 text-white shadow-sm sm:h-16 sm:w-16"
-                        >
-                            <span class="text-lg font-semibold leading-none sm:text-xl">
-                                {{ event.data|date:"d" }}
-                            </span>
-
-                            <span
-                                class="mt-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-brand-200 sm:text-[10px]"
-                            >
-                                {{ event.data|date:"M" }}
-                            </span>
-                        </div>
-
-
-                        <!-- EVENTO -->
-
-                        <div class="min-w-0">
-
-                            <div class="flex flex-wrap items-center gap-2">
-
-                                <p class="font-semibold text-brand-950">
-                                    {{ event.titulo }}
-                                </p>
-
-                                <span
-                                    class="rounded-full bg-gold-50 px-2.5 py-1 text-[11px] font-semibold text-gold-700 ring-1 ring-inset ring-gold-200"
-                                >
-                                    {{ event.get_tipo_display }}
-                                </span>
-
-                            </div>
-
-
-                            <p class="mt-1 truncate text-sm text-slate-500">
-                                {{ event.caso.cliente.nome_completo }}
-
-                                <span class="mx-1 text-slate-300">·</span>
-
-                                {{ event.caso.titulo }}
-                            </p>
-
-
-                            <div
-                                class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-400"
-                            >
-
-                                <span>
-                                    {% if event.hora %}
-                                        {{ event.hora|time:"H:i" }}
-                                    {% else %}
-                                        Horário não informado
-                                    {% endif %}
-                                </span>
-
-                                {% if event.local %}
-                                    <span>·</span>
-                                    <span>{{ event.local }}</span>
-                                {% endif %}
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="flex shrink-0 items-center gap-3">
-
-                        <a
-                            href="{% url 'agenda:update' event.pk %}"
-                            class="inline-flex min-h-9 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
-                        >
-                            Editar
-                        </a>
-
-                        <a
-                            href="{% url 'cases:detail' event.caso.pk %}"
-                            class="inline-flex items-center gap-1 text-sm font-semibold text-gold-700 transition hover:text-gold-800"
-                        >
-                            Abrir caso
-                            <span aria-hidden="true">→</span>
-                        </a>
-
-                    </div>
-
-                </article>
-
-            {% empty %}
-
-                <div class="px-6 py-12 text-center sm:px-7">
+                {% for item in attention_items %}
 
                     <div
-                        class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-400 ring-1 ring-inset ring-brand-100"
+                        class="flex flex-col gap-4 px-6 py-4.5 transition hover:bg-slate-50/60 sm:flex-row sm:items-center sm:justify-between sm:px-7"
+                    >
+
+                        <div class="flex min-w-0 items-start gap-4">
+
+                            <!-- ÍCONE -->
+
+                            {% if item.kind == "document" %}
+
+                                <span
+                                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.8"
+                                        stroke="currentColor"
+                                        class="h-5 w-5"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M19.5 14.25v-2.625A3.375 3.375 0 0 0 16.125 8.25h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15A2.25 2.25 0 0 0 6.75 21.75h10.5A2.25 2.25 0 0 0 19.5 19.5v-5.25Z"
+                                        />
+                                    </svg>
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.8"
+                                        stroke="currentColor"
+                                        class="h-5 w-5"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                        />
+                                    </svg>
+                                </span>
+
+                            {% endif %}
+
+
+                            <!-- CONTEÚDO -->
+
+                            <div class="min-w-0">
+
+                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+
+                                    <p class="text-sm font-semibold text-brand-950">
+                                        {{ item.title }}
+                                    </p>
+
+                                    {% if item.kind == "deadline" %}
+                                        <span
+                                            class="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700 ring-1 ring-inset ring-amber-200"
+                                        >
+                                            Prazo
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+                                <p class="mt-1 text-sm text-slate-700">
+                                    {{ item.description }}
+                                </p>
+
+                                <p class="mt-1.5 text-xs text-slate-500">
+
+                                    {{ item.client.nome_completo }}
+
+                                    <span class="mx-1 text-slate-300">·</span>
+
+                                    {{ item.case.titulo }}
+
+                                    {% if item.kind == "document" and item.date %}
+                                        <span class="mx-1 text-slate-300">·</span>
+                                        solicitado em {{ item.date|date:"d/m/Y" }}
+                                    {% elif item.date %}
+                                        <span class="mx-1 text-slate-300">·</span>
+                                        {{ item.date|date:"d/m/Y" }}
+
+                                        {% if item.time %}
+                                            às {{ item.time|time:"H:i" }}
+                                        {% endif %}
+                                    {% endif %}
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- AÇÃO -->
+
+                        <div class="shrink-0 pl-14 sm:pl-0">
+
+                            {% if item.kind == "document" %}
+
+                                <a
+                                    href="{% url 'cases:detail' item.case.pk %}"
+                                    class="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 transition hover:text-gold-700"
+                                >
+                                    Abrir caso
+                                    <span aria-hidden="true">→</span>
+                                </a>
+
+                            {% else %}
+
+                                <a
+                                    href="{% url 'agenda:list' %}?view=pending"
+                                    class="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-700 transition hover:text-amber-800"
+                                >
+                                    Resolver
+                                    <span aria-hidden="true">→</span>
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="px-6 py-8 sm:px-7">
+
+                <div class="flex items-start gap-4">
+
+                    <span
+                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-100"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
-                            stroke-width="1.7"
+                            stroke-width="2"
                             stroke="currentColor"
                             class="h-5 w-5"
                             aria-hidden="true"
@@ -573,136 +498,141 @@
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
+                                d="m4.5 12.75 6 6 9-13.5"
                             />
                         </svg>
+                    </span>
+
+                    <div>
+                        <p class="text-sm font-semibold text-brand-950">
+                            Tudo em ordem
+                        </p>
+
+                        <p class="mt-1 text-sm leading-6 text-slate-500">
+                            Não há documentos pendentes nem compromissos anteriores aguardando desfecho.
+                        </p>
                     </div>
-
-                    <p class="mt-4 text-sm font-semibold text-brand-950">
-                        Nenhum compromisso futuro
-                    </p>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Audiências, prazos e reuniões aparecerão aqui.
-                    </p>
 
                 </div>
 
-            {% endfor %}
+            </div>
 
-        </div>
+        {% endif %}
 
     </section>
 
 
     <!-- =========================================================
-         PARTE INFERIOR
+         MOVIMENTAÇÃO + CARTEIRA
     ========================================================== -->
 
-    <div class="mt-6 grid gap-6 xl:grid-cols-3">
+    <div class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.65fr)_minmax(340px,0.75fr)]">
 
         <!-- =====================================================
-             CASOS RECENTES
+             MOVIMENTAÇÃO RECENTE
         ====================================================== -->
 
         <section
-            class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm xl:col-span-2"
+            class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
         >
 
-            <header
-                class="flex items-center justify-between gap-5 border-b border-brand-100 px-6 py-5 sm:px-7"
-            >
+            <header class="flex items-start justify-between gap-4 border-b border-brand-100 px-6 py-5 sm:px-7">
 
                 <div>
-
-                    <p
-                        class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
-                    >
-                        Atividade recente
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700">
+                        Movimentação do escritório
                     </p>
 
                     <h2 class="mt-0.5 font-semibold text-brand-950">
-                        Casos recentes
+                        Atividade recente
                     </h2>
 
                     <p class="mt-1 text-sm text-slate-500">
-                        Últimas causas cadastradas no escritório.
+                        Últimos acontecimentos registrados nos casos.
                     </p>
-
                 </div>
 
-
-                <a
-                    href="{% url 'cases:list' %}"
-                    class="shrink-0 text-sm font-semibold text-gold-700 transition hover:text-gold-800"
+                <span
+                    class="hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100 sm:flex"
                 >
-                    Ver todos →
-                </a>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4.5 w-4.5"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                        />
+                    </svg>
+                </span>
 
             </header>
 
 
             <div class="divide-y divide-brand-50">
 
-                {% for case in recent_cases %}
+                {% for activity in recent_activity %}
 
                     <a
-                        href="{% url 'cases:detail' case.pk %}"
-                        class="group flex items-center justify-between gap-6 px-6 py-5 transition hover:bg-brand-50/30 sm:px-7"
+                        href="{% url 'cases:detail' activity.caso.pk %}"
+                        class="group flex gap-4 px-6 py-4 transition hover:bg-brand-50/30 sm:px-7"
                     >
 
-                        <div class="min-w-0">
+                        <div class="relative flex shrink-0 flex-col items-center">
 
-                            <div class="flex flex-wrap items-center gap-2.5">
+                            <span
+                                class="mt-1.5 h-2.5 w-2.5 rounded-full bg-gold-500 ring-4 ring-gold-50"
+                            ></span>
 
-                                <p
-                                    class="truncate text-sm font-semibold text-brand-950 transition group-hover:text-gold-700"
-                                >
-                                    {{ case.titulo }}
-                                </p>
-
-                                {% if case.status %}
-
-                                    <span
-                                        class="rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-600 ring-1 ring-inset ring-brand-100"
-                                    >
-                                        {{ case.status.nome }}
-                                    </span>
-
-                                {% endif %}
-
-                            </div>
-
-
-                            <p class="mt-1 text-sm text-slate-500">
-                                {{ case.cliente.nome_completo }}
-                            </p>
-
-
-                            <p class="mt-2 text-xs text-slate-400">
-
-                                {% if case.numero_identificacao %}
-                                    Caso {{ case.numero_identificacao }}
-                                {% else %}
-                                    Caso #{{ case.pk|stringformat:"05d" }}
-                                {% endif %}
-
-                                {% if case.area_juridica %}
-                                    <span class="mx-1">·</span>
-                                    {{ case.area_juridica }}
-                                {% endif %}
-
-                            </p>
+                            {% if not forloop.last %}
+                                <span class="mt-2 h-full w-px bg-brand-100"></span>
+                            {% endif %}
 
                         </div>
 
 
-                        <span
-                            class="shrink-0 text-slate-300 transition group-hover:translate-x-1 group-hover:text-gold-600"
-                            aria-hidden="true"
-                        >
-                            →
-                        </span>
+                        <div class="min-w-0 flex-1">
+
+                            <div class="flex flex-col justify-between gap-1 sm:flex-row sm:items-start sm:gap-4">
+
+                                <div class="min-w-0">
+
+                                    <p class="text-sm font-semibold text-brand-950 transition group-hover:text-gold-700">
+                                        {{ activity.titulo }}
+                                    </p>
+
+                                    {% if activity.descricao %}
+                                        <p class="mt-1 line-clamp-2 text-xs leading-5 text-slate-500">
+                                            {{ activity.descricao|truncatechars:120 }}
+                                        </p>
+                                    {% endif %}
+
+                                </div>
+
+                                <time
+                                    datetime="{{ activity.criado_em|date:'c' }}"
+                                    class="shrink-0 text-xs text-slate-400"
+                                >
+                                    {{ activity.criado_em|date:"d/m/Y H:i" }}
+                                </time>
+
+                            </div>
+
+                            <p class="mt-2 text-xs font-medium text-slate-500">
+                                {{ activity.caso.cliente.nome_completo }}
+
+                                <span class="mx-1 text-slate-300">·</span>
+
+                                {{ activity.caso.titulo }}
+                            </p>
+
+                        </div>
 
                     </a>
 
@@ -711,11 +641,11 @@
                     <div class="px-6 py-12 text-center sm:px-7">
 
                         <p class="text-sm font-semibold text-brand-950">
-                            Nenhum caso cadastrado
+                            Nenhuma atividade registrada
                         </p>
 
                         <p class="mt-1 text-sm text-slate-500">
-                            Os casos mais recentes aparecerão aqui.
+                            As movimentações recentes aparecerão aqui.
                         </p>
 
                     </div>
@@ -728,7 +658,7 @@
 
 
         <!-- =====================================================
-             CASOS POR STATUS
+             CARTEIRA JURÍDICA
         ====================================================== -->
 
         <section
@@ -737,98 +667,272 @@
 
             <header class="border-b border-brand-100 px-6 py-5">
 
-                <p
-                    class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
-                >
-                    Distribuição
+                <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700">
+                    Carteira jurídica
                 </p>
 
                 <h2 class="mt-0.5 font-semibold text-brand-950">
-                    Casos por status
+                    Situação dos casos
                 </h2>
 
                 <p class="mt-1 text-sm text-slate-500">
-                    Distribuição atual das causas.
+                    Distribuição atual por status.
                 </p>
 
             </header>
 
 
-            <div class="p-6">
+            {% if status_summary %}
 
-                <div class="space-y-5">
+                <div class="p-6">
 
-                    {% for item in status_summary %}
+                    <!-- GRÁFICO MENOR -->
 
-                        <div>
+                    <div class="relative mx-auto h-[165px] w-[165px]">
 
-                            <div
-                                class="flex items-center justify-between gap-4"
-                            >
+                        <canvas
+                            id="case-status-chart"
+                            aria-label="Distribuição dos casos por status"
+                            role="img"
+                        ></canvas>
 
-                                <div
-                                    class="flex min-w-0 items-center gap-3"
-                                >
+                        <div
+                            class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center"
+                        >
+                            <span class="text-2xl font-semibold tracking-tight text-brand-950">
+                                {{ total_cases }}
+                            </span>
+
+                            <span class="mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                                casos
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="mt-6 space-y-2.5">
+
+                        {% for item in status_summary %}
+
+                            <div class="flex items-center justify-between gap-3">
+
+                                <div class="flex min-w-0 items-center gap-2.5">
+
                                     <span
-                                        class="h-2 w-2 shrink-0 rounded-full bg-gold-500 ring-4 ring-gold-50"
+                                        class="case-status-dot h-2.5 w-2.5 shrink-0 rounded-full"
+                                        data-chart-index="{{ forloop.counter0 }}"
                                         aria-hidden="true"
                                     ></span>
 
-                                    <p
-                                        class="truncate text-sm font-medium text-slate-700"
-                                    >
+                                    <span class="truncate text-xs font-medium text-slate-600">
                                         {% if item.status__nome %}
                                             {{ item.status__nome }}
                                         {% else %}
                                             Sem status
                                         {% endif %}
-                                    </p>
+                                    </span>
+
                                 </div>
 
-
-                                <span
-                                    class="flex h-7 min-w-7 shrink-0 items-center justify-center rounded-lg bg-brand-50 px-2 text-xs font-semibold text-brand-700 ring-1 ring-inset ring-brand-100"
-                                >
+                                <span class="shrink-0 text-xs font-semibold text-brand-950">
                                     {{ item.total }}
                                 </span>
 
                             </div>
 
-                        </div>
+                        {% endfor %}
 
-                    {% empty %}
+                    </div>
 
-                        <div class="py-8 text-center">
 
-                            <p class="text-sm font-medium text-slate-500">
-                                Nenhum dado disponível
-                            </p>
-
-                        </div>
-
-                    {% endfor %}
+                    <a
+                        href="{% url 'cases:list' %}"
+                        class="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-gold-700 transition hover:text-gold-800"
+                    >
+                        Ver todos os casos
+                        <span aria-hidden="true">→</span>
+                    </a>
 
                 </div>
 
-            </div>
+            {% else %}
+
+                <div class="px-6 py-10 text-center">
+
+                    <p class="text-sm font-semibold text-brand-950">
+                        Nenhum caso cadastrado
+                    </p>
+
+                    <p class="mt-1 text-sm text-slate-500">
+                        A situação da carteira aparecerá aqui.
+                    </p>
+
+                </div>
+
+            {% endif %}
 
         </section>
 
     </div>
 
+
+    <!-- =========================================================
+         HOJE
+    ========================================================== -->
+
+    <section
+        class="mt-6 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm"
+    >
+
+        <div class="flex flex-col gap-5 px-6 py-5 sm:px-7 lg:flex-row lg:items-center lg:justify-between">
+
+            <div class="flex min-w-0 items-center gap-4">
+
+                <span
+                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-950 text-white shadow-sm"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
+                        />
+                    </svg>
+                </span>
+
+                <div class="min-w-0">
+
+                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700">
+                            Hoje
+                        </p>
+
+                        <span class="text-xs text-slate-300">·</span>
+
+                        <p class="text-xs font-medium text-slate-500">
+                            {{ today|date:"d/m/Y" }}
+                        </p>
+
+                    </div>
+
+
+                    {% if today_events_count %}
+
+                        <p class="mt-1 text-sm font-semibold text-brand-950">
+
+                            {{ today_commitments_count }}
+                            compromisso{{ today_commitments_count|pluralize }}
+
+                            <span class="mx-1.5 font-normal text-slate-300">·</span>
+
+                            {{ today_deadlines_count }}
+                            prazo{{ today_deadlines_count|pluralize }}
+
+                        </p>
+
+                        {% if next_today_event %}
+
+                            <p class="mt-1 truncate text-xs text-slate-500">
+
+                                Próximo:
+
+                                {% if next_today_event.hora %}
+                                    <span class="font-semibold text-brand-700">
+                                        {{ next_today_event.hora|time:"H:i" }}
+                                    </span>
+                                    ·
+                                {% endif %}
+
+                                {{ next_today_event.titulo }}
+
+                                <span class="mx-1 text-slate-300">·</span>
+
+                                {{ next_today_event.caso.cliente.nome_completo }}
+
+                            </p>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <p class="mt-1 text-sm font-semibold text-brand-950">
+                            Nenhum compromisso ou prazo para hoje
+                        </p>
+
+                        <p class="mt-1 text-xs text-slate-500">
+                            Sua agenda está livre nesta data.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="flex shrink-0 items-center gap-4">
+
+                {% if overdue_agenda_count %}
+
+                    <a
+                        href="{% url 'agenda:list' %}?view=pending"
+                        class="inline-flex items-center gap-2 rounded-xl bg-amber-50 px-3.5 py-2 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200 transition hover:bg-amber-100"
+                    >
+                        <span class="h-2 w-2 rounded-full bg-amber-500"></span>
+
+                        {{ overdue_agenda_count }}
+                        anterior{{ overdue_agenda_count|pluralize:" ,es" }}
+                        sem desfecho
+                    </a>
+
+                {% endif %}
+
+                <a
+                    href="{% url 'agenda:list' %}"
+                    class="inline-flex min-h-10 items-center gap-1.5 rounded-xl border border-brand-200 bg-white px-4 text-sm font-semibold text-brand-700 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-950"
+                >
+                    Abrir Agenda
+                    <span aria-hidden="true">→</span>
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
 </div>
 
 
 <!-- =============================================================
+     DADOS DO GRÁFICO
+============================================================= -->
+
+{{ status_summary|json_script:"case-status-data" }}
+
+
+<!-- =============================================================
      MODAL — CLIENTE
-============================================================== -->
+============================================================= -->
 
 {% include "clients/_client_modal.html" %}
 
 
 <!-- =============================================================
      CONFIGURAÇÃO DO MODAL
-============================================================== -->
+============================================================= -->
 
 <div
     id="client-list-config"
@@ -845,9 +949,146 @@
 
     {{ block.super }}
 
+    <!-- MODAL DE CLIENTE -->
+
     <script
         src="{% static 'js/clients/client-modal.js' %}"
         defer
     ></script>
+
+
+    <!-- CHART.JS -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+        defer
+    ></script>
+
+
+    <!-- GRÁFICO DA CARTEIRA -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const canvas = document.getElementById("case-status-chart");
+            const dataElement = document.getElementById("case-status-data");
+
+            if (!canvas || !dataElement) {
+                return;
+            }
+
+            const statusData = JSON.parse(
+                dataElement.textContent || "[]"
+            );
+
+            if (!statusData.length) {
+                return;
+            }
+
+            const labels = statusData.map(function (item) {
+                return item.status__nome || "Sem status";
+            });
+
+            const values = statusData.map(function (item) {
+                return item.total;
+            });
+
+            const colors = [
+                "#17253d",
+                "#b8892f",
+                "#31547d",
+                "#d5b46c",
+                "#64748b",
+                "#7694b4",
+                "#9a6c22",
+                "#94a3b8",
+                "#476b94",
+                "#cbd5e1"
+            ];
+
+            const backgroundColors = values.map(
+                function (_, index) {
+                    return colors[index % colors.length];
+                }
+            );
+
+            document
+                .querySelectorAll(".case-status-dot")
+                .forEach(function (dot) {
+
+                    const index = Number(
+                        dot.dataset.chartIndex
+                    );
+
+                    dot.style.backgroundColor =
+                        backgroundColors[
+                            index % backgroundColors.length
+                        ];
+                });
+
+            if (typeof Chart === "undefined") {
+                return;
+            }
+
+            new Chart(canvas, {
+                type: "doughnut",
+
+                data: {
+                    labels: labels,
+
+                    datasets: [
+                        {
+                            data: values,
+                            backgroundColor: backgroundColors,
+                            borderColor: "#ffffff",
+                            borderWidth: 3,
+                            hoverOffset: 3
+                        }
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "74%",
+
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+
+                        tooltip: {
+                            displayColors: true,
+
+                            callbacks: {
+                                label: function (context) {
+
+                                    const value =
+                                        context.raw ?? 0;
+
+                                    return (
+                                        " " +
+                                        context.label +
+                                        ": " +
+                                        value +
+                                        (
+                                            value === 1
+                                                ? " caso"
+                                                : " casos"
+                                        )
+                                    );
+                                }
+                            }
+                        }
+                    },
+
+                    animation: {
+                        duration: 450
+                    }
+                }
+            });
+
+        });
+    </script>
 
 {% endblock %}
