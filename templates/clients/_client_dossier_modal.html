@@ -12,9 +12,7 @@
     aria-hidden="true"
 >
 
-    <!-- =========================================================
-         BACKDROP
-    ========================================================== -->
+    <!-- BACKDROP -->
 
     <div
         id="dossier-modal-backdrop"
@@ -23,20 +21,15 @@
     ></div>
 
 
-    <!-- =========================================================
-         ÁREA DE ROLAGEM
-    ========================================================== -->
+    <!-- ÁREA DE ROLAGEM -->
 
     <div
         id="dossier-modal-scroll"
         class="absolute inset-0 z-10 overflow-y-auto overscroll-contain p-4 sm:p-6"
     >
-
         <div class="flex min-h-full items-center justify-center">
 
-            <!-- =================================================
-                 PAINEL
-            ================================================== -->
+            <!-- PAINEL -->
 
             <div
                 id="dossier-modal-panel"
@@ -44,25 +37,20 @@
                 tabindex="-1"
             >
 
-                <!-- DESTAQUE SUPERIOR -->
-
                 <div
                     class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-900 via-brand-700 to-gold-400"
                     aria-hidden="true"
                 ></div>
 
 
-                <!-- =============================================
+                <!-- =================================================
                      CABEÇALHO
-                ============================================== -->
+                ================================================== -->
 
                 <header
                     class="flex items-start justify-between gap-4 border-b border-brand-100 bg-white px-5 pb-5 pt-6 sm:px-6"
                 >
-
                     <div class="flex min-w-0 items-start gap-3">
-
-                        <!-- ÍCONE -->
 
                         <div
                             class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-gold-200 bg-gold-50 text-gold-700"
@@ -81,13 +69,11 @@
                                     stroke-linejoin="round"
                                     d="M19.5 14.25v-9A2.25 2.25 0 0 0 17.25 3h-10A2.25 2.25 0 0 0 5 5.25v13.5A2.25 2.25 0 0 0 7.25 21h10a2.25 2.25 0 0 0 2.25-2.25v-4.5"
                                 />
-
                                 <path
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                                     d="M9 7.5h6M9 11.25h6M9 15h3.75"
                                 />
-
                                 <path
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
@@ -97,24 +83,18 @@
                         </div>
 
 
-                        <!-- TEXTO -->
-
                         <div class="min-w-0">
 
-                            <div class="flex flex-wrap items-center gap-2">
-
+                            <span
+                                class="inline-flex items-center gap-1.5 rounded-full border border-gold-200 bg-gold-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-gold-700"
+                            >
                                 <span
-                                    class="inline-flex items-center gap-1.5 rounded-full border border-gold-200 bg-gold-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-gold-700"
-                                >
-                                    <span
-                                        class="h-1.5 w-1.5 rounded-full bg-gold-500"
-                                        aria-hidden="true"
-                                    ></span>
+                                    class="h-1.5 w-1.5 rounded-full bg-gold-500"
+                                    aria-hidden="true"
+                                ></span>
 
-                                    Relatórios
-                                </span>
-
-                            </div>
+                                Relatórios
+                            </span>
 
 
                             <h2
@@ -129,18 +109,28 @@
                                 id="dossier-modal-description"
                                 class="mt-1 text-sm leading-5 text-slate-500"
                             >
-                                Escolha o conteúdo que será incluído no dossiê de
-                                <span class="font-medium text-slate-700">
-                                    {{ client.nome_completo }}
-                                </span>.
+                                Selecione as informações que deseja incluir no documento.
                             </p>
+
+
+                            <div class="mt-3 flex flex-wrap items-center gap-2">
+                                <span
+                                    class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400"
+                                >
+                                    Cliente
+                                </span>
+
+                                <span
+                                    class="text-sm font-semibold text-brand-950"
+                                >
+                                    {{ client.nome_completo }}
+                                </span>
+                            </div>
 
                         </div>
 
                     </div>
 
-
-                    <!-- FECHAR -->
 
                     <button
                         type="button"
@@ -164,13 +154,12 @@
                             />
                         </svg>
                     </button>
-
                 </header>
 
 
-                <!-- =============================================
+                <!-- =================================================
                      FORMULÁRIO
-                ============================================== -->
+                ================================================== -->
 
                 <form
                     id="dossier-form"
@@ -183,320 +172,22 @@
 
                     <div class="max-h-[70vh] overflow-y-auto">
 
-
-                        <!-- =====================================
-                             TIPO DE DOSSIÊ
-                        ====================================== -->
-
-                        <section
-                            class="border-b border-brand-100 px-5 py-6 sm:px-6"
-                            aria-labelledby="dossier-type-title"
-                        >
-
-                            <div class="mb-4">
-
-                                <p
-                                    class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
-                                >
-                                    Etapa 1
-                                </p>
-
-                                <h3
-                                    id="dossier-type-title"
-                                    class="mt-1 text-sm font-semibold text-brand-950"
-                                >
-                                    Tipo de dossiê
-                                </h3>
-
-                                <p
-                                    class="mt-1 text-xs leading-5 text-slate-500"
-                                >
-                                    Defina o nível de detalhamento do documento.
-                                </p>
-
-                            </div>
-
-                            <div class="grid gap-3 md:grid-cols-3">
-
-                                <!-- =====================================================
-                                    COMPLETO
-                                ====================================================== -->
-
-                                <label class="relative cursor-pointer">
-
-                                    <input
-                                        type="radio"
-                                        name="dossier_type"
-                                        value="complete"
-                                        class="peer sr-only"
-                                        checked
-                                    >
-
-                                    <div
-                                        class="relative h-full rounded-xl border border-brand-200 bg-white p-4 transition
-                                            hover:border-brand-300 hover:bg-brand-50/40
-                                            peer-checked:border-brand-700
-                                            peer-checked:bg-brand-50
-                                            peer-checked:ring-1
-                                            peer-checked:ring-brand-700
-                                            peer-focus-visible:ring-4
-                                            peer-focus-visible:ring-brand-100"
-                                    >
-
-                                        <!-- ÍCONE -->
-
-                                        <div
-                                            class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-700"
-                                            aria-hidden="true"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.7"
-                                                stroke="currentColor"
-                                                class="h-[18px] w-[18px]"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M19.5 14.25v-9A2.25 2.25 0 0 0 17.25 3h-10A2.25 2.25 0 0 0 5 5.25v13.5A2.25 2.25 0 0 0 7.25 21h10a2.25 2.25 0 0 0 2.25-2.25v-4.5M9 7.5h6M9 11.25h6M9 15h3"
-                                                />
-                                            </svg>
-                                        </div>
-
-
-                                        <!-- TEXTO -->
-
-                                        <div class="mt-3 pr-7">
-
-                                            <span
-                                                class="block text-sm font-semibold text-brand-950"
-                                            >
-                                                Completo
-                                            </span>
-
-                                            <span
-                                                class="mt-1 block text-xs leading-5 text-slate-500"
-                                            >
-                                                Documento detalhado com todas as informações selecionadas.
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                    <!-- RADIO VISUAL -->
-                                    <span
-                                        class="pointer-events-none absolute right-4 top-4 h-5 w-5 rounded-full border border-slate-300 bg-white transition
-                                            after:absolute after:left-1/2 after:top-1/2
-                                            after:h-2.5 after:w-2.5
-                                            after:-translate-x-1/2 after:-translate-y-1/2
-                                            after:scale-0 after:rounded-full after:bg-brand-700
-                                            after:transition-transform
-                                            peer-checked:border-brand-700
-                                            peer-checked:after:scale-100"
-                                        aria-hidden="true"
-                                    ></span>
-
-                                </label>
-
-
-                                <!-- =====================================================
-                                    DADOS DO CLIENTE
-                                ====================================================== -->
-
-                                <label class="relative cursor-pointer">
-
-                                    <input
-                                        type="radio"
-                                        name="dossier_type"
-                                        value="client"
-                                        class="peer sr-only"
-                                    >
-
-                                    <div
-                                        class="relative h-full rounded-xl border border-brand-200 bg-white p-4 transition
-                                            hover:border-brand-300 hover:bg-brand-50/40
-                                            peer-checked:border-brand-700
-                                            peer-checked:bg-brand-50
-                                            peer-checked:ring-1
-                                            peer-checked:ring-brand-700
-                                            peer-focus-visible:ring-4
-                                            peer-focus-visible:ring-brand-100"
-                                    >
-
-                                        <!-- ÍCONE -->
-
-                                        <div
-                                            class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-700"
-                                            aria-hidden="true"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.7"
-                                                stroke="currentColor"
-                                                class="h-[18px] w-[18px]"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15A1.5 1.5 0 0 0 21 18V6a1.5 1.5 0 0 0-1.5-1.5h-15A1.5 1.5 0 0 0 3 6v12a1.5 1.5 0 0 0 1.5 1.5Z"
-                                                />
-
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M9 9.75A1.875 1.875 0 1 0 9 6a1.875 1.875 0 0 0 0 3.75Zm3 5.625a3 3 0 0 0-6 0"
-                                                />
-                                            </svg>
-                                        </div>
-
-
-                                        <!-- TEXTO -->
-
-                                        <div class="mt-3 pr-7">
-
-                                            <span
-                                                class="block text-sm font-semibold text-brand-950"
-                                            >
-                                                Dados do cliente
-                                            </span>
-
-                                            <span
-                                                class="mt-1 block text-xs leading-5 text-slate-500"
-                                            >
-                                                Foco nas informações cadastrais e pessoais do cliente.
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                    <!-- RADIO VISUAL -->
-                                    <span
-                                        class="pointer-events-none absolute right-4 top-4 h-5 w-5 rounded-full border border-slate-300 bg-white transition
-                                            after:absolute after:left-1/2 after:top-1/2
-                                            after:h-2.5 after:w-2.5
-                                            after:-translate-x-1/2 after:-translate-y-1/2
-                                            after:scale-0 after:rounded-full after:bg-brand-700
-                                            after:transition-transform
-                                            peer-checked:border-brand-700
-                                            peer-checked:after:scale-100"
-                                        aria-hidden="true"
-                                    ></span>
-
-                                </label>
-
-
-                                <!-- =====================================================
-                                    RESUMIDO
-                                ====================================================== -->
-
-                                <label class="relative cursor-pointer">
-
-                                    <input
-                                        type="radio"
-                                        name="dossier_type"
-                                        value="summary"
-                                        class="peer sr-only"
-                                    >
-
-                                    <div
-                                        class="relative h-full rounded-xl border border-brand-200 bg-white p-4 transition
-                                            hover:border-brand-300 hover:bg-brand-50/40
-                                            peer-checked:border-brand-700
-                                            peer-checked:bg-brand-50
-                                            peer-checked:ring-1
-                                            peer-checked:ring-brand-700
-                                            peer-focus-visible:ring-4
-                                            peer-focus-visible:ring-brand-100"
-                                    >
-
-                                        <!-- ÍCONE -->
-
-                                        <div
-                                            class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-700"
-                                            aria-hidden="true"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.7"
-                                                stroke="currentColor"
-                                                class="h-[18px] w-[18px]"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M8.25 6.75h7.5M8.25 10.5h7.5M8.25 14.25h4.5M6.75 3.75h10.5A2.25 2.25 0 0 1 19.5 6v12A2.25 2.25 0 0 1 17.25 20.25H6.75A2.25 2.25 0 0 1 4.5 18V6a2.25 2.25 0 0 1 2.25-2.25Z"
-                                                />
-                                            </svg>
-                                        </div>
-
-
-                                        <!-- TEXTO -->
-
-                                        <div class="mt-3 pr-7">
-
-                                            <span
-                                                class="block text-sm font-semibold text-brand-950"
-                                            >
-                                                Resumido
-                                            </span>
-
-                                            <span
-                                                class="mt-1 block text-xs leading-5 text-slate-500"
-                                            >
-                                                Versão compacta para consulta rápida das informações.
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                    <!-- RADIO VISUAL -->
-                                    <span
-                                        class="pointer-events-none absolute right-4 top-4 h-5 w-5 rounded-full border border-slate-300 bg-white transition
-                                            after:absolute after:left-1/2 after:top-1/2
-                                            after:h-2.5 after:w-2.5
-                                            after:-translate-x-1/2 after:-translate-y-1/2
-                                            after:scale-0 after:rounded-full after:bg-brand-700
-                                            after:transition-transform
-                                            peer-checked:border-brand-700
-                                            peer-checked:after:scale-100"
-                                        aria-hidden="true"
-                                    ></span>
-
-                                </label>
-
-                            </div>
-
-                        </section>
-
-
-                        <!-- =====================================
-                             CASOS INCLUÍDOS
-                        ====================================== -->
+                        <!-- =========================================
+                             ETAPA 1 — CASOS
+                        ========================================== -->
 
                         <section
                             class="border-b border-brand-100 px-5 py-6 sm:px-6"
                             aria-labelledby="dossier-cases-title"
                         >
-
                             <div
                                 class="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-start"
                             >
-
                                 <div>
-
                                     <p
                                         class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
                                     >
-                                        Etapa 2
+                                        Etapa 1
                                     </p>
 
                                     <h3
@@ -506,17 +197,13 @@
                                         Casos incluídos
                                     </h3>
 
-                                    <p
-                                        class="mt-1 text-xs leading-5 text-slate-500"
-                                    >
-                                        Selecione as demandas jurídicas que farão parte do documento.
+                                    <p class="mt-1 text-xs leading-5 text-slate-500">
+                                        Selecione os casos que deseja considerar nas informações jurídicas do dossiê.
                                     </p>
-
                                 </div>
 
 
                                 {% if cases %}
-
                                     <button
                                         type="button"
                                         id="toggle-dossier-cases"
@@ -524,24 +211,19 @@
                                     >
                                         Desmarcar todos
                                     </button>
-
                                 {% endif %}
-
                             </div>
 
 
                             {% if cases %}
 
-                                <div
-                                    class="grid gap-2 sm:grid-cols-2"
-                                >
+                                <div class="grid gap-2 sm:grid-cols-2">
 
                                     {% for case in cases %}
 
                                         <label
                                             class="group flex cursor-pointer items-start gap-3 rounded-xl border border-brand-100 bg-white p-3.5 transition hover:border-brand-200 hover:bg-brand-50/40"
                                         >
-
                                             <input
                                                 type="checkbox"
                                                 name="cases"
@@ -566,7 +248,6 @@
                                                 >
 
                                                     {% if case.status %}
-
                                                         <span
                                                             class="inline-flex items-center gap-1"
                                                         >
@@ -577,12 +258,10 @@
 
                                                             {{ case.status.nome }}
                                                         </span>
-
                                                     {% endif %}
 
 
                                                     {% if case.numero_processo %}
-
                                                         <span
                                                             class="text-slate-300"
                                                             aria-hidden="true"
@@ -593,13 +272,11 @@
                                                         <span class="truncate">
                                                             {{ case.numero_processo }}
                                                         </span>
-
                                                     {% endif %}
 
                                                 </span>
 
                                             </span>
-
                                         </label>
 
                                     {% endfor %}
@@ -612,7 +289,6 @@
                                 <div
                                     class="rounded-xl border border-dashed border-brand-200 bg-brand-50/40 px-5 py-6 text-center"
                                 >
-
                                     <div
                                         class="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-white text-brand-400 shadow-sm"
                                         aria-hidden="true"
@@ -633,59 +309,48 @@
                                         </svg>
                                     </div>
 
-                                    <p
-                                        class="mt-3 text-sm font-semibold text-brand-950"
-                                    >
-                                        Nenhum caso disponível
+                                    <p class="mt-3 text-sm font-semibold text-brand-950">
+                                        Nenhum caso cadastrado
                                     </p>
 
-                                    <p
-                                        class="mt-1 text-xs leading-5 text-slate-500"
-                                    >
-                                        Este cliente ainda não possui casos jurídicos cadastrados.
+                                    <p class="mt-1 text-xs leading-5 text-slate-500">
+                                        Este cliente ainda não possui casos jurídicos.
+                                        Você ainda pode gerar um dossiê somente com os dados do cliente.
                                     </p>
-
                                 </div>
 
                             {% endif %}
-
                         </section>
 
 
-                        <!-- =====================================
-                             SEÇÕES DO DOCUMENTO
-                        ====================================== -->
+                        <!-- =========================================
+                             ETAPA 2 — CONTEÚDO
+                        ========================================== -->
 
                         <section
                             class="px-5 py-6 sm:px-6"
                             aria-labelledby="dossier-sections-title"
                         >
-
                             <div
                                 class="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-start"
                             >
-
                                 <div>
-
                                     <p
                                         class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700"
                                     >
-                                        Etapa 3
+                                        Etapa 2
                                     </p>
 
                                     <h3
                                         id="dossier-sections-title"
                                         class="mt-1 text-sm font-semibold text-brand-950"
                                     >
-                                        Seções do documento
+                                        Conteúdo do dossiê
                                     </h3>
 
-                                    <p
-                                        class="mt-1 text-xs leading-5 text-slate-500"
-                                    >
-                                        Escolha quais grupos de informações serão exibidos.
+                                    <p class="mt-1 text-xs leading-5 text-slate-500">
+                                        Escolha exatamente quais informações serão exibidas no PDF.
                                     </p>
-
                                 </div>
 
 
@@ -694,16 +359,14 @@
                                     id="toggle-dossier-sections"
                                     class="inline-flex min-h-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-brand-200 bg-white px-3 text-xs font-semibold text-brand-700 transition hover:bg-brand-50 focus:outline-none focus:ring-4 focus:ring-brand-100"
                                 >
-                                    Desmarcar todas
+                                    Marcar todas
                                 </button>
-
                             </div>
 
 
                             <div class="grid gap-2 sm:grid-cols-2">
 
-
-                                <!-- CLIENTE -->
+                                <!-- DADOS DO CLIENTE -->
 
                                 <label
                                     class="flex cursor-pointer items-center gap-3 rounded-xl border border-brand-100 p-3.5 transition hover:border-brand-200 hover:bg-brand-50/40"
@@ -717,19 +380,13 @@
                                     >
 
                                     <span class="min-w-0">
-
-                                        <span
-                                            class="block text-sm font-semibold text-brand-950"
-                                        >
+                                        <span class="block text-sm font-semibold text-brand-950">
                                             Dados do cliente
                                         </span>
 
-                                        <span
-                                            class="mt-0.5 block text-[11px] text-slate-500"
-                                        >
+                                        <span class="mt-0.5 block text-[11px] text-slate-500">
                                             Cadastro, identificação e contato.
                                         </span>
-
                                     </span>
                                 </label>
 
@@ -744,23 +401,17 @@
                                         name="sections"
                                         value="cases"
                                         class="dossier-section h-4 w-4 shrink-0 cursor-pointer rounded border-slate-300 text-brand-700 focus:ring-brand-200"
-                                        checked
+                                        {% if cases %}checked{% endif %}
                                     >
 
                                     <span class="min-w-0">
-
-                                        <span
-                                            class="block text-sm font-semibold text-brand-950"
-                                        >
+                                        <span class="block text-sm font-semibold text-brand-950">
                                             Casos jurídicos
                                         </span>
 
-                                        <span
-                                            class="mt-0.5 block text-[11px] text-slate-500"
-                                        >
+                                        <span class="mt-0.5 block text-[11px] text-slate-500">
                                             Demandas e processos selecionados.
                                         </span>
-
                                     </span>
                                 </label>
 
@@ -775,23 +426,17 @@
                                         name="sections"
                                         value="history"
                                         class="dossier-section h-4 w-4 shrink-0 cursor-pointer rounded border-slate-300 text-brand-700 focus:ring-brand-200"
-                                        checked
+                                        {% if cases %}checked{% endif %}
                                     >
 
                                     <span class="min-w-0">
-
-                                        <span
-                                            class="block text-sm font-semibold text-brand-950"
-                                        >
+                                        <span class="block text-sm font-semibold text-brand-950">
                                             Histórico
                                         </span>
 
-                                        <span
-                                            class="mt-0.5 block text-[11px] text-slate-500"
-                                        >
-                                            Registros históricos dos casos.
+                                        <span class="mt-0.5 block text-[11px] text-slate-500">
+                                            Registros históricos dos casos selecionados.
                                         </span>
-
                                     </span>
                                 </label>
 
@@ -806,23 +451,17 @@
                                         name="sections"
                                         value="movements"
                                         class="dossier-section h-4 w-4 shrink-0 cursor-pointer rounded border-slate-300 text-brand-700 focus:ring-brand-200"
-                                        checked
+                                        {% if cases %}checked{% endif %}
                                     >
 
                                     <span class="min-w-0">
-
-                                        <span
-                                            class="block text-sm font-semibold text-brand-950"
-                                        >
+                                        <span class="block text-sm font-semibold text-brand-950">
                                             Movimentações
                                         </span>
 
-                                        <span
-                                            class="mt-0.5 block text-[11px] text-slate-500"
-                                        >
+                                        <span class="mt-0.5 block text-[11px] text-slate-500">
                                             Andamentos e atualizações processuais.
                                         </span>
-
                                     </span>
                                 </label>
 
@@ -837,23 +476,17 @@
                                         name="sections"
                                         value="documents"
                                         class="dossier-section h-4 w-4 shrink-0 cursor-pointer rounded border-slate-300 text-brand-700 focus:ring-brand-200"
-                                        checked
+                                        {% if cases %}checked{% endif %}
                                     >
 
                                     <span class="min-w-0">
-
-                                        <span
-                                            class="block text-sm font-semibold text-brand-950"
-                                        >
+                                        <span class="block text-sm font-semibold text-brand-950">
                                             Documentos
                                         </span>
 
-                                        <span
-                                            class="mt-0.5 block text-[11px] text-slate-500"
-                                        >
-                                            Relação documental dos casos.
+                                        <span class="mt-0.5 block text-[11px] text-slate-500">
+                                            Relação documental dos casos selecionados.
                                         </span>
-
                                     </span>
                                 </label>
 
@@ -868,42 +501,107 @@
                                         name="sections"
                                         value="agenda"
                                         class="dossier-section h-4 w-4 shrink-0 cursor-pointer rounded border-slate-300 text-brand-700 focus:ring-brand-200"
-                                        checked
+                                        {% if cases %}checked{% endif %}
                                     >
 
                                     <span class="min-w-0">
-
-                                        <span
-                                            class="block text-sm font-semibold text-brand-950"
-                                        >
+                                        <span class="block text-sm font-semibold text-brand-950">
                                             Agenda e prazos
                                         </span>
 
-                                        <span
-                                            class="mt-0.5 block text-[11px] text-slate-500"
-                                        >
-                                            Compromissos, audiências e prazos.
+                                        <span class="mt-0.5 block text-[11px] text-slate-500">
+                                            Compromissos, audiências e prazos dos casos selecionados.
+                                        </span>
+                                    </span>
+                                </label>
+
+
+                                <!-- OBSERVAÇÕES INTERNAS -->
+
+                                <label
+                                    class="flex cursor-pointer items-center gap-3 rounded-xl border border-amber-200 bg-amber-50/30 p-3.5 transition hover:border-amber-300 hover:bg-amber-50/60"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="sections"
+                                        value="internal_notes"
+                                        class="dossier-section h-4 w-4 shrink-0 cursor-pointer rounded border-amber-300 text-brand-700 focus:ring-brand-200"
+                                    >
+
+                                    <span class="min-w-0">
+                                        <span class="flex flex-wrap items-center gap-2">
+                                            <span class="block text-sm font-semibold text-brand-950">
+                                                Observações internas
+                                            </span>
+
+                                            <span
+                                                class="inline-flex items-center rounded-full border border-amber-200 bg-white px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-amber-700"
+                                            >
+                                                Uso interno
+                                            </span>
                                         </span>
 
+                                        <span class="mt-0.5 block text-[11px] leading-4 text-slate-500">
+                                            Inclui anotações internas dos casos selecionados.
+                                        </span>
                                     </span>
                                 </label>
 
                             </div>
+
+
+                            <div
+                                class="mt-4 rounded-xl border border-amber-100 bg-amber-50/50 px-4 py-3"
+                            >
+                                <div class="flex items-start gap-2.5">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.8"
+                                        stroke="currentColor"
+                                        class="mt-0.5 h-4 w-4 shrink-0 text-amber-600"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M12 9v3.75m9-3.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 7.5h.008v.008H12V16.5Z"
+                                        />
+                                    </svg>
+
+                                    <p class="text-xs leading-5 text-amber-800">
+                                        <strong>Observações internas</strong> podem conter informações de uso exclusivo do escritório.
+                                        Selecione essa opção somente quando desejar incluí-las no PDF.
+                                    </p>
+                                </div>
+                            </div>
+
+
+                            {% if not cases %}
+                                <div
+                                    class="mt-4 rounded-xl border border-blue-100 bg-blue-50/60 px-4 py-3"
+                                >
+                                    <p class="text-xs leading-5 text-blue-800">
+                                        Como este cliente ainda não possui casos jurídicos,
+                                        mantenha selecionada apenas a opção
+                                        <strong>Dados do cliente</strong> para gerar o dossiê.
+                                    </p>
+                                </div>
+                            {% endif %}
 
                         </section>
 
                     </div>
 
 
-                    <!-- =========================================
+                    <!-- =================================================
                          RODAPÉ
-                    ========================================== -->
+                    ================================================== -->
 
                     <footer
                         class="border-t border-brand-100 bg-white px-5 py-4 sm:px-6"
                     >
-
-                        <!-- ERRO -->
 
                         <div
                             id="dossier-error"
@@ -916,22 +614,14 @@
                         <div
                             class="flex flex-col-reverse justify-between gap-3 sm:flex-row sm:items-center"
                         >
-
-                            <!-- INFORMAÇÃO -->
-
-                            <p
-                                class="text-xs leading-5 text-slate-400"
-                            >
+                            <p class="text-xs leading-5 text-slate-400">
                                 O dossiê será gerado em PDF e aberto em uma nova aba.
                             </p>
 
 
-                            <!-- AÇÕES -->
-
                             <div
                                 class="flex flex-col-reverse gap-2 sm:flex-row sm:items-center"
                             >
-
                                 <button
                                     type="button"
                                     id="cancel-dossier-modal"
@@ -944,8 +634,7 @@
                                 <button
                                     type="submit"
                                     id="generate-dossier-button"
-                                    {% if not cases %}disabled{% endif %}
-                                    class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none"
+                                    class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:shadow-none"
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -961,7 +650,6 @@
                                             stroke-linejoin="round"
                                             d="M19.5 14.25v-9A2.25 2.25 0 0 0 17.25 3h-10A2.25 2.25 0 0 0 5 5.25v13.5A2.25 2.25 0 0 0 7.25 21h10a2.25 2.25 0 0 0 2.25-2.25v-4.5"
                                         />
-
                                         <path
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
@@ -971,9 +659,7 @@
 
                                     <span>Gerar dossiê</span>
                                 </button>
-
                             </div>
-
                         </div>
 
                     </footer>
@@ -981,9 +667,6 @@
                 </form>
 
             </div>
-
         </div>
-
     </div>
-
 </div>

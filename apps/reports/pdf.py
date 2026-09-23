@@ -2,9 +2,12 @@ from io import BytesIO
 from html import escape
 
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.styles import (
+    ParagraphStyle,
+    getSampleStyleSheet,
+)
 from reportlab.lib.units import mm
 from reportlab.platypus import (
     PageBreak,
@@ -30,6 +33,11 @@ class ClientDossierPDF:
 
         self.styles = getSampleStyleSheet()
         self._configure_styles()
+
+
+    # ==========================================================
+    # ESTILOS
+    # ==========================================================
 
     def _configure_styles(self):
         self.title_style = ParagraphStyle(
@@ -112,6 +120,11 @@ class ClientDossierPDF:
             textColor=colors.HexColor("#334155"),
         )
 
+
+    # ==========================================================
+    # RODAPÉ
+    # ==========================================================
+
     def _footer(self, canvas, document):
         canvas.saveState()
 
@@ -149,6 +162,11 @@ class ClientDossierPDF:
 
         canvas.restoreState()
 
+
+    # ==========================================================
+    # HELPERS DE TEXTO
+    # ==========================================================
+
     def _escape_text(self, value):
         if value is None:
             return ""
@@ -161,6 +179,7 @@ class ClientDossierPDF:
             "\n",
             "<br/>",
         )
+
 
     def _paragraph(
         self,
@@ -179,25 +198,27 @@ class ClientDossierPDF:
             style,
         )
 
-    def _dossier_type_label(
-        self,
-        dossier_type,
-    ):
-        labels = {
-            "complete": "Dossiê completo",
-            "client": "Relatório para cliente",
-            "summary": "Resumo do caso",
-        }
 
-        return labels.get(
-            dossier_type,
-            "Dossiê jurídico",
+    def _section_title(
+        self,
+        number,
+        title,
+    ):
+        return Paragraph(
+            self._escape_text(
+                f"{number}. {title}"
+            ),
+            self.section_style,
         )
+
+
+    # ==========================================================
+    # CAPA
+    # ==========================================================
 
     def _add_cover(
         self,
         story,
-        dossier_type="complete",
     ):
         story.append(
             Spacer(
@@ -215,9 +236,7 @@ class ClientDossierPDF:
 
         story.append(
             Paragraph(
-                self._dossier_type_label(
-                    dossier_type
-                ),
+                "Documento jurídico",
                 self.subtitle_style,
             )
         )
@@ -354,14 +373,20 @@ class ClientDossierPDF:
             PageBreak()
         )
 
+
+    # ==========================================================
+    # DADOS DO CLIENTE
+    # ==========================================================
+
     def _add_client_section(
         self,
         story,
+        section_number,
     ):
         story.append(
-            Paragraph(
-                "1. Dados do cliente",
-                self.section_style,
+            self._section_title(
+                section_number,
+                "Dados do cliente",
             )
         )
 
@@ -439,6 +464,7 @@ class ClientDossierPDF:
             )
         )
 
+
     def _client_address(self):
         parts = [
             self.client.logradouro,
@@ -462,14 +488,20 @@ class ClientDossierPDF:
             else "Endereço não informado."
         )
 
+
+    # ==========================================================
+    # CASOS JURÍDICOS
+    # ==========================================================
+
     def _add_cases_section(
         self,
         story,
+        section_number,
     ):
         story.append(
-            Paragraph(
-                "2. Casos e processos",
-                self.section_style,
+            self._section_title(
+                section_number,
+                "Casos e processos",
             )
         )
 
@@ -482,6 +514,8 @@ class ClientDossierPDF:
             )
 
             return
+
+        total_cases = self.cases.count()
 
         for index, case in enumerate(
             self.cases,
@@ -499,7 +533,11 @@ class ClientDossierPDF:
             rows = [
                 [
                     "Status",
-                    case.status.nome,
+                    (
+                        case.status.nome
+                        if case.status
+                        else "Não informado"
+                    ),
                 ],
                 [
                     "Área jurídica",
@@ -562,7 +600,7 @@ class ClientDossierPDF:
 
                 story.append(
                     Paragraph(
-                        "<b>Descrição</b>",
+                        "Descrição",
                         self.subsection_style,
                     )
                 )
@@ -574,37 +612,7 @@ class ClientDossierPDF:
                     )
                 )
 
-            options = self.data.get(
-                "options",
-                {},
-            )
-
-            dossier_type = options.get(
-                "dossier_type",
-                "complete",
-            )
-
-            if (
-                dossier_type != "client"
-                and case.observacoes
-            ):
-                story.append(
-                    Paragraph(
-                        "<b>Observações internas</b>",
-                        self.subsection_style,
-                    )
-                )
-
-                story.append(
-                    self._paragraph(
-                        case.observacoes,
-                        self.body_style,
-                    )
-                )
-
-            if (
-                index < self.cases.count()
-            ):
+            if index < total_cases:
                 story.append(
                     Spacer(
                         1,
@@ -612,14 +620,20 @@ class ClientDossierPDF:
                     )
                 )
 
+
+    # ==========================================================
+    # HISTÓRICO
+    # ==========================================================
+
     def _add_history_section(
         self,
         story,
+        section_number,
     ):
         story.append(
-            Paragraph(
-                "3. Histórico",
-                self.section_style,
+            self._section_title(
+                section_number,
+                "Histórico",
             )
         )
 
@@ -706,14 +720,20 @@ class ClientDossierPDF:
                 )
             )
 
+
+    # ==========================================================
+    # MOVIMENTAÇÕES
+    # ==========================================================
+
     def _add_movements_section(
         self,
         story,
+        section_number,
     ):
         story.append(
-            Paragraph(
-                "4. Movimentações",
-                self.section_style,
+            self._section_title(
+                section_number,
+                "Movimentações",
             )
         )
 
@@ -800,18 +820,28 @@ class ClientDossierPDF:
                 )
             )
 
+
+    # ==========================================================
+    # DOCUMENTOS
+    # ==========================================================
+
     def _add_documents_section(
         self,
         story,
+        section_number,
     ):
         story.append(
-            Paragraph(
-                "5. Documentação",
-                self.section_style,
+            self._section_title(
+                section_number,
+                "Documentação",
             )
         )
 
+        has_case_content = False
+
         for case in self.cases:
+            has_case_content = True
+
             documents = case.documentos.all()
             required = case.documentos_necessarios.all()
 
@@ -868,6 +898,14 @@ class ClientDossierPDF:
                     )
                 )
 
+            else:
+                story.append(
+                    Paragraph(
+                        "Nenhum documento necessário cadastrado.",
+                        self.small_style,
+                    )
+                )
+
             story.append(
                 Spacer(
                     1,
@@ -890,6 +928,7 @@ class ClientDossierPDF:
                             self.body_style,
                         )
                     )
+
             else:
                 story.append(
                     Paragraph(
@@ -898,14 +937,35 @@ class ClientDossierPDF:
                     )
                 )
 
+            story.append(
+                Spacer(
+                    1,
+                    7,
+                )
+            )
+
+        if not has_case_content:
+            story.append(
+                Paragraph(
+                    "Nenhum caso selecionado.",
+                    self.small_style,
+                )
+            )
+
+
+    # ==========================================================
+    # AGENDA E PRAZOS
+    # ==========================================================
+
     def _add_agenda_section(
         self,
         story,
+        section_number,
     ):
         story.append(
-            Paragraph(
-                "6. Agenda",
-                self.section_style,
+            self._section_title(
+                section_number,
+                "Agenda e prazos",
             )
         )
 
@@ -1008,6 +1068,68 @@ class ClientDossierPDF:
                 )
             )
 
+
+    # ==========================================================
+    # OBSERVAÇÕES INTERNAS
+    # ==========================================================
+
+    def _add_internal_notes_section(
+        self,
+        story,
+        section_number,
+    ):
+        story.append(
+            self._section_title(
+                section_number,
+                "Observações internas",
+            )
+        )
+
+        has_notes = False
+
+        for case in self.cases:
+            if not case.observacoes:
+                continue
+
+            has_notes = True
+
+            story.append(
+                Paragraph(
+                    self._escape_text(
+                        case.titulo
+                    ),
+                    self.subsection_style,
+                )
+            )
+
+            story.append(
+                self._paragraph(
+                    case.observacoes,
+                    self.body_style,
+                )
+            )
+
+            story.append(
+                Spacer(
+                    1,
+                    7,
+                )
+            )
+
+        if not has_notes:
+            story.append(
+                Paragraph(
+                    "Nenhuma observação interna cadastrada "
+                    "para os casos selecionados.",
+                    self.small_style,
+                )
+            )
+
+
+    # ==========================================================
+    # TABELA DE DUAS COLUNAS
+    # ==========================================================
+
     def _two_column_table(
         self,
         rows,
@@ -1048,6 +1170,11 @@ class ClientDossierPDF:
             ],
             header=False,
         )
+
+
+    # ==========================================================
+    # TABELA GENÉRICA
+    # ==========================================================
 
     def _data_table(
         self,
@@ -1149,30 +1276,10 @@ class ClientDossierPDF:
 
         return table
 
-    def _add_summary_intro(
-        self,
-        story,
-    ):
-        story.append(
-            Paragraph(
-                "Resumo executivo",
-                self.subsection_style,
-            )
-        )
 
-        total_cases = self.cases.count()
-
-        story.append(
-            self._paragraph(
-                (
-                    f"Este documento apresenta um resumo "
-                    f"objetivo das informações cadastradas "
-                    f"para o cliente, contemplando "
-                    f"{total_cases} caso(s) selecionado(s)."
-                ),
-                self.body_style,
-            )
-        )
+    # ==========================================================
+    # GERAÇÃO DO PDF
+    # ==========================================================
 
     def build(self):
         document = SimpleDocTemplate(
@@ -1196,11 +1303,6 @@ class ClientDossierPDF:
             {},
         )
 
-        dossier_type = options.get(
-            "dossier_type",
-            "complete",
-        )
-
         sections = set(
             options.get(
                 "sections",
@@ -1208,81 +1310,77 @@ class ClientDossierPDF:
             )
         )
 
-        # ---------------------------------------------------------
+        # ------------------------------------------------------
         # CAPA
-        # ---------------------------------------------------------
+        # ------------------------------------------------------
 
         self._add_cover(
-            story,
-            dossier_type=dossier_type,
+            story
         )
 
-        # ---------------------------------------------------------
-        # RESUMO
-        # ---------------------------------------------------------
+        # ------------------------------------------------------
+        # SEÇÕES SELECIONADAS
+        # ------------------------------------------------------
 
-        if dossier_type == "summary":
-            self._add_summary_intro(
-                story
-            )
-
-        # ---------------------------------------------------------
-        # DADOS DO CLIENTE
-        # ---------------------------------------------------------
+        section_number = 1
 
         if "client" in sections:
             self._add_client_section(
-                story
+                story,
+                section_number,
             )
 
-        # ---------------------------------------------------------
-        # PROCESSOS / CASOS
-        # ---------------------------------------------------------
+            section_number += 1
 
         if "cases" in sections:
             self._add_cases_section(
-                story
+                story,
+                section_number,
             )
 
-        # ---------------------------------------------------------
-        # HISTÓRICO
-        # ---------------------------------------------------------
+            section_number += 1
 
         if "history" in sections:
             self._add_history_section(
-                story
+                story,
+                section_number,
             )
 
-        # ---------------------------------------------------------
-        # MOVIMENTAÇÕES
-        # ---------------------------------------------------------
+            section_number += 1
 
         if "movements" in sections:
             self._add_movements_section(
-                story
+                story,
+                section_number,
             )
 
-        # ---------------------------------------------------------
-        # DOCUMENTAÇÃO
-        # ---------------------------------------------------------
+            section_number += 1
 
         if "documents" in sections:
             self._add_documents_section(
-                story
+                story,
+                section_number,
             )
 
-        # ---------------------------------------------------------
-        # AGENDA
-        # ---------------------------------------------------------
+            section_number += 1
 
         if "agenda" in sections:
             self._add_agenda_section(
-                story
+                story,
+                section_number,
             )
 
-        # ---------------------------------------------------------
-        # GERAÇÃO DO PDF
-        # ---------------------------------------------------------
+            section_number += 1
+
+        if "internal_notes" in sections:
+            self._add_internal_notes_section(
+                story,
+                section_number,
+            )
+
+        # ------------------------------------------------------
+        # GERAÇÃO
+        # ------------------------------------------------------
 
         document.build(
             story,

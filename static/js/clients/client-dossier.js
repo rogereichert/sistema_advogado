@@ -1,29 +1,38 @@
 (() => {
     "use strict";
 
-    // =========================================================
-    // ELEMENTOS PRINCIPAIS
-    // =========================================================
+    // ==========================================================
+    // ELEMENTOS
+    // ==========================================================
 
-    const modal = document.getElementById("dossier-modal");
-    const modalBackdrop = document.getElementById(
+    const modal = document.getElementById(
+        "dossier-modal"
+    );
+
+    const backdrop = document.getElementById(
         "dossier-modal-backdrop"
     );
-    const modalPanel = document.getElementById(
+
+    const panel = document.getElementById(
         "dossier-modal-panel"
     );
 
     const openButton = document.getElementById(
         "open-dossier-modal"
     );
+
     const closeButton = document.getElementById(
         "close-dossier-modal"
     );
+
     const cancelButton = document.getElementById(
         "cancel-dossier-modal"
     );
 
-    const form = document.getElementById("dossier-form");
+    const form = document.getElementById(
+        "dossier-form"
+    );
+
     const errorBox = document.getElementById(
         "dossier-error"
     );
@@ -31,6 +40,7 @@
     const toggleCasesButton = document.getElementById(
         "toggle-dossier-cases"
     );
+
     const toggleSectionsButton = document.getElementById(
         "toggle-dossier-sections"
     );
@@ -39,37 +49,46 @@
         "generate-dossier-button"
     );
 
+
+    // ==========================================================
+    // VERIFICAÇÃO BÁSICA
+    // ==========================================================
+
     if (
-        !modal ||
-        !openButton ||
-        !closeButton ||
-        !form
+        !modal
+        || !openButton
+        || !closeButton
+        || !form
     ) {
         return;
     }
 
 
-    // =========================================================
+    // ==========================================================
     // ESTADO
-    // =========================================================
+    // ==========================================================
 
     let lastFocusedElement = null;
 
 
-    // =========================================================
-    // HELPERS
-    // =========================================================
+    // ==========================================================
+    // CHECKBOXES
+    // ==========================================================
 
     function getCaseCheckboxes() {
         return Array.from(
-            form.querySelectorAll(".dossier-case")
+            form.querySelectorAll(
+                ".dossier-case"
+            )
         );
     }
 
 
     function getSectionCheckboxes() {
         return Array.from(
-            form.querySelectorAll(".dossier-section")
+            form.querySelectorAll(
+                ".dossier-section"
+            )
         );
     }
 
@@ -88,19 +107,50 @@
     }
 
 
+    function getSelectedSectionValues() {
+        return getCheckedSections().map(
+            (checkbox) => checkbox.value
+        );
+    }
+
+
     function areAllChecked(checkboxes) {
         return (
-            checkboxes.length > 0 &&
-            checkboxes.every(
+            checkboxes.length > 0
+            && checkboxes.every(
                 (checkbox) => checkbox.checked
             )
         );
     }
 
 
-    // =========================================================
-    // ERRO
-    // =========================================================
+    // ==========================================================
+    // SEÇÕES QUE DEPENDEM DE CASOS
+    // ==========================================================
+
+    function selectedSectionsRequireCases() {
+        const sectionsThatRequireCases = new Set([
+            "cases",
+            "history",
+            "movements",
+            "documents",
+            "agenda",
+            "internal_notes",
+        ]);
+
+        return getSelectedSectionValues().some(
+            (value) => (
+                sectionsThatRequireCases.has(
+                    value
+                )
+            )
+        );
+    }
+
+
+    // ==========================================================
+    // ERROS
+    // ==========================================================
 
     function showError(message) {
         if (!errorBox) {
@@ -108,12 +158,10 @@
         }
 
         errorBox.textContent = message;
-        errorBox.classList.remove("hidden");
 
-        errorBox.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-        });
+        errorBox.classList.remove(
+            "hidden"
+        );
     }
 
 
@@ -123,13 +171,16 @@
         }
 
         errorBox.textContent = "";
-        errorBox.classList.add("hidden");
+
+        errorBox.classList.add(
+            "hidden"
+        );
     }
 
 
-    // =========================================================
-    // ESTADO DOS BOTÕES "TODOS"
-    // =========================================================
+    // ==========================================================
+    // BOTÃO MARCAR / DESMARCAR CASOS
+    // ==========================================================
 
     function updateCasesToggleButton() {
         if (!toggleCasesButton) {
@@ -139,19 +190,28 @@
         const checkboxes = getCaseCheckboxes();
 
         if (!checkboxes.length) {
-            toggleCasesButton.hidden = true;
+            toggleCasesButton.classList.add(
+                "hidden"
+            );
+
             return;
         }
 
-        toggleCasesButton.hidden = false;
+        toggleCasesButton.classList.remove(
+            "hidden"
+        );
 
-        toggleCasesButton.textContent = areAllChecked(
-            checkboxes
-        )
-            ? "Desmarcar todos"
-            : "Marcar todos";
+        toggleCasesButton.textContent = (
+            areAllChecked(checkboxes)
+                ? "Desmarcar todos"
+                : "Marcar todos"
+        );
     }
 
+
+    // ==========================================================
+    // BOTÃO MARCAR / DESMARCAR SEÇÕES
+    // ==========================================================
 
     function updateSectionsToggleButton() {
         if (!toggleSectionsButton) {
@@ -160,38 +220,50 @@
 
         const checkboxes = getSectionCheckboxes();
 
-        toggleSectionsButton.textContent = areAllChecked(
-            checkboxes
-        )
-            ? "Desmarcar todas"
-            : "Marcar todas";
+        if (!checkboxes.length) {
+            toggleSectionsButton.classList.add(
+                "hidden"
+            );
+
+            return;
+        }
+
+        toggleSectionsButton.classList.remove(
+            "hidden"
+        );
+
+        toggleSectionsButton.textContent = (
+            areAllChecked(checkboxes)
+                ? "Desmarcar todas"
+                : "Marcar todas"
+        );
     }
 
 
-    // =========================================================
-    // ESTADO DO BOTÃO GERAR
-    // =========================================================
+    // ==========================================================
+    // BOTÃO GERAR
+    // ==========================================================
 
     function updateGenerateButton() {
         if (!generateButton) {
             return;
         }
 
-        const cases = getCaseCheckboxes();
-
         /*
-         * O template já deixa o botão desabilitado quando
-         * o cliente não possui nenhum caso.
+         * O botão permanece disponível.
          *
-         * Aqui reforçamos essa regra no JavaScript.
+         * A validação acontece no submit para que,
+         * em caso de combinação inválida, o usuário
+         * receba uma mensagem explicando o problema.
          */
-        generateButton.disabled = cases.length === 0;
+
+        generateButton.disabled = false;
     }
 
 
-    // =========================================================
-    // SINCRONIZAÇÃO
-    // =========================================================
+    // ==========================================================
+    // SINCRONIZAÇÃO DA INTERFACE
+    // ==========================================================
 
     function syncState() {
         updateCasesToggleButton();
@@ -200,57 +272,73 @@
     }
 
 
-    // =========================================================
+    // ==========================================================
     // ABRIR MODAL
-    // =========================================================
+    // ==========================================================
 
     function openModal() {
-        lastFocusedElement = document.activeElement;
+        lastFocusedElement = (
+            document.activeElement
+        );
 
         clearError();
         syncState();
 
-        modal.classList.remove("hidden");
-        modal.setAttribute("aria-hidden", "false");
+        modal.classList.remove(
+            "hidden"
+        );
 
-        document.body.classList.add("overflow-hidden");
+        modal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
 
-        window.requestAnimationFrame(() => {
-            modalPanel?.focus();
-        });
+        document.body.classList.add(
+            "overflow-hidden"
+        );
+
+        window.requestAnimationFrame(
+            () => {
+                if (panel) {
+                    panel.focus();
+                }
+            }
+        );
     }
 
 
-    // =========================================================
+    // ==========================================================
     // FECHAR MODAL
-    // =========================================================
+    // ==========================================================
 
     function closeModal() {
-        if (modal.classList.contains("hidden")) {
-            return;
-        }
+        modal.classList.add(
+            "hidden"
+        );
 
-        modal.classList.add("hidden");
-        modal.setAttribute("aria-hidden", "true");
+        modal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
-        document.body.classList.remove("overflow-hidden");
+        document.body.classList.remove(
+            "overflow-hidden"
+        );
 
         clearError();
 
         if (
-            lastFocusedElement &&
-            typeof lastFocusedElement.focus === "function"
+            lastFocusedElement
+            && typeof lastFocusedElement.focus === "function"
         ) {
             lastFocusedElement.focus();
         }
-
-        lastFocusedElement = null;
     }
 
 
-    // =========================================================
+    // ==========================================================
     // MARCAR / DESMARCAR TODOS OS CASOS
-    // =========================================================
+    // ==========================================================
 
     function toggleAllCases() {
         const checkboxes = getCaseCheckboxes();
@@ -259,20 +347,24 @@
             return;
         }
 
-        const shouldCheck = !areAllChecked(checkboxes);
+        const shouldCheck = !areAllChecked(
+            checkboxes
+        );
 
-        checkboxes.forEach((checkbox) => {
-            checkbox.checked = shouldCheck;
-        });
+        checkboxes.forEach(
+            (checkbox) => {
+                checkbox.checked = shouldCheck;
+            }
+        );
 
         clearError();
         syncState();
     }
 
 
-    // =========================================================
+    // ==========================================================
     // MARCAR / DESMARCAR TODAS AS SEÇÕES
-    // =========================================================
+    // ==========================================================
 
     function toggleAllSections() {
         const checkboxes = getSectionCheckboxes();
@@ -281,20 +373,24 @@
             return;
         }
 
-        const shouldCheck = !areAllChecked(checkboxes);
+        const shouldCheck = !areAllChecked(
+            checkboxes
+        );
 
-        checkboxes.forEach((checkbox) => {
-            checkbox.checked = shouldCheck;
-        });
+        checkboxes.forEach(
+            (checkbox) => {
+                checkbox.checked = shouldCheck;
+            }
+        );
 
         clearError();
         syncState();
     }
 
 
-    // =========================================================
-    // ALTERAÇÃO INDIVIDUAL — CASOS
-    // =========================================================
+    // ==========================================================
+    // ALTERAÇÃO DE CASO
+    // ==========================================================
 
     function handleCaseChange() {
         clearError();
@@ -303,61 +399,39 @@
     }
 
 
-    // =========================================================
-    // ALTERAÇÃO INDIVIDUAL — SEÇÕES
-    // =========================================================
+    // ==========================================================
+    // ALTERAÇÃO DE SEÇÃO
+    // ==========================================================
 
     function handleSectionChange() {
         clearError();
         updateSectionsToggleButton();
+        updateGenerateButton();
     }
 
 
-    // =========================================================
+    // ==========================================================
     // VALIDAÇÃO
-    // =========================================================
+    // ==========================================================
 
     function validateForm() {
         clearError();
 
-        const caseCheckboxes = getCaseCheckboxes();
-        const sectionCheckboxes =
-            getSectionCheckboxes();
+        const sectionCheckboxes = (
+            getSectionCheckboxes()
+        );
 
-        const checkedCases = getCheckedCases();
-        const checkedSections =
-            getCheckedSections();
+        const checkedSections = (
+            getCheckedSections()
+        );
 
+        const checkedCases = (
+            getCheckedCases()
+        );
 
-        // -----------------------------------------------------
-        // CLIENTE SEM CASOS
-        // -----------------------------------------------------
-
-        if (!caseCheckboxes.length) {
-            showError(
-                "Este cliente não possui casos disponíveis para gerar o dossiê."
-            );
-
-            return false;
-        }
-
-
-        // -----------------------------------------------------
-        // NENHUM CASO SELECIONADO
-        // -----------------------------------------------------
-
-        if (!checkedCases.length) {
-            showError(
-                "Selecione pelo menos um caso para incluir no dossiê."
-            );
-
-            return false;
-        }
-
-
-        // -----------------------------------------------------
-        // NENHUMA SEÇÃO DISPONÍVEL
-        // -----------------------------------------------------
+        // ------------------------------------------------------
+        // PRECISA EXISTIR PELO MENOS UMA SEÇÃO DISPONÍVEL
+        // ------------------------------------------------------
 
         if (!sectionCheckboxes.length) {
             showError(
@@ -367,10 +441,9 @@
             return false;
         }
 
-
-        // -----------------------------------------------------
-        // NENHUMA SEÇÃO SELECIONADA
-        // -----------------------------------------------------
+        // ------------------------------------------------------
+        // PRECISA EXISTIR PELO MENOS UMA SEÇÃO SELECIONADA
+        // ------------------------------------------------------
 
         if (!checkedSections.length) {
             showError(
@@ -380,18 +453,16 @@
             return false;
         }
 
+        // ------------------------------------------------------
+        // SEÇÃO JURÍDICA EXIGE PELO MENOS UM CASO
+        // ------------------------------------------------------
 
-        // -----------------------------------------------------
-        // TIPO DO DOSSIÊ
-        // -----------------------------------------------------
-
-        const dossierType = form.querySelector(
-            'input[name="dossier_type"]:checked'
-        );
-
-        if (!dossierType) {
+        if (
+            selectedSectionsRequireCases()
+            && !checkedCases.length
+        ) {
             showError(
-                "Selecione o tipo de dossiê que deseja gerar."
+                "Selecione pelo menos um caso para incluir as informações jurídicas escolhidas no dossiê."
             );
 
             return false;
@@ -401,42 +472,36 @@
     }
 
 
-    // =========================================================
+    // ==========================================================
     // SUBMIT
-    // =========================================================
+    // ==========================================================
 
     function handleSubmit(event) {
-        /*
-         * IMPORTANTE:
-         *
-         * Não usamos fetch aqui.
-         *
-         * O form possui target="_blank", então queremos deixar
-         * o navegador realizar o POST normalmente para que o
-         * backend gere o PDF e ele seja aberto em uma nova aba.
-         */
-
         if (!validateForm()) {
             event.preventDefault();
+
             return;
         }
 
         /*
-         * O submit continua normalmente.
+         * O formulário utiliza target="_blank".
          *
-         * Como o target é _blank, a página atual permanece
-         * aberta e o PDF é carregado em outra aba.
+         * O navegador realiza o POST normalmente
+         * e abre o PDF gerado em uma nova aba.
          */
 
-        window.setTimeout(() => {
-            closeModal();
-        }, 150);
+        window.setTimeout(
+            () => {
+                closeModal();
+            },
+            150
+        );
     }
 
 
-    // =========================================================
-    // EVENTOS — ABERTURA / FECHAMENTO
-    // =========================================================
+    // ==========================================================
+    // EVENTOS — ABRIR
+    // ==========================================================
 
     openButton.addEventListener(
         "click",
@@ -444,63 +509,83 @@
     );
 
 
+    // ==========================================================
+    // EVENTOS — FECHAR
+    // ==========================================================
+
     closeButton.addEventListener(
         "click",
         closeModal
     );
 
 
-    cancelButton?.addEventListener(
-        "click",
-        closeModal
-    );
-
-
-    modalBackdrop?.addEventListener(
-        "click",
-        closeModal
-    );
-
-
-    // =========================================================
-    // EVENTOS — TOGGLES
-    // =========================================================
-
-    toggleCasesButton?.addEventListener(
-        "click",
-        toggleAllCases
-    );
-
-
-    toggleSectionsButton?.addEventListener(
-        "click",
-        toggleAllSections
-    );
-
-
-    // =========================================================
-    // EVENTOS — CHECKBOXES
-    // =========================================================
-
-    getCaseCheckboxes().forEach((checkbox) => {
-        checkbox.addEventListener(
-            "change",
-            handleCaseChange
+    if (cancelButton) {
+        cancelButton.addEventListener(
+            "click",
+            closeModal
         );
-    });
+    }
 
 
-    getSectionCheckboxes().forEach((checkbox) => {
-        checkbox.addEventListener(
-            "change",
-            handleSectionChange
+    if (backdrop) {
+        backdrop.addEventListener(
+            "click",
+            closeModal
         );
-    });
+    }
 
 
-    // =========================================================
+    // ==========================================================
+    // EVENTOS — MARCAR / DESMARCAR TODOS
+    // ==========================================================
+
+    if (toggleCasesButton) {
+        toggleCasesButton.addEventListener(
+            "click",
+            toggleAllCases
+        );
+    }
+
+
+    if (toggleSectionsButton) {
+        toggleSectionsButton.addEventListener(
+            "click",
+            toggleAllSections
+        );
+    }
+
+
+    // ==========================================================
+    // EVENTOS — CHECKBOXES DE CASOS
+    // ==========================================================
+
+    getCaseCheckboxes().forEach(
+        (checkbox) => {
+            checkbox.addEventListener(
+                "change",
+                handleCaseChange
+            );
+        }
+    );
+
+
+    // ==========================================================
+    // EVENTOS — CHECKBOXES DE SEÇÕES
+    // ==========================================================
+
+    getSectionCheckboxes().forEach(
+        (checkbox) => {
+            checkbox.addEventListener(
+                "change",
+                handleSectionChange
+            );
+        }
+    );
+
+
+    // ==========================================================
     // EVENTO — SUBMIT
-    // =========================================================
+    // ==========================================================
 
     form.addEventListener(
         "submit",
@@ -508,32 +593,35 @@
     );
 
 
-    // =========================================================
-    // ESCAPE
-    // =========================================================
+    // ==========================================================
+    // TECLA ESC
+    // ==========================================================
 
-    document.addEventListener("keydown", (event) => {
-        if (
-            event.key !== "Escape" ||
-            modal.classList.contains("hidden")
-        ) {
-            return;
+    document.addEventListener(
+        "keydown",
+        (event) => {
+            if (
+                event.key === "Escape"
+                && !modal.classList.contains(
+                    "hidden"
+                )
+            ) {
+                closeModal();
+            }
         }
-
-        closeModal();
-    });
+    );
 
 
-    // =========================================================
+    // ==========================================================
     // ESTADO INICIAL
-    // =========================================================
+    // ==========================================================
 
     syncState();
 
 
-    // =========================================================
+    // ==========================================================
     // API PÚBLICA
-    // =========================================================
+    // ==========================================================
 
     window.ClientDossier = {
         open: openModal,

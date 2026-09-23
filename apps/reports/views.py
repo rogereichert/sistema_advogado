@@ -8,12 +8,9 @@ from .pdf import ClientDossierPDF
 from .services import ClientDossierService
 
 
-ALLOWED_DOSSIER_TYPES = {
-    "complete",
-    "client",
-    "summary",
-}
-
+# ==============================================================
+# SEÇÕES PERMITIDAS NO DOSSIÊ
+# ==============================================================
 
 ALLOWED_SECTIONS = {
     "client",
@@ -22,26 +19,65 @@ ALLOWED_SECTIONS = {
     "movements",
     "documents",
     "agenda",
+    "internal_notes",
+}
+
+
+# ==============================================================
+# SEÇÕES QUE DEPENDEM DE PELO MENOS UM CASO
+# ==============================================================
+
+CASE_DEPENDENT_SECTIONS = {
+    "cases",
+    "history",
+    "movements",
+    "documents",
+    "agenda",
+    "internal_notes",
 }
 
 
 @login_required
 def client_dossier(request, client_pk):
+    """
+    Gera o dossiê PDF de um cliente.
+
+    O conteúdo do documento é determinado exclusivamente por:
+        - casos selecionados;
+        - seções selecionadas.
+
+    Não existe mais "tipo de dossiê".
+
+    Um dossiê pode ser gerado sem casos quando somente seções
+    independentes de casos forem selecionadas, como os dados
+    cadastrais do cliente.
+    """
+
     client = get_object_or_404(
         Client,
         pk=client_pk,
     )
 
-    dossier_type = "complete"
-    selected_case_ids = []
-    selected_sections = list(ALLOWED_SECTIONS)
+    # ==========================================================
+    # VALORES PADRÃO
+    # ==========================================================
+
+    selected_case_ids = list(
+        client.casos.values_list(
+            "pk",
+            flat=True,
+        )
+    )
+
+    selected_sections = list(
+        ALLOWED_SECTIONS
+    )
+
+    # ==========================================================
+    # POST — ESCOLHAS DO USUÁRIO
+    # ==========================================================
 
     if request.method == "POST":
-        dossier_type = request.POST.get(
-            "dossier_type",
-            "complete",
-        )
-
         selected_case_ids = request.POST.getlist(
             "cases"
         )
@@ -50,11 +86,9 @@ def client_dossier(request, client_pk):
             "sections"
         )
 
-        if dossier_type not in ALLOWED_DOSSIER_TYPES:
-            return HttpResponse(
-                "Tipo de dossiê inválido.",
-                status=400,
-            )
+        # ------------------------------------------------------
+        # VALIDAÇÃO DAS SEÇÕES
+        # ------------------------------------------------------
 
         invalid_sections = (
             set(selected_sections)
@@ -73,6 +107,10 @@ def client_dossier(request, client_pk):
                 status=400,
             )
 
+        # ------------------------------------------------------
+        # CASOS QUE REALMENTE PERTENCEM AO CLIENTE
+        # ------------------------------------------------------
+
         client_case_ids = set(
             client.casos.values_list(
                 "pk",
@@ -83,29 +121,44 @@ def client_dossier(request, client_pk):
         valid_case_ids = []
 
         for case_id in selected_case_ids:
-            if not case_id.isdigit():
+            try:
+                case_id = int(
+                    case_id
+                )
+            except (TypeError, ValueError):
                 continue
 
-            case_id = int(case_id)
-
             if case_id in client_case_ids:
-                valid_case_ids.append(case_id)
+                valid_case_ids.append(
+                    case_id
+                )
 
         selected_case_ids = valid_case_ids
 
-        if not selected_case_ids:
+        # ------------------------------------------------------
+        # VALIDAÇÃO DAS SEÇÕES DEPENDENTES DE CASOS
+        # ------------------------------------------------------
+
+        selected_case_dependent_sections = (
+            set(selected_sections)
+            & CASE_DEPENDENT_SECTIONS
+        )
+
+        if (
+            selected_case_dependent_sections
+            and not selected_case_ids
+        ):
             return HttpResponse(
-                "Selecione pelo menos um caso para gerar o dossiê.",
+                (
+                    "Selecione pelo menos um caso para incluir "
+                    "as informações jurídicas escolhidas no dossiê."
+                ),
                 status=400,
             )
 
-    else:
-        selected_case_ids = list(
-            client.casos.values_list(
-                "pk",
-                flat=True,
-            )
-        )
+    # ==========================================================
+    # SERVIÇO
+    # ==========================================================
 
     service = ClientDossierService(
         client
@@ -114,8 +167,11 @@ def client_dossier(request, client_pk):
     data = service.get_data(
         case_ids=selected_case_ids,
         sections=selected_sections,
-        dossier_type=dossier_type,
     )
+
+    # ==========================================================
+    # PDF
+    # ==========================================================
 
     pdf = ClientDossierPDF(
         data
