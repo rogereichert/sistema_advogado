@@ -1,64 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const menu = document.getElementById("notifications-menu");
-    const trigger = document.getElementById("notifications-trigger");
-    const dropdown = document.getElementById("notifications-dropdown");
-    const markAllButton = document.getElementById("notifications-mark-all");
-
-    if (!menu || !trigger || !dropdown) {
-        return;
-    }
-
     const csrfToken = document.querySelector(
         "[name=csrfmiddlewaretoken]"
     )?.value;
 
     // =========================================================
-    // DROPDOWN
+    // UTILITÁRIOS
     // =========================================================
 
-    const openDropdown = () => {
-        dropdown.classList.remove("hidden");
-        trigger.setAttribute("aria-expanded", "true");
-    };
+    const postRequest = async (url) => {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrfToken,
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        });
 
-    const closeDropdown = () => {
-        dropdown.classList.add("hidden");
-        trigger.setAttribute("aria-expanded", "false");
-    };
-
-    const toggleDropdown = () => {
-        if (dropdown.classList.contains("hidden")) {
-            openDropdown();
-            return;
+        if (!response.ok) {
+            throw new Error(
+                "Não foi possível concluir a operação."
+            );
         }
 
-        closeDropdown();
+        return response.json();
     };
 
-    trigger.addEventListener("click", (event) => {
-        event.stopPropagation();
-        toggleDropdown();
-    });
-
-    dropdown.addEventListener("click", (event) => {
-        event.stopPropagation();
-    });
-
-    document.addEventListener("click", (event) => {
-        if (!menu.contains(event.target)) {
-            closeDropdown();
-        }
-    });
-
-    document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-            closeDropdown();
-            trigger.focus();
-        }
-    });
 
     // =========================================================
-    // INTERFACE
+    // INTERFACE GLOBAL DO SINO
     // =========================================================
 
     const updateUnreadInterface = (count) => {
@@ -70,11 +39,16 @@ document.addEventListener("DOMContentLoaded", () => {
             "notifications-unread-summary"
         );
 
+        const dropdownMarkAllButton = document.getElementById(
+            "notifications-mark-all"
+        );
+
         if (badge) {
             if (count > 0) {
                 badge.textContent = count > 99 ? "99+" : count;
                 badge.classList.remove("hidden");
             } else {
+                badge.textContent = "";
                 badge.classList.add("hidden");
             }
         }
@@ -89,22 +63,46 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        if (markAllButton) {
-            markAllButton.disabled = count === 0;
+        if (dropdownMarkAllButton) {
+            dropdownMarkAllButton.disabled = count === 0;
 
-            markAllButton.classList.toggle(
+            dropdownMarkAllButton.classList.toggle(
                 "opacity-40",
                 count === 0
             );
 
-            markAllButton.classList.toggle(
+            dropdownMarkAllButton.classList.toggle(
                 "cursor-not-allowed",
                 count === 0
             );
         }
     };
 
-    const setNotificationAsRead = (notificationElement) => {
+
+    // =========================================================
+    // DROPDOWN DO SINO
+    // =========================================================
+
+    const menu = document.getElementById(
+        "notifications-menu"
+    );
+
+    const trigger = document.getElementById(
+        "notifications-trigger"
+    );
+
+    const dropdown = document.getElementById(
+        "notifications-dropdown"
+    );
+
+    const dropdownMarkAllButton = document.getElementById(
+        "notifications-mark-all"
+    );
+
+
+    const setDropdownNotificationAsRead = (
+        notificationElement
+    ) => {
         notificationElement.dataset.unread = "false";
 
         notificationElement.classList.remove(
@@ -136,49 +134,320 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // =========================================================
-    // MARCAR UMA COMO LIDA
-    // =========================================================
 
-    document
-        .querySelectorAll("[data-notification-item]")
-        .forEach((notificationElement) => {
-            notificationElement.addEventListener(
+    if (menu && trigger && dropdown) {
+        const openDropdown = () => {
+            dropdown.classList.remove("hidden");
+            trigger.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+        };
+
+        const closeDropdown = () => {
+            dropdown.classList.add("hidden");
+            trigger.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+        };
+
+        const toggleDropdown = () => {
+            if (dropdown.classList.contains("hidden")) {
+                openDropdown();
+                return;
+            }
+
+            closeDropdown();
+        };
+
+
+        trigger.addEventListener("click", (event) => {
+            event.stopPropagation();
+            toggleDropdown();
+        });
+
+
+        dropdown.addEventListener("click", (event) => {
+            event.stopPropagation();
+        });
+
+
+        document.addEventListener("click", (event) => {
+            if (!menu.contains(event.target)) {
+                closeDropdown();
+            }
+        });
+
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                closeDropdown();
+                trigger.focus();
+            }
+        });
+
+
+        // =====================================================
+        // DROPDOWN — MARCAR UMA COMO LIDA
+        // =====================================================
+
+        document
+            .querySelectorAll("[data-notification-item]")
+            .forEach((notificationElement) => {
+                notificationElement.addEventListener(
+                    "click",
+                    async (event) => {
+                        const destination =
+                            notificationElement.dataset.destination || "";
+
+                        const readUrl =
+                            notificationElement.dataset.readUrl;
+
+                        const unread =
+                            notificationElement.dataset.unread === "true";
+
+                        /*
+                         * Notificação já lida:
+                         * deixa o comportamento normal do link seguir.
+                         */
+                        if (!unread || !readUrl) {
+                            return;
+                        }
+
+                        event.preventDefault();
+
+                        try {
+                            const data = await postRequest(
+                                readUrl
+                            );
+
+                            setDropdownNotificationAsRead(
+                                notificationElement
+                            );
+
+                            updateUnreadInterface(
+                                data.unread_count
+                            );
+
+                            if (
+                                destination
+                                && destination !== "#"
+                            ) {
+                                window.location.href =
+                                    destination;
+                            }
+                        } catch (error) {
+                            console.error(error);
+
+                            /*
+                             * Uma falha ao marcar como lida
+                             * não pode impedir a navegação.
+                             */
+                            if (
+                                destination
+                                && destination !== "#"
+                            ) {
+                                window.location.href =
+                                    destination;
+                            }
+                        }
+                    }
+                );
+            });
+
+
+        // =====================================================
+        // DROPDOWN — MARCAR TODAS COMO LIDAS
+        // =====================================================
+
+        if (dropdownMarkAllButton) {
+            dropdownMarkAllButton.addEventListener(
                 "click",
-                async (event) => {
-                    const destination =
-                        notificationElement.dataset.destination || "";
-
-                    const readUrl =
-                        notificationElement.dataset.readUrl;
-
-                    const unread =
-                        notificationElement.dataset.unread === "true";
-
-                    if (!unread || !readUrl) {
+                async () => {
+                    if (dropdownMarkAllButton.disabled) {
                         return;
                     }
 
-                    event.preventDefault();
+                    const markAllUrl =
+                        dropdownMarkAllButton.dataset.markAllUrl;
+
+                    if (!markAllUrl) {
+                        return;
+                    }
+
+                    dropdownMarkAllButton.disabled = true;
 
                     try {
-                        const response = await fetch(readUrl, {
-                            method: "POST",
-                            headers: {
-                                "X-CSRFToken": csrfToken,
-                                "X-Requested-With": "XMLHttpRequest",
-                            },
-                        });
+                        const data = await postRequest(
+                            markAllUrl
+                        );
 
-                        if (!response.ok) {
-                            throw new Error(
-                                "Não foi possível marcar a notificação como lida."
+                        document
+                            .querySelectorAll(
+                                '[data-notification-item][data-unread="true"]'
+                            )
+                            .forEach(
+                                (notificationElement) => {
+                                    setDropdownNotificationAsRead(
+                                        notificationElement
+                                    );
+                                }
                             );
-                        }
 
-                        const data = await response.json();
+                        updateUnreadInterface(
+                            data.unread_count
+                        );
+                    } catch (error) {
+                        console.error(error);
 
-                        setNotificationAsRead(
+                        dropdownMarkAllButton.disabled =
+                            false;
+                    }
+                }
+            );
+        }
+    }
+
+
+    // =========================================================
+    // CENTRAL DE NOTIFICAÇÕES
+    // =========================================================
+
+    const centralItems = document.querySelectorAll(
+        ".notification-list-item"
+    );
+
+    const centralMarkAllButton = document.getElementById(
+        "notification-list-mark-all-read"
+    );
+
+
+    const getCentralUnreadCount = () => {
+        return document.querySelectorAll(
+            ".notification-list-item[data-unread='true']"
+        ).length;
+    };
+
+
+    const updateCentralCounters = (count) => {
+        const unreadCounter = document.getElementById(
+            "notification-list-unread-count"
+        );
+
+        const unreadTabCounter = document.getElementById(
+            "notification-list-unread-tab-count"
+        );
+
+        if (unreadCounter) {
+            unreadCounter.textContent = count;
+        }
+
+        if (unreadTabCounter) {
+            unreadTabCounter.textContent = count;
+
+            if (count === 0) {
+                unreadTabCounter.classList.add(
+                    "hidden"
+                );
+            } else {
+                unreadTabCounter.classList.remove(
+                    "hidden"
+                );
+            }
+        }
+
+        if (centralMarkAllButton) {
+            if (count === 0) {
+                centralMarkAllButton.remove();
+            }
+        }
+    };
+
+
+    const setCentralNotificationAsRead = (
+        notificationElement
+    ) => {
+        notificationElement.dataset.unread = "false";
+
+        notificationElement.classList.remove(
+            "bg-brand-50/40"
+        );
+
+        notificationElement.classList.add(
+            "bg-white"
+        );
+
+        const unreadLabel =
+            notificationElement.querySelector(
+                ".notification-unread-label"
+            );
+
+        if (unreadLabel) {
+            unreadLabel.remove();
+        }
+
+        const title = notificationElement.querySelector(
+            "h2"
+        );
+
+        if (title) {
+            title.classList.remove(
+                "font-bold"
+            );
+
+            title.classList.add(
+                "font-semibold"
+            );
+        }
+
+        const markReadButton =
+            notificationElement.querySelector(
+                ".notification-mark-read"
+            );
+
+        if (markReadButton) {
+            markReadButton.remove();
+        }
+    };
+
+
+    // =========================================================
+    // CENTRAL — MARCAR UMA COMO LIDA
+    // =========================================================
+
+    document
+        .querySelectorAll(".notification-mark-read")
+        .forEach((button) => {
+            button.addEventListener(
+                "click",
+                async () => {
+                    const notificationId =
+                        button.dataset.notificationId;
+
+                    const notificationElement =
+                        button.closest(
+                            ".notification-list-item"
+                        );
+
+                    if (
+                        !notificationId
+                        || !notificationElement
+                    ) {
+                        return;
+                    }
+
+                    button.disabled = true;
+
+                    try {
+                        const readUrl =
+                            button.dataset.readUrl;
+
+                        const data = await postRequest(
+                            readUrl
+                        );
+
+                        setCentralNotificationAsRead(
                             notificationElement
                         );
 
@@ -186,77 +455,131 @@ document.addEventListener("DOMContentLoaded", () => {
                             data.unread_count
                         );
 
-                        if (destination && destination !== "#") {
-                            window.location.href = destination;
-                        }
+                        updateCentralCounters(
+                            data.unread_count
+                        );
                     } catch (error) {
                         console.error(error);
-
-                        /*
-                         * A falha ao marcar como lida não deve impedir
-                         * o usuário de acessar o destino da notificação.
-                         */
-                        if (destination && destination !== "#") {
-                            window.location.href = destination;
-                        }
+                        button.disabled = false;
                     }
                 }
             );
         });
 
+
     // =========================================================
-    // MARCAR TODAS COMO LIDAS
+    // CENTRAL — ABRIR NOTIFICAÇÃO
     // =========================================================
 
-    if (markAllButton) {
-        markAllButton.addEventListener("click", async () => {
-            if (markAllButton.disabled) {
-                return;
-            }
+    document
+        .querySelectorAll(".notification-open-link")
+        .forEach((link) => {
+            link.addEventListener(
+                "click",
+                async (event) => {
+                    const notificationId =
+                        link.dataset.notificationId;
 
-            const markAllUrl =
-                markAllButton.dataset.markAllUrl;
+                    const notificationElement =
+                        link.closest(
+                            ".notification-list-item"
+                        );
 
-            if (!markAllUrl) {
-                return;
-            }
+                    const destination =
+                        link.getAttribute("href");
 
-            markAllButton.disabled = true;
+                    if (
+                        !notificationId
+                        || !notificationElement
+                        || notificationElement.dataset.unread
+                            !== "true"
+                    ) {
+                        return;
+                    }
 
-            try {
-                const response = await fetch(markAllUrl, {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": csrfToken,
-                        "X-Requested-With": "XMLHttpRequest",
-                    },
-                });
+                    event.preventDefault();
 
-                if (!response.ok) {
-                    throw new Error(
-                        "Não foi possível marcar todas as notificações como lidas."
-                    );
+                    try {
+                        const readUrl =
+                            button.dataset.readUrl;
+
+                        await postRequest(
+                            readUrl
+                        );
+                    } catch (error) {
+                        console.error(error);
+                    }
+
+                    /*
+                     * Mesmo que a marcação como lida falhe,
+                     * o usuário continua para o destino.
+                     */
+                    window.location.href = destination;
+                }
+            );
+        });
+
+
+    // =========================================================
+    // CENTRAL — MARCAR TODAS COMO LIDAS
+    // =========================================================
+
+    if (centralMarkAllButton) {
+        centralMarkAllButton.addEventListener(
+            "click",
+            async () => {
+                const markAllUrl =
+                    centralMarkAllButton.dataset.markAllUrl;
+
+                if (!markAllUrl) {
+                    return;
                 }
 
-                const data = await response.json();
+                centralMarkAllButton.disabled = true;
 
-                document
-                    .querySelectorAll(
-                        '[data-notification-item][data-unread="true"]'
-                    )
-                    .forEach((notificationElement) => {
-                        setNotificationAsRead(
-                            notificationElement
-                        );
-                    });
+                try {
+                    const data = await postRequest(
+                        markAllUrl
+                    );
 
-                updateUnreadInterface(
-                    data.unread_count
-                );
-            } catch (error) {
-                console.error(error);
-                markAllButton.disabled = false;
+                    centralItems.forEach(
+                        (notificationElement) => {
+                            if (
+                                notificationElement.dataset.unread
+                                === "true"
+                            ) {
+                                setCentralNotificationAsRead(
+                                    notificationElement
+                                );
+                            }
+                        }
+                    );
+
+                    updateUnreadInterface(
+                        data.unread_count
+                    );
+
+                    updateCentralCounters(
+                        data.unread_count
+                    );
+                } catch (error) {
+                    console.error(error);
+
+                    centralMarkAllButton.disabled =
+                        false;
+                }
             }
-        });
+        );
+    }
+
+
+    // =========================================================
+    // ESTADO INICIAL DA CENTRAL
+    // =========================================================
+
+    if (centralItems.length) {
+        updateCentralCounters(
+            getCentralUnreadCount()
+        );
     }
 });

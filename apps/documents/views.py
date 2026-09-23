@@ -9,6 +9,11 @@ from django.views.decorators.http import require_POST
 
 from apps.cases.models import CaseHistory, LegalCase
 from apps.clients.models import Client
+from apps.notifications.services import (
+    create_pending_document_notification,
+    reopen_pending_document_notification,
+    resolve_pending_document_notification,
+)
 
 from .forms import DocumentUploadForm, RequiredDocumentForm
 from .models import Document, RequiredDocument
@@ -284,6 +289,15 @@ def required_document_create(request, case_pk):
                 ),
             )
 
+            # ==================================================
+            # NOTIFICAÇÃO
+            # ==================================================
+
+            create_pending_document_notification(
+                required_document=required_document,
+                usuario=request.user,
+            )
+
             if _is_ajax(request):
                 return JsonResponse(
                     {
@@ -340,11 +354,16 @@ def required_document_toggle(request, pk):
     required_document = get_object_or_404(
         RequiredDocument.objects.select_related(
             "caso",
+            "caso__cliente",
         ),
         pk=pk,
     )
 
     if required_document.recebido:
+        # ======================================================
+        # RECEBIDO -> PENDENTE
+        # ======================================================
+
         required_document.recebido = False
         required_document.recebido_em = None
 
@@ -357,6 +376,10 @@ def required_document_toggle(request, pk):
         )
 
     else:
+        # ======================================================
+        # PENDENTE -> RECEBIDO
+        # ======================================================
+
         required_document.recebido = True
         required_document.recebido_em = timezone.now()
 
@@ -382,6 +405,21 @@ def required_document_toggle(request, pk):
         descricao=descricao,
     )
 
+    # ==========================================================
+    # SINCRONIZAÇÃO DA NOTIFICAÇÃO
+    # ==========================================================
+
+    if required_document.recebido:
+        resolve_pending_document_notification(
+            required_document=required_document,
+        )
+
+    else:
+        reopen_pending_document_notification(
+            required_document=required_document,
+            usuario=request.user,
+        )
+
     return redirect(
         "cases:detail",
         pk=required_document.caso.pk,
@@ -405,6 +443,14 @@ def required_document_delete(request, pk):
 
     legal_case = required_document.caso
     nome = required_document.nome
+
+    # ==========================================================
+    # REMOVE A NOTIFICAÇÃO ANTES DO OBJETO SER EXCLUÍDO
+    # ==========================================================
+
+    resolve_pending_document_notification(
+        required_document=required_document,
+    )
 
     required_document.delete()
 
