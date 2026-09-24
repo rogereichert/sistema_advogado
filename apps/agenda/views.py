@@ -16,6 +16,7 @@ from apps.cases.models import CaseHistory, LegalCase
 from .forms import AgendaEventForm, AgendaRescheduleForm
 from .models import AgendaEvent, GoogleCalendarConnection
 from .services.google_calendar import (
+    build_google_calendar_service,
     build_google_oauth_flow,
     create_google_calendar_event,
     delete_google_calendar_event,
@@ -726,15 +727,29 @@ def agenda_update(request, pk):
             instance=event,
         )
 
+    context = {
+        "form": form,
+        "case": event.caso,
+        "event": event,
+        "editing": True,
+    }
+
+    if _is_ajax(request):
+        return render(
+            request,
+            "agenda/_agenda_form_content.html",
+            context,
+            status=(
+                400
+                if request.method == "POST"
+                else 200
+            ),
+        )
+
     return render(
         request,
         "agenda/agenda_form.html",
-        {
-            "form": form,
-            "case": event.caso,
-            "event": event,
-            "editing": True,
-        },
+        context,
     )
 
 
@@ -1636,6 +1651,9 @@ def google_calendar_sync(request):
             status=400,
         )
 
+    # Eventos já identificados como REMOVED não precisam ser
+    # consultados novamente. Eles só voltam ao fluxo normal
+    # quando o usuário usa “Reenviar ao Google”.
     events = (
         AgendaEvent.objects
         .select_related(
@@ -1649,10 +1667,22 @@ def google_calendar_sync(request):
         .exclude(
             google_event_id="",
         )
+        .exclude(
+            google_sync_status=(
+                AgendaEvent.GoogleSyncStatus.REMOVED
+            ),
+        )
         .order_by(
             "data",
             "hora",
         )
+    )
+
+    # Um único cliente da Google Calendar API é reutilizado
+    # durante toda esta sincronização. Antes, cada evento
+    # reconstruía credenciais + service separadamente.
+    google_service = build_google_calendar_service(
+        connection
     )
 
     checked_count = 0
@@ -1669,6 +1699,8 @@ def google_calendar_sync(request):
                 sync_google_event_to_lexcontrol(
                     event,
                     request.user,
+                    connection=connection,
+                    service=google_service,
                 )
             )
 

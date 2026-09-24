@@ -841,7 +841,12 @@ def _get_http_status(error):
 # =========================================================
 
 
-def sync_google_event_to_lexcontrol(event, user):
+def sync_google_event_to_lexcontrol(
+    event,
+    user,
+    connection=None,
+    service=None,
+):
     """
     Consulta no Google Calendar o evento vinculado
     ao AgendaEvent e traz as alterações para o
@@ -858,9 +863,10 @@ def sync_google_event_to_lexcontrol(event, user):
             "reason": "not_linked",
         }
 
-    connection = get_google_calendar_connection(
-        user
-    )
+    if connection is None:
+        connection = get_google_calendar_connection(
+            user
+        )
 
     if not connection:
         return {
@@ -875,9 +881,10 @@ def sync_google_event_to_lexcontrol(event, user):
     )
 
     try:
-        service = build_google_calendar_service(
-            connection
-        )
+        if service is None:
+            service = build_google_calendar_service(
+                connection
+            )
 
         google_event = (
             service.events()

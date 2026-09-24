@@ -1,18 +1,18 @@
 <style>
     /* =========================================================
-       CAMPOS DO MODAL — SEM SOMBRA EXTERNA
+       FORMULÁRIO DA AGENDA — PADRÃO VISUAL LEXCONTROL
     ========================================================== */
 
-    #agenda-create-form input,
-    #agenda-create-form select,
-    #agenda-create-form textarea {
+    .agenda-event-form input,
+    .agenda-event-form select,
+    .agenda-event-form textarea {
         box-shadow: none !important;
         -webkit-box-shadow: none !important;
     }
 
-    #agenda-create-form input:focus,
-    #agenda-create-form select:focus,
-    #agenda-create-form textarea:focus {
+    .agenda-event-form input:focus,
+    .agenda-event-form select:focus,
+    .agenda-event-form textarea:focus {
         box-shadow: none !important;
         -webkit-box-shadow: none !important;
     }
@@ -21,70 +21,20 @@
 
 <div class="agenda-modal-content">
 
-    <!-- =========================================================
-         CONTEXTO DO CASO
-    ========================================================== -->
-
-    <div
-        class="mb-6 rounded-xl border border-brand-100 bg-brand-50/40 px-4 py-3.5"
-    >
-        <div
-            class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
-        >
-
-            <div class="min-w-0">
-
-                <div class="flex flex-wrap items-center gap-2">
-
-                    <span
-                        class="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-600"
-                    >
-                        {% if case.numero_identificacao %}
-                            {{ case.numero_identificacao }}
-                        {% else %}
-                            #{{ case.pk|stringformat:"05d" }}
-                        {% endif %}
-                    </span>
-
-                    <span
-                        class="h-1 w-1 rounded-full bg-gold-500"
-                        aria-hidden="true"
-                    ></span>
-
-                    {% if case.status %}
-                        <span class="text-xs font-medium text-gold-800">
-                            {{ case.status.nome }}
-                        </span>
-                    {% endif %}
-
-                </div>
-
-                <p class="mt-1 truncate text-sm font-semibold text-brand-950">
-                    {{ case.titulo }}
-                </p>
-
-            </div>
-
-
-            <div class="shrink-0 text-xs text-slate-500">
-                {{ case.cliente.nome_completo }}
-            </div>
-
-        </div>
-    </div>
-
-
-    <!-- =========================================================
-         FORMULÁRIO
-    ========================================================== -->
-
     <form
         method="post"
-        action="{% url 'agenda:create' case.pk %}"
-        id="agenda-create-form"
+
+        {% if editing and event %}
+            action="{% url 'agenda:update' event.pk %}"
+            id="agenda-update-form"
+        {% else %}
+            action="{% url 'agenda:create' case.pk %}"
+            id="agenda-create-form"
+        {% endif %}
+
+        class="agenda-event-form"
         novalidate
     >
-
         {% csrf_token %}
 
 
@@ -93,345 +43,377 @@
         ====================================================== -->
 
         {% if form.non_field_errors %}
-
             <div
                 class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
                 role="alert"
             >
                 {{ form.non_field_errors }}
             </div>
-
         {% endif %}
 
 
-        <div class="grid gap-x-5 gap-y-5 md:grid-cols-2">
+        <!-- =====================================================
+             CONTEXTO DO CASO
+        ====================================================== -->
 
-            <!-- =================================================
-                 TIPO
-            ================================================== -->
-
-            <div>
-
-                <label
-                    for="{{ form.tipo.id_for_label }}"
-                    class="mb-2 block text-sm font-semibold text-slate-700"
-                >
-                    {{ form.tipo.label }}
-
-                    {% if form.tipo.field.required %}
-                        <span class="text-red-500">*</span>
-                    {% endif %}
-                </label>
-
-                {{ form.tipo }}
-
-                {% if form.tipo.errors %}
-
-                    <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
-                    >
-                        {{ form.tipo.errors }}
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-
-            <!-- =================================================
-                 TÍTULO
-            ================================================== -->
-
-            <div>
-
-                <label
-                    for="{{ form.titulo.id_for_label }}"
-                    class="mb-2 block text-sm font-semibold text-slate-700"
-                >
-                    {{ form.titulo.label }}
-
-                    {% if form.titulo.field.required %}
-                        <span class="text-red-500">*</span>
-                    {% endif %}
-                </label>
-
-                {{ form.titulo }}
-
-                {% if form.titulo.errors %}
-
-                    <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
-                    >
-                        {{ form.titulo.errors }}
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-
-            <!-- =================================================
-                 DATA
-            ================================================== -->
-
-            <div>
-
-                <label
-                    for="{{ form.data.id_for_label }}"
-                    class="mb-2 block text-sm font-semibold text-slate-700"
-                >
-                    {{ form.data.label }}
-
-                    {% if form.data.field.required %}
-                        <span class="text-red-500">*</span>
-                    {% endif %}
-                </label>
-
-                {{ form.data }}
-
-                {% if form.data.errors %}
-
-                    <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
-                    >
-                        {{ form.data.errors }}
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-
-            <!-- =================================================
-                 HORA
-            ================================================== -->
-
-            <div>
-
-                <div
-                    class="mb-2 flex items-center justify-between gap-3"
-                >
-
-                    <label
-                        for="{{ form.hora.id_for_label }}"
-                        class="block text-sm font-semibold text-slate-700"
-                    >
-                        {{ form.hora.label }}
-
-                        {% if form.hora.field.required %}
-                            <span class="text-red-500">*</span>
-                        {% endif %}
-                    </label>
-
-                    {% if not form.hora.field.required %}
-
-                        <span
-                            class="text-[11px] font-medium text-slate-400"
-                        >
-                            Opcional
+        <div class="mb-6 rounded-xl border border-brand-100 bg-brand-50/40 px-4 py-3.5">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-600">
+                            {% if case.numero_identificacao %}
+                                {{ case.numero_identificacao }}
+                            {% else %}
+                                #{{ case.pk|stringformat:"05d" }}
+                            {% endif %}
                         </span>
 
-                    {% endif %}
-
-                </div>
-
-                {{ form.hora }}
-
-                {% if form.hora.errors %}
-
-                    <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
-                    >
-                        {{ form.hora.errors }}
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-
-            <!-- =================================================
-                 LOCAL
-            ================================================== -->
-
-            <div class="md:col-span-2">
-
-                <div
-                    class="mb-2 flex items-center justify-between gap-3"
-                >
-
-                    <label
-                        for="{{ form.local.id_for_label }}"
-                        class="block text-sm font-semibold text-slate-700"
-                    >
-                        {{ form.local.label }}
-
-                        {% if form.local.field.required %}
-                            <span class="text-red-500">*</span>
-                        {% endif %}
-                    </label>
-
-                    {% if not form.local.field.required %}
-
                         <span
-                            class="text-[11px] font-medium text-slate-400"
-                        >
-                            Opcional
-                        </span>
+                            class="h-1 w-1 rounded-full bg-gold-500"
+                            aria-hidden="true"
+                        ></span>
 
-                    {% endif %}
-
-                </div>
-
-                {{ form.local }}
-
-                {% if form.local.errors %}
-
-                    <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
-                    >
-                        {{ form.local.errors }}
-                    </div>
-
-                {% endif %}
-
-            </div>
-
-
-            <!-- =================================================
-                 DESCRIÇÃO
-            ================================================== -->
-
-            <div class="md:col-span-2">
-
-                <div
-                    class="mb-2 flex items-center justify-between gap-3"
-                >
-
-                    <label
-                        for="{{ form.descricao.id_for_label }}"
-                        class="block text-sm font-semibold text-slate-700"
-                    >
-                        {{ form.descricao.label }}
-
-                        {% if form.descricao.field.required %}
-                            <span class="text-red-500">*</span>
+                        {% if case.status %}
+                            <span class="text-xs font-medium text-gold-800">
+                                {{ case.status.nome }}
+                            </span>
                         {% endif %}
-                    </label>
-
-                    {% if not form.descricao.field.required %}
-
-                        <span
-                            class="text-[11px] font-medium text-slate-400"
-                        >
-                            Opcional
-                        </span>
-
-                    {% endif %}
-
-                </div>
-
-                {{ form.descricao }}
-
-                {% if form.descricao.errors %}
-
-                    <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
-                    >
-                        {{ form.descricao.errors }}
                     </div>
 
-                {% endif %}
-
-            </div>
-
-
-            <!-- =================================================
-                 OBSERVAÇÕES
-            ================================================== -->
-
-            <div class="md:col-span-2">
-
-                <div
-                    class="mb-2 flex items-center justify-between gap-3"
-                >
-
-                    <label
-                        for="{{ form.observacoes.id_for_label }}"
-                        class="block text-sm font-semibold text-slate-700"
-                    >
-                        {{ form.observacoes.label }}
-
-                        {% if form.observacoes.field.required %}
-                            <span class="text-red-500">*</span>
-                        {% endif %}
-                    </label>
-
-                    {% if not form.observacoes.field.required %}
-
-                        <span
-                            class="text-[11px] font-medium text-slate-400"
-                        >
-                            Opcional
-                        </span>
-
-                    {% endif %}
-
+                    <p class="mt-1 truncate text-sm font-semibold text-brand-950">
+                        {{ case.titulo }}
+                    </p>
                 </div>
 
-                {{ form.observacoes }}
-
-                {% if form.observacoes.errors %}
-
-                    <div
-                        class="mt-2 text-sm text-red-600"
-                        role="alert"
-                    >
-                        {{ form.observacoes.errors }}
-                    </div>
-
-                {% endif %}
-
+                <div class="shrink-0 text-xs text-slate-500">
+                    {{ case.cliente.nome_completo }}
+                </div>
             </div>
-
         </div>
 
 
         <!-- =====================================================
-             AVISO
+             SEÇÃO — DADOS DO COMPROMISSO
         ====================================================== -->
 
-        <div
-            class="mt-5 flex items-start gap-3 rounded-xl border border-gold-200 bg-gold-50/50 px-4 py-3.5"
-        >
+        <section>
+            <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div class="flex items-start gap-3">
+                    <div
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-brand-100 bg-brand-50 text-brand-700"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.8"
+                            stroke="currentColor"
+                            class="h-4 w-4"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
+                            />
+                        </svg>
+                    </div>
 
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.8"
-                stroke="currentColor"
-                class="mt-0.5 h-4 w-4 shrink-0 text-gold-700"
-                aria-hidden="true"
+                    <div>
+                        <h3 class="text-sm font-semibold text-brand-950">
+                            Dados do compromisso
+                        </h3>
+
+                        <p class="mt-0.5 text-xs leading-5 text-slate-500">
+                            Informações principais do evento que será registrado na agenda.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    class="inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full border border-gold-200 bg-gold-50 px-3 py-1.5 text-[11px] font-medium text-gold-800"
+                >
+                    <span class="h-1.5 w-1.5 rounded-full bg-gold-500"></span>
+                    Campos com
+                    <span class="font-semibold text-red-500">*</span>
+                    são obrigatórios
+                </div>
+            </div>
+
+
+            <div class="grid gap-x-5 gap-y-5 md:grid-cols-2">
+
+                <!-- TIPO -->
+                <div>
+                    <label
+                        for="{{ form.tipo.id_for_label }}"
+                        class="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                        {{ form.tipo.label }}
+                        {% if form.tipo.field.required %}
+                            <span class="text-red-500">*</span>
+                        {% endif %}
+                    </label>
+
+                    {{ form.tipo }}
+
+                    {% if form.tipo.errors %}
+                        <div class="mt-2 text-sm text-red-600" role="alert">
+                            {{ form.tipo.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                <!-- TÍTULO -->
+                <div>
+                    <label
+                        for="{{ form.titulo.id_for_label }}"
+                        class="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                        {{ form.titulo.label }}
+                        {% if form.titulo.field.required %}
+                            <span class="text-red-500">*</span>
+                        {% endif %}
+                    </label>
+
+                    {{ form.titulo }}
+
+                    {% if form.titulo.errors %}
+                        <div class="mt-2 text-sm text-red-600" role="alert">
+                            {{ form.titulo.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                <!-- DATA -->
+                <div>
+                    <label
+                        for="{{ form.data.id_for_label }}"
+                        class="mb-2 block text-sm font-semibold text-slate-700"
+                    >
+                        {{ form.data.label }}
+                        {% if form.data.field.required %}
+                            <span class="text-red-500">*</span>
+                        {% endif %}
+                    </label>
+
+                    {{ form.data }}
+
+                    {% if form.data.errors %}
+                        <div class="mt-2 text-sm text-red-600" role="alert">
+                            {{ form.data.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                <!-- HORA -->
+                <div>
+                    <div class="mb-2 flex items-center justify-between gap-3">
+                        <label
+                            for="{{ form.hora.id_for_label }}"
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            {{ form.hora.label }}
+                            {% if form.hora.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if not form.hora.field.required %}
+                            <span class="text-[11px] font-medium text-slate-400">
+                                Opcional
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    {{ form.hora }}
+
+                    {% if form.hora.errors %}
+                        <div class="mt-2 text-sm text-red-600" role="alert">
+                            {{ form.hora.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                <!-- LOCAL -->
+                <div class="md:col-span-2">
+                    <div class="mb-2 flex items-center justify-between gap-3">
+                        <label
+                            for="{{ form.local.id_for_label }}"
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            {{ form.local.label }}
+                            {% if form.local.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if not form.local.field.required %}
+                            <span class="text-[11px] font-medium text-slate-400">
+                                Opcional
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    {{ form.local }}
+
+                    {% if form.local.errors %}
+                        <div class="mt-2 text-sm text-red-600" role="alert">
+                            {{ form.local.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =====================================================
+             DIVISOR
+        ====================================================== -->
+
+        <div class="my-6 border-t border-brand-100"></div>
+
+
+        <!-- =====================================================
+             SEÇÃO — INFORMAÇÕES COMPLEMENTARES
+        ====================================================== -->
+
+        <section>
+            <div class="mb-5 flex items-start gap-3">
+                <div
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-brand-100 bg-brand-50 text-brand-700"
+                    aria-hidden="true"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M7.5 8.25h9m-9 3h9m-9 3h5.25M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"
+                        />
+                    </svg>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-semibold text-brand-950">
+                        Informações complementares
+                    </h3>
+
+                    <p class="mt-0.5 text-xs leading-5 text-slate-500">
+                        Registre detalhes adicionais e observações relevantes sobre o compromisso.
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="grid gap-x-5 gap-y-5 md:grid-cols-2">
+
+                <!-- DESCRIÇÃO -->
+                <div>
+                    <div class="mb-2 flex items-center justify-between gap-3">
+                        <label
+                            for="{{ form.descricao.id_for_label }}"
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            {{ form.descricao.label }}
+                            {% if form.descricao.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if not form.descricao.field.required %}
+                            <span class="text-[11px] font-medium text-slate-400">
+                                Opcional
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    {{ form.descricao }}
+
+                    {% if form.descricao.errors %}
+                        <div class="mt-2 text-sm text-red-600" role="alert">
+                            {{ form.descricao.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                <!-- OBSERVAÇÕES -->
+                <div>
+                    <div class="mb-2 flex items-center justify-between gap-3">
+                        <label
+                            for="{{ form.observacoes.id_for_label }}"
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            {{ form.observacoes.label }}
+                            {% if form.observacoes.field.required %}
+                                <span class="text-red-500">*</span>
+                            {% endif %}
+                        </label>
+
+                        {% if not form.observacoes.field.required %}
+                            <span class="text-[11px] font-medium text-slate-400">
+                                Opcional
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    {{ form.observacoes }}
+
+                    {% if form.observacoes.errors %}
+                        <div class="mt-2 text-sm text-red-600" role="alert">
+                            {{ form.observacoes.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =====================================================
+             AVISO DE HISTÓRICO
+        ====================================================== -->
+
+        <div class="mt-6 border-t border-brand-100 pt-5">
+            <div
+                class="flex items-start gap-3 rounded-xl border border-gold-200 bg-gold-50/50 px-4 py-3"
             >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
-                />
-            </svg>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.8"
+                    stroke="currentColor"
+                    class="mt-0.5 h-4 w-4 shrink-0 text-gold-700"
+                    aria-hidden="true"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5m-15 12h13.5A1.5 1.5 0 0 0 20.25 18.75V6.75a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5Z"
+                    />
+                </svg>
 
-            <p class="text-xs leading-5 text-gold-900">
-                O compromisso será vinculado a este caso e também
-                registrado no histórico da causa.
-            </p>
-
+                <p class="text-xs leading-5 text-gold-900">
+                    {% if editing %}
+                        As alterações deste compromisso serão registradas
+                        no histórico da causa.
+                    {% else %}
+                        O compromisso será vinculado a este caso e também
+                        registrado no histórico da causa.
+                    {% endif %}
+                </p>
+            </div>
         </div>
 
 
@@ -439,10 +421,7 @@
              AÇÕES
         ====================================================== -->
 
-        <div
-            class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end"
-        >
-
+        <div class="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
             <button
                 type="button"
                 data-agenda-modal-close
@@ -451,34 +430,52 @@
                 Cancelar
             </button>
 
-
             <button
                 type="submit"
                 class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-950 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-100"
             >
-
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.8"
-                    stroke="currentColor"
-                    class="h-4 w-4"
-                    aria-hidden="true"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                    />
-                </svg>
+                {% if editing %}
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M16.862 4.487 19.5 7.125m-1.5-4.5a2.121 2.121 0 0 1 3 3L7.5 19.125 3 21l1.875-4.5L18 3.375Z"
+                        />
+                    </svg>
+                {% else %}
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.8"
+                        stroke="currentColor"
+                        class="h-4 w-4"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 4.5v15m7.5-7.5h-15"
+                        />
+                    </svg>
+                {% endif %}
 
                 <span data-agenda-submit-label>
-                    Agendar compromisso
+                    {% if editing %}
+                        Salvar alterações
+                    {% else %}
+                        Agendar compromisso
+                    {% endif %}
                 </span>
-
             </button>
-
         </div>
 
     </form>

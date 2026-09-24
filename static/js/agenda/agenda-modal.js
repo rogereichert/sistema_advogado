@@ -1,6 +1,10 @@
 (() => {
     "use strict";
 
+    // =========================================================
+    // ELEMENTOS
+    // =========================================================
+
     const modal = document.getElementById("agenda-modal");
 
     if (!modal) {
@@ -18,6 +22,11 @@
     const backdrop = modal.querySelector(
         "[data-agenda-modal-backdrop]"
     );
+
+
+    // =========================================================
+    // ESTADO
+    // =========================================================
 
     let triggerElement = null;
     let agendaUrl = "";
@@ -333,7 +342,7 @@
 
         const originalLabel = submitLabel
             ? submitLabel.textContent.trim()
-            : "Agendar compromisso";
+            : "Salvar";
 
 
         // -----------------------------------------------------
@@ -350,7 +359,11 @@
         }
 
         if (submitLabel) {
-            submitLabel.textContent = "Agendando...";
+            submitLabel.textContent = (
+                form.id === "agenda-update-form"
+                    ? "Salvando..."
+                    : "Agendando..."
+            );
         }
 
 
@@ -432,12 +445,12 @@
 
 
             throw new Error(
-                `Erro ao agendar compromisso: ${response.status}`
+                `Erro ao salvar compromisso: ${response.status}`
             );
 
         } catch (error) {
             console.error(
-                "Erro ao agendar compromisso:",
+                "Erro ao salvar compromisso:",
                 error
             );
 
@@ -556,8 +569,17 @@
         "submit",
         (event) => {
 
+            /*
+             * A mesma modal atende agora aos dois fluxos:
+             *
+             * - criação: #agenda-create-form
+             * - edição:  #agenda-update-form
+             *
+             * Ambos compartilham .agenda-event-form.
+             */
+
             const form = event.target.closest(
-                "#agenda-create-form"
+                ".agenda-event-form"
             );
 
             if (

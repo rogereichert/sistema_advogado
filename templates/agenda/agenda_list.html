@@ -7,7 +7,17 @@
 
 {% block content %}
 
-<div class="mx-auto max-w-[1600px]">
+<div id="agenda-page-content" class="relative mx-auto max-w-[1600px]">
+
+    <!--
+        Bloqueio visual temporário durante a sincronização com o Google.
+        Fica restrito ao conteúdo da Agenda: sidebar/topbar continuam livres.
+    -->
+    <div
+        id="agenda-sync-lock-overlay"
+        class="absolute inset-0 z-[80] hidden cursor-not-allowed bg-transparent"
+        aria-hidden="true"
+    ></div>
 
     <!-- =========================================================
          CABEÇALHO DA PÁGINA
@@ -178,7 +188,7 @@
     <section class="mb-5 grid gap-4 md:grid-cols-3" aria-label="Resumo da agenda">
 
         <a
-            href="{% url 'agenda:list' %}?view=upcoming&period=month"
+            href="{% url 'agenda:list' %}?view=upcoming&period=day"
             class="group rounded-2xl border border-brand-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-brand-100"
         >
             <div class="flex items-start justify-between gap-4">
@@ -284,7 +294,7 @@
                 </div>
 
                 {% if upcoming_count > agenda_preview_limit %}
-                    <a href="{% url 'agenda:list' %}?view=upcoming&period=month" class="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3.5 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100">
+                    <a href="{% url 'agenda:list' %}?view=upcoming&period=day" class="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3.5 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100">
                         Ver todos os {{ upcoming_count }}
                         <span aria-hidden="true">→</span>
                     </a>
@@ -318,7 +328,7 @@
 
                                     {% if event.removido_do_google %}
                                         <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200" title="Este compromisso foi removido do Google Agenda, mas continua salvo no LexControl.">
-                                            Removido do Google
+                                            Removido do Google Agenda
                                         </span>
                                     {% elif event.erro_sincronizacao_google %}
                                         <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700 ring-1 ring-inset ring-red-200">
@@ -343,22 +353,11 @@
                                     {% endif %}
                                 </div>
 
-                                {% if event.removido_do_google %}
-                                    <div class="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                                        <span class="font-medium text-amber-700">
-                                            Removido do Google Agenda.
-                                        </span>
-                                        <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-4 w-4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992V4.356m-.582 11.292a8.25 8.25 0 1 1-2.433-8.4l3.015 2.1" /></svg>
-                                            <span class="google-calendar-resend-label">Reenviar ao Google</span>
-                                        </button>
-                                    </div>
-                                {% endif %}
                             </div>
                         </div>
 
                         <div class="flex shrink-0 items-center gap-3 pl-[76px] sm:pl-20 lg:pl-0">
-                            <a href="{% url 'agenda:update' event.pk %}" class="agenda-sync-write-action text-xs font-semibold text-slate-500 transition hover:text-brand-800 focus:outline-none focus:underline">
+                            <a href="{% url 'agenda:update' event.pk %}" data-agenda-modal-open data-agenda-url="{% url 'agenda:update' event.pk %}" class="agenda-sync-write-action text-xs font-semibold text-slate-500 transition hover:text-brand-800 focus:outline-none focus:underline">
                                 Editar
                             </a>
 
@@ -391,6 +390,26 @@
                                     <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
                                         Gerenciar
                                     </p>
+
+                                    {% if event.removido_do_google and not event.cancelado %}
+                                        <button
+                                            type="button"
+                                            class="google-calendar-resend-button agenda-sync-write-action flex w-full items-start gap-2.5 rounded-lg px-3 py-2.5 text-left transition hover:bg-brand-50 focus:outline-none focus:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                            role="menuitem"
+                                            data-resend-url="{% url 'agenda:google_resend' event.pk %}"
+                                            data-event-title="{{ event.titulo|escape }}"
+                                        >
+                                            <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200" aria-hidden="true">↻</span>
+                                            <span class="min-w-0">
+                                                <span class="google-calendar-resend-label block text-xs font-semibold text-brand-900">Reenviar ao Google</span>
+                                                <span class="mt-0.5 block text-[11px] font-normal leading-4 text-slate-500">
+                                                    Criar novamente este compromisso no Google Agenda
+                                                </span>
+                                            </span>
+                                        </button>
+
+                                        <div class="my-1.5 border-t border-brand-50"></div>
+                                    {% endif %}
 
                                     {% if event.status == "scheduled" %}
                                         <button
@@ -548,7 +567,7 @@
                                             {{ event.get_status_display }}
                                         </span>
                                         {% if event.removido_do_google %}
-                                            <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200">Removido do Google</span>
+                                            <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200">Removido do Google Agenda</span>
                                         {% endif %}
                                     </div>
 
@@ -587,7 +606,7 @@
                             </div>
 
                             <div class="flex shrink-0 items-center gap-3 pl-[72px] lg:pl-0">
-                                <a href="{% url 'agenda:update' event.pk %}" class="agenda-sync-write-action text-xs font-semibold text-slate-500 transition hover:text-brand-800 focus:outline-none focus:underline">
+                                <a href="{% url 'agenda:update' event.pk %}" data-agenda-modal-open data-agenda-url="{% url 'agenda:update' event.pk %}" class="agenda-sync-write-action text-xs font-semibold text-slate-500 transition hover:text-brand-800 focus:outline-none focus:underline">
                                     Editar
                                 </a>
                                 <span class="text-slate-300" aria-hidden="true">·</span>
@@ -642,7 +661,7 @@
                                     {% endif %}
 
                                     {% if event.removido_do_google %}
-                                        <span class="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700 ring-1 ring-inset ring-amber-200">Removido do Google</span>
+                                        <span class="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700 ring-1 ring-inset ring-amber-200">Removido do Google Agenda</span>
                                     {% endif %}
                                 </div>
 
@@ -705,7 +724,7 @@
 
             <header class="flex flex-col gap-4 border-b {% if agenda_view == 'pending' %}border-amber-100 bg-amber-50/40{% else %}border-brand-100{% endif %} px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                 <div>
-                    <a href="{% url 'agenda:list' %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-700 transition hover:text-brand-950">
+                    <a href="{% url 'agenda:list' %}?source=internal" class="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-700 transition hover:text-brand-950">
                         <span aria-hidden="true">←</span>
                         Voltar ao painel da Agenda
                     </a>
@@ -823,7 +842,7 @@
                                             <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200"><span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>{{ event.get_status_display }}</span>
                                         {% endif %}
                                         {% if event.removido_do_google %}
-                                            <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200">Removido do Google</span>
+                                            <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-200">Removido do Google Agenda</span>
                                         {% endif %}
                                     </div>
 
@@ -861,20 +880,57 @@
                             </div>
 
                             <div class="flex shrink-0 flex-wrap items-center gap-3 pl-[72px] lg:pl-0">
-                                {% if event.removido_do_google and not event.cancelado %}
-                                    <button type="button" class="google-calendar-resend-button agenda-sync-write-action inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-brand-100 bg-white px-3 text-xs font-semibold text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60" data-resend-url="{% url 'agenda:google_resend' event.pk %}" data-event-title="{{ event.titulo|escape }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-4 w-4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992V4.356m-.582 11.292a8.25 8.25 0 1 1-2.433-8.4l3.015 2.1" /></svg>
-                                            <span class="google-calendar-resend-label">Reenviar ao Google</span>
-                                    </button>
-                                {% endif %}
-
-                                <a href="{% url 'agenda:update' event.pk %}" class="agenda-sync-write-action text-xs font-semibold text-slate-500 transition hover:text-brand-800 focus:outline-none focus:underline">
+                                <a href="{% url 'agenda:update' event.pk %}" data-agenda-modal-open data-agenda-url="{% url 'agenda:update' event.pk %}" class="agenda-sync-write-action text-xs font-semibold text-slate-500 transition hover:text-brand-800 focus:outline-none focus:underline">
                                     Editar
                                 </a>
                                 <span class="text-slate-300" aria-hidden="true">·</span>
                                 <a href="{% url 'cases:detail' event.caso.pk %}" class="text-xs font-semibold text-brand-700 transition hover:text-brand-950 focus:outline-none focus:underline">
                                     Abrir caso →
                                 </a>
+
+                                {% if event.removido_do_google and not event.cancelado %}
+                                    <div class="relative agenda-more-actions">
+                                        <button
+                                            type="button"
+                                            class="agenda-more-actions-button inline-flex h-9 w-9 items-center justify-center rounded-lg border border-brand-100 bg-white text-brand-700 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-950 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                                            aria-label="Mais ações para {{ event.titulo|escape }}"
+                                            aria-haspopup="menu"
+                                            aria-expanded="false"
+                                            title="Mais ações"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4" aria-hidden="true">
+                                                <circle cx="5" cy="12" r="1.6"></circle>
+                                                <circle cx="12" cy="12" r="1.6"></circle>
+                                                <circle cx="19" cy="12" r="1.6"></circle>
+                                            </svg>
+                                        </button>
+
+                                        <div
+                                            class="agenda-more-actions-menu absolute right-0 z-30 hidden w-64 overflow-hidden rounded-xl border border-brand-100 bg-white p-1.5 shadow-lg"
+                                            role="menu"
+                                        >
+                                            <p class="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                                                Google Agenda
+                                            </p>
+
+                                            <button
+                                                type="button"
+                                                class="google-calendar-resend-button agenda-sync-write-action flex w-full items-start gap-2.5 rounded-lg px-3 py-2.5 text-left transition hover:bg-brand-50 focus:outline-none focus:bg-brand-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                                role="menuitem"
+                                                data-resend-url="{% url 'agenda:google_resend' event.pk %}"
+                                                data-event-title="{{ event.titulo|escape }}"
+                                            >
+                                                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200" aria-hidden="true">↻</span>
+                                                <span class="min-w-0">
+                                                    <span class="google-calendar-resend-label block text-xs font-semibold text-brand-900">Reenviar ao Google</span>
+                                                    <span class="mt-0.5 block text-[11px] font-normal leading-4 text-slate-500">
+                                                        Criar novamente este compromisso no Google Agenda
+                                                    </span>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
                         </article>
                     {% endif %}
@@ -931,6 +987,64 @@
 
 
 {% include "agenda/_agenda_complete_modal.html" %}
+
+
+<!-- =========================================================
+     MODAL — EDITAR COMPROMISSO
+========================================================== -->
+
+<div id="agenda-modal" class="fixed inset-0 z-[10020] hidden" aria-hidden="true">
+    <div data-agenda-modal-backdrop class="absolute inset-0 bg-slate-950/45 backdrop-blur-[1px]"></div>
+
+    <div class="relative flex min-h-full items-center justify-center p-4 sm:p-6">
+        <section
+            data-agenda-modal-panel
+            class="relative flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-2xl sm:max-h-[calc(100vh-3rem)]"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="agenda-edit-modal-title"
+            aria-describedby="agenda-edit-modal-description"
+        >
+            <header class="flex shrink-0 items-start justify-between gap-4 border-b border-brand-100 bg-brand-50/30 px-5 py-4 sm:px-6">
+                <div class="flex min-w-0 items-start gap-3">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-950 text-white shadow-sm" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-5 w-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487 19.5 7.125m-1.5-4.5a2.121 2.121 0 0 1 3 3L7.5 19.125 3 21l1.875-4.5L18 3.375Z" />
+                        </svg>
+                    </div>
+
+                    <div class="min-w-0">
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-gold-700">Agenda</p>
+                        <h2 id="agenda-edit-modal-title" class="mt-1 text-lg font-semibold tracking-tight text-brand-950">Editar compromisso</h2>
+                        <p id="agenda-edit-modal-description" class="mt-1 text-sm leading-5 text-slate-500">Atualize as informações do compromisso vinculado ao caso.</p>
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    data-agenda-modal-close
+                    class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white hover:text-slate-700 focus:outline-none focus:ring-4 focus:ring-brand-100"
+                    aria-label="Fechar"
+                >
+                    <span class="text-xl leading-none" aria-hidden="true">×</span>
+                </button>
+            </header>
+
+            <div id="agenda-modal-body" class="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+                <div class="flex min-h-64 items-center justify-center">
+                    <div class="text-center">
+                        <svg class="mx-auto h-6 w-6 animate-spin text-brand-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4Z"></path>
+                        </svg>
+                        <p class="mt-3 text-sm font-medium text-slate-500">Carregando compromisso...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
 
 
 <!-- =========================================================
@@ -1940,6 +2054,10 @@
                 "google-calendar-last-sync"
             );
 
+            const syncLockOverlay = document.getElementById(
+                "agenda-sync-lock-overlay"
+            );
+
             const resendButtons = document.querySelectorAll(
                 ".google-calendar-resend-button"
             );
@@ -2090,6 +2208,13 @@
                 }
 
                 setWriteActionsLocked(syncing);
+
+                if (syncLockOverlay) {
+                    syncLockOverlay.classList.toggle(
+                        "hidden",
+                        !syncing
+                    );
+                }
 
                 if (syncLabel) {
                     syncLabel.textContent = syncing
@@ -2302,11 +2427,26 @@
                     window.location.href
                 );
 
+                const isInternalNavigation = (
+                    agendaUrl.searchParams.get("source") === "internal"
+                );
+
                 const isAgendaEntry = (
                     !agendaUrl.searchParams.has("view")
                     && !agendaUrl.searchParams.has("period")
                     && !agendaUrl.searchParams.has("page")
+                    && !isInternalNavigation
                 );
+
+                if (isInternalNavigation) {
+                    agendaUrl.searchParams.delete("source");
+
+                    window.history.replaceState(
+                        {},
+                        document.title,
+                        agendaUrl.pathname + agendaUrl.search + agendaUrl.hash
+                    );
+                }
 
                 if (cameFromAutoSyncReload) {
                     sessionStorage.removeItem(
@@ -2439,6 +2579,7 @@
     </script>
 {% endif %}
 
+<script src="{% static 'js/agenda/agenda-modal.js' %}"></script>
 <script src="{% static 'js/agenda/agenda-complete.js' %}"></script>
 
 {% endblock %}
