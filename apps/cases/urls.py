@@ -8,6 +8,12 @@ app_name = "cases"
 
 urlpatterns = [
     path(
+        "datajud/consultar/",
+        views.datajud_consultar_processo,
+        name="datajud_consultar",
+    ),
+
+    path(
         "novo/<int:client_pk>/",
         views.case_create,
         name="create",

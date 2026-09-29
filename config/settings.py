@@ -35,6 +35,9 @@ GOOGLE_CALENDAR_SCOPES = [
     "https://www.googleapis.com/auth/calendar.events",
 ]
 
+# DataJud / CNJ
+DATAJUD_API_KEY = os.getenv("DATAJUD_API_KEY")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 

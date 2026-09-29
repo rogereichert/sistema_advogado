@@ -432,7 +432,44 @@
 
                     </div>
 
-                    {{ form.numero_processo }}
+
+                    <div
+                        class="flex flex-col gap-3 sm:flex-row sm:items-stretch"
+                    >
+
+                        <div class="min-w-0 flex-1">
+                            {{ form.numero_processo }}
+                        </div>
+
+
+                        <button
+                            type="button"
+                            id="consultar-processo-datajud-modal"
+                            data-datajud-consultar
+                            data-datajud-url="{% url 'cases:datajud_consultar' %}"
+                            class="inline-flex min-h-[46px] shrink-0 items-center justify-center gap-2 rounded-xl border border-brand-200 bg-brand-50 px-5 text-sm font-semibold text-brand-800 transition hover:border-brand-300 hover:bg-brand-100 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.8"
+                                stroke="currentColor"
+                                class="h-4 w-4"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"
+                                />
+                            </svg>
+
+                            <span>Consultar processo</span>
+                        </button>
+
+                    </div>
+
 
                     {% if form.numero_processo.errors %}
 
@@ -443,101 +480,122 @@
                             {{ form.numero_processo.errors }}
                         </div>
 
+                    {% else %}
+
+                        <p class="mt-2 text-xs leading-5 text-slate-400">
+                            Informe o número CNJ para consultar os dados
+                            processuais automaticamente. Deixe em branco
+                            enquanto a demanda ainda não tiver sido ajuizada.
+                        </p>
+
                     {% endif %}
 
-                </div>
 
-
-                <!-- VARA -->
-
-                <div>
+                    <!-- RESULTADO DA CONSULTA DATAJUD -->
 
                     <div
-                        class="mb-2 flex items-center justify-between gap-3"
-                    >
+                        data-datajud-feedback
+                        class="mt-4 hidden"
+                        aria-live="polite"
+                    ></div>
 
-                        <label
-                            for="{{ form.vara.id_for_label }}"
-                            class="block text-sm font-semibold text-slate-700"
-                        >
-                            {{ form.vara.label }}
-
-                            {% if form.vara.field.required %}
-                                <span class="text-red-500">*</span>
+                    <!-- CAMPOS PROCESSUAIS OPCIONAIS: MANUAL OU DATAJUD -->
+                    <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50/50 p-4 sm:p-5">
+                        <div class="mb-5">
+                            <h4 class="text-sm font-semibold text-brand-950">Informações do processo</h4>
+                            <p class="mt-1 text-xs leading-5 text-slate-500">
+                                Todos os campos abaixo são opcionais. Preencha manualmente ou consulte o DataJud.
+                                Uma consulta com erro não impede o cadastro.
+                            </p>
+                        </div>
+                        <div class="grid gap-x-5 gap-y-5 md:grid-cols-2">
+                        <div class="min-w-0" data-datajud-field="tribunal">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                                <label for="{{ form.tribunal.id_for_label }}" class="text-sm font-semibold text-slate-700">Tribunal</label>
+                                <span class="text-[11px] font-medium text-slate-400">Opcional</span>
+                            </div>
+                            {{ form.tribunal }}
+                            {% if form.tribunal.errors %}
+                                <div class="mt-2 text-sm text-red-600" role="alert">{{ form.tribunal.errors }}</div>
                             {% endif %}
-                        </label>
-
-                        {% if not form.vara.field.required %}
-                            <span
-                                class="text-[11px] font-medium text-slate-400"
-                            >
-                                Opcional
-                            </span>
-                        {% endif %}
-
+                        </div>
+                        <div class="min-w-0" data-datajud-field="grau">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                                <label for="{{ form.grau.id_for_label }}" class="text-sm font-semibold text-slate-700">Grau</label>
+                                <span class="text-[11px] font-medium text-slate-400">Opcional</span>
+                            </div>
+                            {{ form.grau }}
+                            {% if form.grau.errors %}
+                                <div class="mt-2 text-sm text-red-600" role="alert">{{ form.grau.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="min-w-0" data-datajud-field="classe_processual">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                                <label for="{{ form.classe_processual.id_for_label }}" class="text-sm font-semibold text-slate-700">Classe processual</label>
+                                <span class="text-[11px] font-medium text-slate-400">Opcional</span>
+                            </div>
+                            {{ form.classe_processual }}
+                            {% if form.classe_processual.errors %}
+                                <div class="mt-2 text-sm text-red-600" role="alert">{{ form.classe_processual.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="min-w-0" data-datajud-field="sistema_processual">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                                <label for="{{ form.sistema_processual.id_for_label }}" class="text-sm font-semibold text-slate-700">Sistema processual</label>
+                                <span class="text-[11px] font-medium text-slate-400">Opcional</span>
+                            </div>
+                            {{ form.sistema_processual }}
+                            {% if form.sistema_processual.errors %}
+                                <div class="mt-2 text-sm text-red-600" role="alert">{{ form.sistema_processual.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="min-w-0" data-datajud-field="orgao_julgador_nome">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                                <label for="{{ form.orgao_julgador_nome.id_for_label }}" class="text-sm font-semibold text-slate-700">Órgão julgador</label>
+                                <span class="text-[11px] font-medium text-slate-400">Opcional</span>
+                            </div>
+                            {{ form.orgao_julgador_nome }}
+                            {% if form.orgao_julgador_nome.errors %}
+                                <div class="mt-2 text-sm text-red-600" role="alert">{{ form.orgao_julgador_nome.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="min-w-0" data-datajud-field="data_ajuizamento">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                                <label for="{{ form.data_ajuizamento.id_for_label }}" class="text-sm font-semibold text-slate-700">Data de ajuizamento</label>
+                                <span class="text-[11px] font-medium text-slate-400">Opcional</span>
+                            </div>
+                            {{ form.data_ajuizamento }}
+                            {% if form.data_ajuizamento.errors %}
+                                <div class="mt-2 text-sm text-red-600" role="alert">{{ form.data_ajuizamento.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="min-w-0" data-datajud-field="vara">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                                <label for="{{ form.vara.id_for_label }}" class="text-sm font-semibold text-slate-700">Vara</label>
+                                <span class="text-[11px] font-medium text-slate-400">Opcional</span>
+                            </div>
+                            {{ form.vara }}
+                            {% if form.vara.errors %}
+                                <div class="mt-2 text-sm text-red-600" role="alert">{{ form.vara.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="min-w-0" data-datajud-field="comarca">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                                <label for="{{ form.comarca.id_for_label }}" class="text-sm font-semibold text-slate-700">Comarca</label>
+                                <span class="text-[11px] font-medium text-slate-400">Opcional</span>
+                            </div>
+                            {{ form.comarca }}
+                            {% if form.comarca.errors %}
+                                <div class="mt-2 text-sm text-red-600" role="alert">{{ form.comarca.errors }}</div>
+                            {% endif %}
+                        </div>
+                        </div>
+                        <p class="mt-4 text-xs leading-5 text-slate-500">
+                            Órgão julgador, Vara e Comarca são informações distintas. Confira os dados antes de salvar.
+                        </p>
                     </div>
 
-                    {{ form.vara }}
-
-                    {% if form.vara.errors %}
-
-                        <div
-                            class="mt-2 text-sm text-red-600"
-                            role="alert"
-                        >
-                            {{ form.vara.errors }}
-                        </div>
-
-                    {% endif %}
-
                 </div>
-
-
-                <!-- COMARCA -->
-
-                <div>
-
-                    <div
-                        class="mb-2 flex items-center justify-between gap-3"
-                    >
-
-                        <label
-                            for="{{ form.comarca.id_for_label }}"
-                            class="block text-sm font-semibold text-slate-700"
-                        >
-                            {{ form.comarca.label }}
-
-                            {% if form.comarca.field.required %}
-                                <span class="text-red-500">*</span>
-                            {% endif %}
-                        </label>
-
-                        {% if not form.comarca.field.required %}
-                            <span
-                                class="text-[11px] font-medium text-slate-400"
-                            >
-                                Opcional
-                            </span>
-                        {% endif %}
-
-                    </div>
-
-                    {{ form.comarca }}
-
-                    {% if form.comarca.errors %}
-
-                        <div
-                            class="mt-2 text-sm text-red-600"
-                            role="alert"
-                        >
-                            {{ form.comarca.errors }}
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-            </div>
 
         </section>
 

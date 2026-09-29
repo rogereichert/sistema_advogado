@@ -1,3 +1,4 @@
+
 from django import forms
 
 from .models import CaseMovement, LegalCase
@@ -16,6 +17,12 @@ class LegalCaseForm(forms.ModelForm):
             "status",
             "descricao",
             "numero_processo",
+            "tribunal",
+            "grau",
+            "classe_processual",
+            "sistema_processual",
+            "orgao_julgador_nome",
+            "data_ajuizamento",
             "vara",
             "comarca",
             "observacoes",
@@ -45,16 +52,50 @@ class LegalCaseForm(forms.ModelForm):
             ),
             "numero_processo": forms.TextInput(
                 attrs={
+                    "id": "id_numero_processo",
                     "placeholder": (
                         "Ex.: 0000000-00.0000.0.00.0000"
                     ),
+                    "autocomplete": "off",
+                    "inputmode": "numeric",
                 }
+            ),
+            "tribunal": forms.TextInput(
+                attrs={
+                    "placeholder": "Ex.: TRF1, TJPE, TRT6",
+                }
+            ),
+            "grau": forms.TextInput(
+                attrs={
+                    "placeholder": "Ex.: G1, G2, JE",
+                }
+            ),
+            "classe_processual": forms.TextInput(
+                attrs={
+                    "placeholder": (
+                        "Ex.: Procedimento do Juizado Especial Cível"
+                    ),
+                }
+            ),
+            "sistema_processual": forms.TextInput(
+                attrs={
+                    "placeholder": "Ex.: PJe",
+                }
+            ),
+            "orgao_julgador_nome": forms.TextInput(
+                attrs={
+                    "placeholder": "Ex.: 1ª Vara Cível",
+                }
+            ),
+            "data_ajuizamento": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={
+                    "type": "date",
+                },
             ),
             "vara": forms.TextInput(
                 attrs={
-                    "placeholder": (
-                        "Ex.: 1ª Vara do Trabalho"
-                    ),
+                    "placeholder": "Ex.: 1ª Vara do Trabalho",
                 }
             ),
             "comarca": forms.TextInput(
@@ -75,6 +116,28 @@ class LegalCaseForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Todos os campos processuais são opcionais.
+        optional_process_fields = [
+            "numero_processo",
+            "tribunal",
+            "grau",
+            "classe_processual",
+            "sistema_processual",
+            "orgao_julgador_nome",
+            "data_ajuizamento",
+            "vara",
+            "comarca",
+        ]
+
+        for field_name in optional_process_fields:
+            self.fields[field_name].required = False
+
+        # O campo do model é DateTimeField, mas a interface
+        # precisa receber somente a data.
+        self.fields["data_ajuizamento"].input_formats = [
+            "%Y-%m-%d",
+        ]
 
         for field in self.fields.values():
             existing_classes = field.widget.attrs.get(
@@ -186,9 +249,7 @@ class CaseMovementForm(forms.ModelForm):
         widgets = {
             "titulo": forms.TextInput(
                 attrs={
-                    "placeholder": (
-                        "Ex.: Audiência realizada"
-                    ),
+                    "placeholder": "Ex.: Audiência realizada",
                 }
             ),
             "descricao": forms.Textarea(

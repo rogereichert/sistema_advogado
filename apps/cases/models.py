@@ -91,6 +91,62 @@ class LegalCase(models.Model):
         verbose_name="Comarca",
     )
 
+    # Dados processuais obtidos do DataJud
+
+    tribunal = models.CharField(
+        max_length=30,
+        blank=True,
+        verbose_name="Tribunal",
+    )
+
+    grau = models.CharField(
+        max_length=30,
+        blank=True,
+        verbose_name="Grau",
+    )
+
+    classe_processual = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Classe processual",
+    )
+
+    classe_processual_codigo = models.CharField(
+        max_length=30,
+        blank=True,
+        verbose_name="Código da classe processual",
+    )
+
+    sistema_processual = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name="Sistema processual",
+    )
+
+    orgao_julgador_codigo = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name="Código do órgão julgador",
+    )
+
+    orgao_julgador_nome = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Órgão julgador",
+    )
+
+    data_ajuizamento = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Data de ajuizamento",
+    )
+
+    datajud_consultado_em = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Última consulta ao DataJud",
+    )
+
     data_abertura = models.DateField(
         auto_now_add=True,
         verbose_name="Data de abertura",
@@ -149,6 +205,38 @@ class LegalCase(models.Model):
             self.comarca,
         )
 
+        self.tribunal = self._normalizar_texto(
+            self.tribunal,
+        )
+
+        self.grau = self._normalizar_texto(
+            self.grau,
+        )
+
+        self.classe_processual = self._normalizar_texto(
+            self.classe_processual,
+        )
+
+        self.classe_processual_codigo = (
+            str(self.classe_processual_codigo).strip()
+            if self.classe_processual_codigo
+            else ""
+        )
+
+        self.sistema_processual = self._normalizar_texto(
+            self.sistema_processual,
+        )
+
+        self.orgao_julgador_codigo = (
+            str(self.orgao_julgador_codigo).strip()
+            if self.orgao_julgador_codigo
+            else ""
+        )
+
+        self.orgao_julgador_nome = self._normalizar_texto(
+            self.orgao_julgador_nome,
+        )
+
         self.descricao = (
             self.descricao.strip()
             if self.descricao
@@ -169,7 +257,7 @@ class LegalCase(models.Model):
             return ""
 
         return " ".join(
-            valor.strip().split()
+            str(valor).strip().split()
         )
 
     @property

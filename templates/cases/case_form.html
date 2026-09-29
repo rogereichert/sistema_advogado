@@ -534,7 +534,40 @@
                         </label>
 
 
-                        {{ form.numero_processo }}
+                        <div
+                            class="flex flex-col gap-3 sm:flex-row sm:items-stretch"
+                        >
+
+                            <div class="min-w-0 flex-1">
+                                {{ form.numero_processo }}
+                            </div>
+
+
+                            <button
+                                type="button"
+                                id="consultar-processo-datajud"
+                                class="inline-flex min-h-[46px] shrink-0 items-center justify-center gap-2 rounded-xl border border-brand-200 bg-brand-50 px-5 text-sm font-semibold text-brand-800 transition hover:border-brand-300 hover:bg-brand-100 focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.8"
+                                    stroke="currentColor"
+                                    class="h-4 w-4"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"
+                                    />
+                                </svg>
+
+                                <span>Consultar processo</span>
+                            </button>
+
+                        </div>
 
 
                         {% if form.numero_processo.errors %}
@@ -548,11 +581,21 @@
                         {% else %}
 
                             <p class="mt-2 text-xs text-slate-400">
-                                Deixe em branco enquanto a demanda
-                                ainda não tiver sido ajuizada.
+                                Informe o número CNJ para consultar os dados
+                                processuais automaticamente. Deixe em branco
+                                enquanto a demanda ainda não tiver sido ajuizada.
                             </p>
 
                         {% endif %}
+
+
+                        <!-- RESULTADO DA CONSULTA DATAJUD -->
+
+                        <div
+                            id="datajud-feedback"
+                            class="mt-4 hidden"
+                            aria-live="polite"
+                        ></div>
 
                     </div>
 
